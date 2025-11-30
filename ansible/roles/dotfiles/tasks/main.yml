@@ -1,0 +1,25 @@
+---
+# Symlink dotfiles into home directory
+
+- name: Symlink .bashrc
+  file:
+    src: "{{ playbook_dir }}/../dotfiles/.bashrc"
+    dest: "~/.bashrc"
+    state: link
+    force: true
+
+- name: Symlink .bash_profile
+  file:
+    src: "{{ playbook_dir }}/../dotfiles/.bash_profile"
+    dest: "~/.bash_profile"
+    state: link
+    force: true
+
+- name: Symlink .gitconfig
+  file:
+    src: "{{ playbook_dir }}/../dotfiles/.gitconfig"
+    dest: "~/.gitconfig"
+    state: link
+    force: true
+
+

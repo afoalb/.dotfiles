@@ -1,0 +1,18 @@
+---
+# Basic macOS preference automation
+
+- name: Disable annoying UI animations
+  shell: defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+
+- name: Show all filename extensions
+  shell: defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+
+- name: Disable “natural” scrolling
+  shell: defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+
+- name: Prevent .DS_Store files on network drives
+  shell: defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+
+- name: Restart Finder
+  shell: killall Finder || true
+

@@ -6,4 +6,7 @@
 
   roles:
     - homebrew
-
+    - macos
+    - shell 
+    - dotfiles
+    - app_cleanup

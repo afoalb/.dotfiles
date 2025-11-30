@@ -1,0 +1,20 @@
+---
+# Hide unwanted system apps by setting hidden flag
+
+- name: Hide Chess.app
+  shell: chflags hidden "/Applications/Chess.app"
+  ignore_errors: true
+
+- name: Hide Stickies.app
+  shell: chflags hidden "/Applications/Stickies.app"
+  ignore_errors: true
+
+- name: Hide Shortcuts.app
+  shell: chflags hidden "/System/Applications/Shortcuts.app"
+  ignore_errors: true
+
+- name: Hide Image Playground.app
+  shell: chflags hidden "/Applications/Image Playground.app"
+  ignore_errors: true
+
+
