@@ -1,0 +1,6 @@
+
+# Load .bashrc if interactive
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+
