@@ -4,6 +4,6 @@
   connection: local
   gather_facts: false
 
-  roles: []
-
+  roles:
+    - homebrew
 

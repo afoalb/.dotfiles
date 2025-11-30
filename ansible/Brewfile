@@ -1,4 +1,7 @@
 
 # Homebrew packages (Phase 1 will fill this)
 
+brew "ansible"
+brew "git"
+cask "iterm2"
 

@@ -1,0 +1,21 @@
+
+---
+# Homebrew installation and package management role
+
+- name: Check if Homebrew is installed
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: brew_check
+
+- name: Install Homebrew (Apple Silicon)
+  when: not brew_check.stat.exists
+  shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  args:
+    executable: /bin/bash
+
+- name: Ensure brew bundle installs packages from Brewfile
+  shell: brew bundle --file="{{ playbook_dir }}/Brewfile"
+  args:
+    executable: /bin/bash
+
