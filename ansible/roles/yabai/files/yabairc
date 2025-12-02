@@ -1,0 +1,37 @@
+#!/usr/bin/env sh
+
+yabai -m config layout bsp
+yabai -m config window_placement second_child
+
+# ----------
+# padding
+# ----------
+yabai -m config top_padding 20
+yabai -m config bottom_padding 20
+yabai -m config left_padding 20
+yabai -m config right_padding 20
+yabai -m config window_gap {{ yabai_gap }}
+yabai -m config window_padding_top {{ yabai_padding }}
+yabai -m config window_padding_bottom {{ yabai_padding }}
+yabai -m config window_padding_left {{ yabai_padding }}
+yabai -m config window_padding_right {{ yabai_padding }}
+
+# ----------
+# mouse
+# ----------
+yabai -m config mouse_follows_focus {{ yabai_focus_follows_mouse }}
+yabai -m config mouse_modifier alt
+# left click+drag
+yabai -m config mouse_action1 move
+# right click+d
+yabai -m config mouse_action2 resize
+yabai -m config focus_follows_mouse {{ yabai_focus_follows_mouse }}
+yabai -m mouse_drop_action swap
+
+
+# ----------
+# disable specfiic apps
+# ----------
+yabai -m rule --add="^System Settings$" manage=off
+yabai -m rule --add="^Calculator$" manage=off
+yabai -m rule --add="^Karabiner-Elements$" manage=off
