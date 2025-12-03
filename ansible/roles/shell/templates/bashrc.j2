@@ -1,0 +1,72 @@
+
+# -------- Environment defaults --------
+export EDITOR=vim
+export PAGER=less
+export PATH="$HOME/bin:$PATH"          # User binaries first
+
+# -------- History --------
+export HISTCONTROL=ignoredups:erasedups
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+shopt -s histappend  # Append, don’t overwrite
+shopt -s checkwinsize # Correct line wrapping after resize
+
+# -------- Aliases --------
+alias ll='ls -lah --color=auto'
+alias ls='ls -GFh'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias grep='grep --color=auto'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias h='history'
+alias j='jobs -l'
+alias reload='source ~/.bashrc && echo "Bashrc reloaded"'
+# Safety
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+
+# -------- Bash completion --------
+# For macOS (requires: brew install bash-completion)
+if [ -f /opt/homebrew/etc/bash_completion ]; then
+    . /opt/homebrew/etc/bash_completion
+fi
+
+# -----------------
+# Prompt
+# -----------------
+
+# -------- Colours --------
+green=$(tput setaf 34)       # Directory
+orange=$(tput setaf 208)     # Git branch / SSH marker
+reset=$(tput sgr0)           # Reset colour
+
+
+# -------- Git Helpers --------
+# Returns "*" if there are uncommitted changes
+parse_git_dirty() {
+    [[ $(git status --porcelain 2> /dev/null) ]] && echo "*"
+}
+
+# Returns current branch name with dirty indicator
+parse_git_branch() {
+    git branch --no-color 2> /dev/null \
+        | sed -e '/^[^*]/d' -e "s/* \(.*\)/ (\1$(parse_git_dirty))/"
+}
+
+# -------- SSH Helper --------
+# Returns [SSH] if connected via SSH
+ssh_marker() {
+    [[ -n "$SSH_CONNECTION" ]] && echo "[SSH]"
+}
+
+# -------- PS1 --------
+PS1=""
+PS1+="\u "                        # Username
+PS1+="\[$green\]\w"               # Current working directory
+PS1+="\[$orange\]\$(parse_git_branch)"  # Git branch info
+PS1+="\[$orange\]\$(ssh_marker)"        # SSH marker if connected
+PS1+="\[$reset\] \$ "             # Reset colour + prompt symbol
+
+export PS1

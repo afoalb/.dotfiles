@@ -1,0 +1,38 @@
+" ----- General -----
+syntax on
+set number
+set relativenumber
+
+" ----- Indentation -----
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set smartindent
+
+" ----- Search -----
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+" Clear search highlight on pressing Esc in normal mode 
+nnoremap <Esc> :noh<CR><Esc>
+
+" ------ Clipboard -----
+" Use system's clipboard (requires: vim --version | grep clipboard)
+set clipboard=unnamed 
+
+" ----- UI -----
+set ruler
+set showmatch
+set colorcolumn=80
+set wrap
+
+" ----- Performance -----
+set lazyredraw
+set ttyfast
+
+" ----- Backups -----
+set nobackup
+set nowritebackup
+set noswapfile
+

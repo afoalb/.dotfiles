@@ -1,0 +1,51 @@
+---
+# ---------
+# Set bash as default shell
+# ---------
+- name: Ensure bash is available in /etc/shells
+  ansible.builtin.shell: |
+    grep -qx "/bin/bash" /etc/shells || echo "/bin/bash" | sudo tee -a /etc/shells
+  tags: shell
+
+- name: Set bash as the default login shell
+  ansible.builtin.shell: chsh -s /bin/bash
+  when: ansible_facts['env']['SHELL'] != "/bin/bash"
+  tags: shell
+
+# ---------
+# Deploy config files
+# ---------
+- name: Deploy .bashrc
+  ansible.builtin.template:
+    src: bashrc.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
+    mode: "0644"
+  tags: shell
+
+- name: Deploy .vimrc
+  ansible.builtin.template:
+    src: vimrc.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.vimrc"
+    mode: "0644"
+  tags: shell
+
+- name: Deploy .gitconfig
+  ansible.builtin.template:
+    src: gitconfig.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
+    mode: "0644"
+  tags: shell
+
+- name: Install tmux
+  ansible.builtin.homebrew:
+    name: tmux
+    state: present
+  tags: shell
+
+- name: Deploy .tmux.conf
+  ansible.builtin.template:
+    src: tmux.conf.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
+    mode: "0644"
+  tags: shell
+

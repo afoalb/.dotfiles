@@ -1,0 +1,44 @@
+[user]
+    name = Afonso Schulz Albrecht
+    email = a.schulzalbrecht@gmail.com
+
+[color]
+    ui = auto
+
+[core]
+    editor = vim
+    pager = less -FXR
+
+[merge]
+    conflictstyle = diff3
+
+[log]
+    decorate = true
+
+[alias]
+    # Status & diff
+    st = status -sb
+    df = diff
+    dfn = diff --name-only
+
+    # Log
+    lg = log --oneline --graph --decorate --all
+    lga = log --oneline --graph --decorate --all
+
+    # Commit
+    cm = commit -m
+    ca = commit --amend --no-edit
+
+    # Push/Pull
+    pl = pull --rebase
+    ps = push
+
+    # Branching
+    br = branch
+    co = checkout
+    cob = checkout -b
+
+    # Stash
+    ss = stash
+    sl = stash list
+
