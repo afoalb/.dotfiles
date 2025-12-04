@@ -15,6 +15,13 @@
 # ---------
 # Deploy config files
 # ---------
+- name: Deploy .bash_profile
+  ansible.builtin.template:
+    src: bash_profile.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
+    mode: "0644"
+  tags: shell
+
 - name: Deploy .bashrc
   ansible.builtin.template:
     src: bashrc.j2
