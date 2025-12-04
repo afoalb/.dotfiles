@@ -2,6 +2,14 @@
     name = Afonso Schulz Albrecht
     email = a.schulzalbrecht@gmail.com
 
+[credential]
+{% if ansible_facts['os_family'] == 'Darwin' %}
+    helper = osxkeychain
+{% else %}
+# TODO: setup libsecret for Debian in future
+    helper = store
+{% endif %}
+
 [color]
     ui = auto
 
@@ -17,26 +25,23 @@
 
 [alias]
     # Status & diff
-    st = status -sb
-    df = diff
-    dfn = diff --name-only
+    st = status
+    sta = status -sb
+    dfname = diff --name-only
 
     # Log
-    lg = log --oneline --graph --decorate --all
     lga = log --oneline --graph --decorate --all
 
     # Commit
-    cm = commit -m
-    ca = commit --amend --no-edit
+    cmm = commit -m
 
     # Push/Pull
     pl = pull --rebase
-    ps = push
 
     # Branching
     br = branch
     co = checkout
-    cob = checkout -b
+    cobr = checkout -b
 
     # Stash
     ss = stash
