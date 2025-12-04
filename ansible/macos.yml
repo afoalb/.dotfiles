@@ -3,8 +3,6 @@
 - hosts: localhost
   connection: local
   gather_facts: true
-  vars_files:
-    - ~/.dotfiles/vault.yml
   roles:
     - homebrew
     - macos

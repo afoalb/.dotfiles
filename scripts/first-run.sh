@@ -9,7 +9,7 @@ echo "[first-run] Installing Ansible..."
 brew install ansible
 
 echo "[first-run] Running Ansible playbook..."
-ansible-playbook ~/.dotfiles/ansible/macos.yml
+ansible-playbook ~/.dotfiles/ansible/macos.yml --ask-become-pass
 
 echo "[first-run] Done."
 

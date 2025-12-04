@@ -3,7 +3,6 @@
   homebrew_cask:
     name: karabiner-elements
     state: present
-    sudo_password: "{{ vault_sudo_password }}"
   tags: keyboard
 
 - name: Ensure Karabiner config directory exists
