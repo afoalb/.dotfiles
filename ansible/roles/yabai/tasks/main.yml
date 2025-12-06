@@ -56,7 +56,7 @@
     - yabai
 
 - name: Start skhd service
-  ansible.builtin.command: yabai --start-service
+  ansible.builtin.command: skhd --start-service
   changed_when: false
   tags: 
     - yabai
