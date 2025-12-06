@@ -71,6 +71,12 @@
   shell: defaults write com.apple.dock show-recents -bool false
   #become_user: "{{ ansible_user }}"
 
+- name: Reset Dock to empty
+  shell: |
+    defaults write com.apple.dock persistent-apps -array
+    defaults write com.apple.dock persistent-others -array
+
+
 ##########################
 # System-wide Auto-Correct & Text Substitutions
 ##########################
