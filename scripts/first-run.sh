@@ -2,8 +2,24 @@
 #!/usr/bin/env bash
 set -e
 
-echo "[first-run] Installing Homebrew..."
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+ensure_brew_installed() {
+  if command -v /opt/homebrew/bin/brew >/dev/null 2>&1; then
+    return 0
+  fi
+  
+  echo "[first-run] Homebrew not found. Attempting installation..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
+ensure_brew_installed
+
+echo "[first-run] Adding Homebrew to PATH..."
+echo export PATH=$PATH:/opt/homebrew/bin >> ~/.zshrc
+source ~/.zshrc
+
+echo "[first-run] Updating brew..."
+brew update
 
 echo "[first-run] Installing Ansible..."
 brew install ansible
