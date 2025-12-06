@@ -1,15 +1,106 @@
 ---
-# Basic macOS preference automation
+##########################
+# Finder Defaults
+##########################
+- name: Show hidden files
+  shell: defaults write com.apple.finder AppleShowAllFiles -bool true
+  #become_user: "{{ ansible_user }}"
 
-- name: Disable annoying UI animations
-  shell: defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
-
-- name: Show all filename extensions
+- name: Show all file extensions
   shell: defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+  #become_user: "{{ ansible_user }}"
 
-- name: Prevent .DS_Store files on network drives
+- name: Prevent creation of .DS_Store on network drives
   shell: defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+  #become_user: "{{ ansible_user }}"
 
-- name: Restart Finder
+- name: Show full POSIX path in Finder window titles
+  shell: defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Set Finder default location to Home folder
+  shell: |
+    defaults write com.apple.finder NewWindowTarget -string "PfHm"
+    defaults write com.apple.finder NewWindowTargetPath -string "file://${HOME}/"
+  #become_user: "{{ ansible_user }}"
+
+- name: Enable spring-loading for folders
+  shell: defaults write NSGlobalDomain com.apple.springing.enabled -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Reduce delay for spring-loaded folders
+  shell: defaults write NSGlobalDomain com.apple.springing.delay -float 0.1
+  #become_user: "{{ ansible_user }}"
+
+- name: Show status bar in Finder
+  shell: defaults write com.apple.finder ShowStatusBar -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Show path bar in Finder
+  shell: defaults write com.apple.finder ShowPathbar -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Set default Finder view to list view
+  shell: defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable warning when changing file extensions
+  shell: defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
+  #become_user: "{{ ansible_user }}"
+
+##########################
+# Dock Tweaks
+##########################
+- name: Automatically hide the Dock
+  shell: defaults write com.apple.dock autohide -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Remove Dock auto-hide delay
+  shell: defaults write com.apple.dock autohide-delay -float 0
+  #become_user: "{{ ansible_user }}"
+
+- name: Make Dock appear instantly
+  shell: defaults write com.apple.dock autohide-time-modifier -float 0
+  #become_user: "{{ ansible_user }}"
+
+- name: Minimize windows into application icon
+  shell: defaults write com.apple.dock minimize-to-application -bool true
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable recent apps in Dock
+  shell: defaults write com.apple.dock show-recents -bool false
+  #become_user: "{{ ansible_user }}"
+
+##########################
+# System-wide Auto-Correct & Text Substitutions
+##########################
+- name: Disable auto spelling correction
+  shell: defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable automatic capitalization
+  shell: defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable smart dashes
+  shell: defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable smart quotes
+  shell: defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
+  #become_user: "{{ ansible_user }}"
+
+- name: Disable period substitution (double-space -> period)
+  shell: defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+  #become_user: "{{ ansible_user }}"
+
+##########################
+# Apply changes
+##########################
+- name: Restart Finder to apply changes
   shell: killall Finder || true
+  #become_user: "{{ ansible_user }}"
 
+- name: Restart Dock to apply changes
+  shell: killall Dock || true
+  #become_user: "{{ ansible_user }}"
