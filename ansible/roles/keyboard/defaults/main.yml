@@ -1,0 +1,4 @@
+---
+karabiner_version: 15.7.0
+karabiner_dmg_name: "Karabiner-Elements-{{ karabiner_version }}"
+karabiner_dmg_url: "https://github.com/pqrs-org/Karabiner-Elements/releases/download/v{{ karabiner_version }}/{{ karabiner_dmg_name }}.dmg"
