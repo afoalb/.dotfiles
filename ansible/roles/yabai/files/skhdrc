@@ -50,12 +50,11 @@ shift + alt - y : yabai -m space --mirror y-axis
 shift + alt - x : yabai -m space --mirror x-axis
 
 # Toggle window float (pop out)
-shift + alt - p : yabai -m window --toggle float --grid 4:4:1:1:2:2
-
+shift + alt - d : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
 # Move window between workspaces (requires SIP disabled)
 shift + alt - p : yabai -m window --space prev;
-shift + alt - p : yabai -m window --space next;
+shift + alt - n : yabai -m window --space next;
 
 # move window to space (requires SIP disabled)
 shift + alt - 1 : yabai -m window --space 1;

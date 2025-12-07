@@ -49,6 +49,7 @@
   tags:
     - yabai
 
+# TODO: if yabai is runing, restart it
 - name: Start yabai service
   ansible.builtin.command: yabai --start-service
   changed_when: false
@@ -59,5 +60,4 @@
   ansible.builtin.command: skhd --start-service
   changed_when: false
   tags: 
-    - yabai
-  
+    - yabai 
