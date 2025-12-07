@@ -1,0 +1,6 @@
+---
+sketchybar_config_path: "{{  ansible_facts['env']['HOME'] }}/.config/sketchybar/sketchybarrc"
+sketchybar_plugins_path: "{{ ansible_facts['env']['HOME'] }}/.config/sketchybar/plugins"
+sketchybar_launchagent_path: "{{ ansible_env.HOME }}/Library/LaunchAgents/com.user.sketchybar.plist"
+sketchybar_binary: "/usr/local/bin/sketchybar"
+

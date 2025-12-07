@@ -17,6 +17,8 @@ yabai -m config window_padding_bottom 10
 yabai -m config window_padding_left 10
 yabai -m config window_padding_right 10
 
+yabai -m config external_bar all:32:0 # 32 = heigh of sketchybar
+
 # ----------
 # mouse
 # ----------

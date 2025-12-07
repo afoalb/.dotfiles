@@ -1,0 +1,24 @@
+#!/usr/bin/env sh
+# ----------------------------
+# SketchyBar Power-User Config
+# ----------------------------
+
+# General settings
+sketchybar --defaults update_freq=2 \
+           background_color=0xff1e1e2e \
+           icon.color=0xffdcdcdc \
+           label.color=0xffdcdcdc \
+           font="Hack Nerd Font:Regular:14"
+
+# LEFT: Yabai spaces
+sketchybar --add item spaces left \
+           --set spaces script="{{ sketchybar_plugins_path }}/spaces.sh"
+
+# CENTER: System stats
+sketchybar --add item cpu center --set cpu script="{{ sketchybar_plugins_path }}/cpu.sh"
+sketchybar --add item memory center --set memory script="{{ sketchybar_plugins_path }}/memory.sh"
+
+# RIGHT: Battery, clock
+sketchybar --add item battery right --set battery script="{{ sketchybar_plugins_path }}/battery.sh"
+sketchybar --add item clock right --set clock script="{{ sketchybar_plugins_path }}/clock.sh"
+
