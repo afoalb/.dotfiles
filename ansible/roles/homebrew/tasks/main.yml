@@ -50,3 +50,9 @@
     - homebrew
     - cleanup
 
+- name: Clear all quarantine attributes from Firefox
+  shell: |
+      xattr -cr /Applications/Firefox.app || true
+  tags: 
+    - homebrew
+

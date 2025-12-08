@@ -47,6 +47,9 @@
       ignore_errors: yes
   tags: productivity
 
+
+##########################
+
 - name: Configure Alfred to replace Spotlight
   block:
     - name: Get current user for preference paths
@@ -76,6 +79,7 @@
       shell: |
         killall cfprefsd || true
       ignore_errors: yes
+      tags: productivity
 
     - name: Restart SystemUIServer to apply changes
       shell: |

@@ -145,7 +145,7 @@
   shell: defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 - name: Reduce transparency
-  shell: defaults write com.apple.universalaccess reduceTransparency -bool true
+  shell: defaults write NSGlobalDomain AppleReduceTransparency -bool true
 
 - name: Disable sound effects
   shell: defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
@@ -168,8 +168,8 @@
 - name: Enable three-finger drag (Accessibility)
   shell: defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
 
-- name: Set scroll direction to not natural (Linux-like)
-  shell: defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+- name: Set scroll direction to natural
+  shell: defaults write NSGlobalDomain com.apple.swipescrolldirection -bool true
 
 ##########################
 # Security
