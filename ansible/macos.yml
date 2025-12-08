@@ -4,6 +4,9 @@
   gather_facts: true
   vars_files:
     - vars/secrets.yml
+  vars:
+    # Map sudo_pass from vault to Ansible's become password
+    ansible_become_password: "{{ sudo_pass }}"
   roles:
     - homebrew
     - macos
