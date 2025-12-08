@@ -33,7 +33,7 @@
 
 - name: Set zsh as the default login shell
   shell: "chsh -s {{ zsh_path }}"
-  when: ansible_env.SHELL != zsh_path
+  when: ansible_facts['env']['SHELL'] != zsh_path
   tags: shell
 
 # ------------------------------------------------------------------------------
@@ -42,14 +42,14 @@
 - name: Deploy .bash_profile
   template:
     src: bash_profile.j2
-    dest: "{{ ansible_env.HOME }}/.bash_profile"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     mode: "0644"
   tags: shell
 
 - name: Deploy .bashrc
   template:
     src: bashrc.j2
-    dest: "{{ ansible_env.HOME }}/.bashrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
     mode: "0644"
   tags: shell
 
@@ -59,13 +59,13 @@
 - name: Deploy .zshrc
   template:
     src: zshrc.j2
-    dest: "{{ ansible_env.HOME }}/.zshrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
     mode: "0644"
   tags: shell
 
 - name: Create .zshrc.local if it doesn't exist
   file:
-    path: "{{ ansible_env.HOME }}/.zshrc.local"
+    path: "{{ ansible_facts['env']['HOME'] }}/.zshrc.local"
     state: touch
     mode: "0644"
     modification_time: preserve
@@ -77,7 +77,7 @@
 # ------------------------------------------------------------------------------
 - name: Create starship config directory
   file:
-    path: "{{ ansible_env.HOME }}/.config"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config"
     state: directory
     mode: "0755"
   tags: shell
@@ -85,7 +85,7 @@
 - name: Deploy starship configuration
   template:
     src: starship.toml.j2
-    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/starship.toml"
     mode: "0644"
   tags: shell
 
@@ -96,7 +96,7 @@
   shell: |
     {{ '/opt/homebrew/opt/fzf/install' if zsh_homebrew_arm.stat.exists else '/usr/local/opt/fzf/install' }} --key-bindings --completion --no-update-rc
   args:
-    creates: "{{ ansible_env.HOME }}/.fzf.zsh"
+    creates: "{{ ansible_facts['env']['HOME'] }}/.fzf.zsh"
   tags: shell
 
 # ------------------------------------------------------------------------------
@@ -105,7 +105,7 @@
 - name: Deploy .vimrc
   template:
     src: vimrc.j2
-    dest: "{{ ansible_env.HOME }}/.vimrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.vimrc"
     mode: "0644"
   tags: shell
 
@@ -115,7 +115,7 @@
 - name: Deploy .gitconfig
   template:
     src: gitconfig.j2
-    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
     mode: "0644"
   tags: shell
 
@@ -131,7 +131,7 @@
 - name: Deploy .tmux.conf
   template:
     src: tmux.conf.j2
-    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
     mode: "0644"
   tags: shell
 

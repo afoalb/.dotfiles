@@ -27,7 +27,7 @@
 - name: Add Homebrew to PATH for Apple Silicon
   when: brew_apple_silicon.stat.exists or (not brew_intel.stat.exists)
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.bash_profile"
+    path: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
     create: yes
     mode: '0644'
@@ -35,7 +35,7 @@
 - name: Add Homebrew to PATH for Intel
   when: brew_intel.stat.exists and not brew_apple_silicon.stat.exists
   lineinfile:
-    path: "{{ ansible_env.HOME }}/.bash_profile"
+    path: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     line: 'eval "$(/usr/local/bin/brew shellenv)"'
     create: yes
     mode: '0644'

@@ -7,14 +7,14 @@
 
 - name: Create SSH directory
   file:
-    path: "{{ ansible_env.HOME }}/.ssh"
+    path: "{{ ansible_facts['env']['HOME'] }}/.ssh"
     state: directory
     mode: '0700'
   tags: ssh
 
 - name: Create SSH config.d directory
   file:
-    path: "{{ ansible_env.HOME }}/.ssh/config.d"
+    path: "{{ ansible_facts['env']['HOME'] }}/.ssh/config.d"
     state: directory
     mode: '0700'
   tags: ssh
@@ -22,7 +22,7 @@
 - name: Deploy SSH config
   template:
     src: ssh_config.j2
-    dest: "{{ ansible_env.HOME }}/.ssh/config"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.ssh/config"
     mode: '0600'
   tags: ssh
 
@@ -35,7 +35,7 @@
       #   HostName example.com
       #   User username
       #   IdentityFile ~/.ssh/id_rsa
-    dest: "{{ ansible_env.HOME }}/.ssh/config.d/hosts.conf"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.ssh/config.d/hosts.conf"
     mode: '0600'
     force: no
   tags: ssh

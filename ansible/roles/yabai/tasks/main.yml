@@ -9,14 +9,14 @@
 - name: Deploy yabairc configuration
   copy:
     src: yabairc
-    dest: "{{ ansible_env.HOME }}/.yabairc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.yabairc"
     mode: '0755'
   tags: yabai
 
 - name: Deploy skhdrc configuration
   copy:
     src: skhdrc
-    dest: "{{ ansible_env.HOME }}/.skhdrc"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.skhdrc"
     mode: '0644'
   tags: yabai
 

@@ -8,7 +8,7 @@
 
 - name: Create Karabiner configuration directory
   file:
-    path: "{{ ansible_env.HOME }}/.config/karabiner"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/karabiner"
     state: directory
     mode: "0755"
   tags: keyboard
@@ -16,7 +16,7 @@
 - name: Deploy Karabiner configuration (CapsLock → Control)
   template:
     src: karabiner.json.j2
-    dest: "{{ ansible_env.HOME }}/.config/karabiner/karabiner.json"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/karabiner/karabiner.json"
     mode: "0644"
   tags: keyboard
 

@@ -152,12 +152,12 @@
 
 - name: Create Screenshots directory
   file:
-    path: "{{ ansible_env.HOME }}/Screenshots"
+    path: "{{ ansible_facts['env']['HOME'] }}/Screenshots"
     state: directory
     mode: '0755'
 
 - name: Set screenshots location
-  shell: defaults write com.apple.screencapture location -string "{{ ansible_env.HOME }}/Screenshots"
+  shell: defaults write com.apple.screencapture location -string "{{ ansible_facts['env']['HOME'] }}/Screenshots"
 
 - name: Set screenshots format to PNG
   shell: defaults write com.apple.screencapture type -string "png"
