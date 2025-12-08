@@ -178,11 +178,11 @@
   shell: defaults write com.apple.screensaver askForPasswordDelay -int 0
 
 - name: Enable firewall
-  shell: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+  shell: /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
   become: yes
 
 - name: Enable stealth mode
-  shell: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
+  shell: /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
   become: yes
 
 ##########################
