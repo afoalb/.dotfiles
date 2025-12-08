@@ -10,7 +10,7 @@
 - SketchyBar (menu bar)
 - Karabiner-Elements (keyboard customization)
 - Hammerspoon (automation)
-- Ice (menu bar icon organization)
+- Ice / JordanBaird Ice (menu bar icon organization)
 
 ## Terminal & Shell
 - Alacritty (terminal emulator)
@@ -30,7 +30,7 @@
 - jq (JSON processor)
 - yq (YAML processor)
 - mtr (network diagnostics)
-- dog (DNS client)
+- doggo (DNS client)
 - curlie (curl + httpie syntax)
 - httpie (HTTP client)
 - mosh (mobile shell, better SSH)
@@ -96,7 +96,7 @@
 - tfsec
 - Ansible
 - ansible-lint
-- Packer
+- Packer (note: no longer available via Homebrew, manual install required)
 
 ## Database Tools
 - TablePlus (universal database GUI, paid software)
@@ -115,16 +115,16 @@
 ## Productivity & Utilities
 - Alfred Powerpack (launcher, paid software)
 - Maccy (clipboard manager)
-- espanso (text expander)
+- espanso (text expander - note: no longer available via Homebrew, manual install required)
 - AlDente (battery charge limiter, free tier, limit to 80%)
 
 ## Documentation & Knowledge
 - Obsidian (notes, markdown-based)
-- Zeal (offline API documentation)
+- Zeal (offline API documentation - note: no longer available via Homebrew, consider alternatives)
 
 ## File Management
 - Keka (archive utility)
-- Quick Look plugins: qlmarkdown, qlstephen, quicklook-json
+- Quick Look plugins (note: deprecated in modern macOS, limited availability)
 
 ## Browsers
 - Firefox Developer Edition
