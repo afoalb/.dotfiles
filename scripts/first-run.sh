@@ -78,10 +78,8 @@ ensure_brew_installed() {
 
 ensure_brew_installed
 
-echo "[first-run] Adding Homebrew to PATH..."
-export PATH=$PATH:/opt/homebrew/bin
-grep -qxF 'export PATH=$PATH:/opt/homebrew/bin' ~/.zshrc || echo 'export PATH=$PATH:/opt/homebrew/bin' >> ~/.zshrc
-source ~/.zshrc
+echo "[first-run] Adding Homebrew to PATH for this script..."
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 echo "[first-run] Updating Homebrew..."
 brew update
