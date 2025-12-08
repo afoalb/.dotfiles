@@ -22,6 +22,10 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 # ------------------------------------------------------------------------------
 # Zsh Options
 # ------------------------------------------------------------------------------
+# Word Characters - Define what's considered part of a word for word-based navigation
+# Removing '/' makes Ctrl-W and Alt-Backspace stop at path separators
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
 # History
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000

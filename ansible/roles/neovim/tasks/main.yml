@@ -13,11 +13,10 @@
   when: lazyvim_clean_install | default(false)
   tags: neovim
 
-- name: Create Neovim config directory
-  file:
+- name: Check if Neovim config directory exists
+  stat:
     path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
-    state: directory
-    mode: '0755'
+  register: nvim_config_dir
   tags: neovim
 
 - name: Clone LazyVim starter template
@@ -26,6 +25,7 @@
     dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     version: main
     update: no
+  when: not nvim_config_dir.stat.exists
   tags: neovim
 
 - name: Remove LazyVim starter .git directory (to make it your own)

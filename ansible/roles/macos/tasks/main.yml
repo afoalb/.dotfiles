@@ -92,7 +92,7 @@
     defaults write com.apple.dock persistent-others -array
 
 - name: Set Dock icon size
-  shell: defaults write com.apple.dock tilesize -int 48
+  shell: defaults write com.apple.dock tilesize -int 56
 
 - name: Set Dock minimize animation to scale
   shell: defaults write com.apple.dock mineffect -string "scale"
