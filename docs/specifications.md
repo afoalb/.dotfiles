@@ -115,7 +115,7 @@
 - tfsec
 - Ansible
 - ansible-lint
-- Packer (note: no longer available via Homebrew, manual install required)
+- Packer (via HashiCorp tap: hashicorp/tap/packer)
 
 ## Database Tools
 - TablePlus (universal database GUI, paid software)
@@ -134,12 +134,12 @@
 ## Productivity & Utilities
 - Alfred Powerpack (launcher, paid software)
 - Maccy (clipboard manager)
-- espanso (text expander - note: no longer available via Homebrew, manual install required)
-- AlDente (battery charge limiter, free tier, limit to 80%)
+- espanso (text expander - installed via direct download from GitHub releases v2.2.1)
+- AlDente (battery charge limiter, free tier, limit to 80%, configured as background app)
 
 ## Documentation & Knowledge
 - Obsidian (notes, markdown-based)
-- Zeal (offline API documentation - note: no longer available via Homebrew, consider alternatives)
+- DevDocs Desktop (offline API documentation, replaces Zeal)
 
 ## File Management
 - Keka (archive utility)

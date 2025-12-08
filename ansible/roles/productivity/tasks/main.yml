@@ -1,0 +1,25 @@
+---
+# ==============================================================================
+# Productivity Apps Configuration Role
+# ==============================================================================
+# Configures productivity applications like AlDente, Espanso
+# ==============================================================================
+
+- name: Configure AlDente to run as background app (hide from dock)
+  block:
+    - name: Check if AlDente is installed
+      stat:
+        path: /Applications/AlDente.app
+      register: aldente_app
+
+    - name: Set AlDente as background app (LSUIElement)
+      shell: |
+        /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" /Applications/AlDente.app/Contents/Info.plist 2>/dev/null || \
+        /usr/libexec/PlistBuddy -c "Set :LSUIElement true" /Applications/AlDente.app/Contents/Info.plist
+      when: aldente_app.stat.exists
+      ignore_errors: yes
+
+    - name: Touch AlDente.app to update Launch Services database
+      shell: touch /Applications/AlDente.app
+      when: aldente_app.stat.exists
+  tags: productivity

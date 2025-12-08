@@ -1,0 +1,31 @@
+---
+# ==============================================================================
+# Espanso Text Expander Role
+# ==============================================================================
+# Installs Espanso from GitHub releases (not available via Homebrew)
+# ==============================================================================
+
+- name: Check if Espanso is installed
+  stat:
+    path: /Applications/Espanso.app
+  register: espanso_installed
+
+- name: Download Espanso
+  get_url:
+    url: https://github.com/espanso/espanso/releases/download/v2.2.1/Espanso-Mac-Intel.zip
+    dest: /tmp/espanso.zip
+    mode: '0644'
+  when: not espanso_installed.stat.exists
+
+- name: Install Espanso
+  unarchive:
+    src: /tmp/espanso.zip
+    dest: /Applications/
+    remote_src: yes
+  when: not espanso_installed.stat.exists
+
+- name: Clean up downloaded file
+  file:
+    path: /tmp/espanso.zip
+    state: absent
+  when: not espanso_installed.stat.exists

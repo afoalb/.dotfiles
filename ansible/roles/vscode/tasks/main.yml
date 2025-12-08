@@ -24,7 +24,10 @@
     - oderwat.indent-rainbow
     - usernamehw.errorlens
     - ms-vscode-remote.remote-ssh
-  ignore_errors: yes
+  register: vscode_extension_result
+  failed_when:
+    - vscode_extension_result.rc != 0
+    - "'already installed' not in vscode_extension_result.stdout"
   tags: vscode
 
 - name: Create VS Code user settings directory
