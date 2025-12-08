@@ -1,0 +1,41 @@
+---
+# ==============================================================================
+# SSH Configuration Role
+# ==============================================================================
+# Configures SSH with security best practices
+# ==============================================================================
+
+- name: Create SSH directory
+  file:
+    path: "{{ ansible_env.HOME }}/.ssh"
+    state: directory
+    mode: '0700'
+  tags: ssh
+
+- name: Create SSH config.d directory
+  file:
+    path: "{{ ansible_env.HOME }}/.ssh/config.d"
+    state: directory
+    mode: '0700'
+  tags: ssh
+
+- name: Deploy SSH config
+  template:
+    src: ssh_config.j2
+    dest: "{{ ansible_env.HOME }}/.ssh/config"
+    mode: '0600'
+  tags: ssh
+
+- name: Create placeholder for host-specific configs
+  copy:
+    content: |
+      # Add host-specific SSH configurations here
+      # Example:
+      # Host myserver
+      #   HostName example.com
+      #   User username
+      #   IdentityFile ~/.ssh/id_rsa
+    dest: "{{ ansible_env.HOME }}/.ssh/config.d/hosts.conf"
+    mode: '0600'
+    force: no
+  tags: ssh

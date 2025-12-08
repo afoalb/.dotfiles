@@ -69,3 +69,96 @@ cask "ice"                             # Menu bar icon manager
 brew "neovim"                 # Modern vim with Lua support
 cask "visual-studio-code"     # VS Code editor
 
+# ------------------------------------------------------------------------------
+# Version Control & Git Tools
+# ------------------------------------------------------------------------------
+brew "lazygit"                # Terminal UI for git
+brew "git-delta"              # Better diff viewer
+brew "gh"                     # GitHub CLI
+brew "tig"                    # Text-mode interface for git
+
+# ------------------------------------------------------------------------------
+# Language Runtimes & Version Managers
+# ------------------------------------------------------------------------------
+brew "pyenv"                  # Python version management
+brew "poetry"                 # Python dependency management
+brew "pipx"                   # Install Python apps in isolated environments
+brew "fnm"                    # Fast Node.js version manager
+brew "direnv"                 # Automatic environment variable loading
+
+# ------------------------------------------------------------------------------
+# Containers & Virtualization
+# ------------------------------------------------------------------------------
+brew "colima"                 # Container runtime
+brew "podman"                 # Container CLI
+cask "utm"                    # Virtual machine manager (QEMU frontend)
+
+# ------------------------------------------------------------------------------
+# Infrastructure as Code
+# ------------------------------------------------------------------------------
+brew "terraform"              # Infrastructure provisioning
+brew "terraform-docs"         # Generate documentation from Terraform
+brew "tflint"                 # Terraform linter
+brew "tfsec"                  # Terraform security scanner
+brew "ansible-lint"           # Ansible best practices checker
+brew "packer"                 # Image builder
+
+# ------------------------------------------------------------------------------
+# Database Tools
+# ------------------------------------------------------------------------------
+brew "mycli"                  # MySQL CLI with autocomplete
+brew "pgcli"                  # PostgreSQL CLI with autocomplete
+
+# ------------------------------------------------------------------------------
+# API Development
+# ------------------------------------------------------------------------------
+cask "httpie"                 # HTTPie Desktop
+# httpie CLI already installed in CLI Tools section
+
+# ------------------------------------------------------------------------------
+# Monitoring & System Tools
+# ------------------------------------------------------------------------------
+brew "btop"                   # System monitor
+cask "stats"                  # Menu bar system monitor
+brew "glances"                # Alternative system monitor
+
+# ------------------------------------------------------------------------------
+# Productivity & Utilities
+# ------------------------------------------------------------------------------
+cask "maccy"                  # Clipboard manager
+brew "espanso"                # Text expander
+cask "aldente"                # Battery charge limiter
+
+# ------------------------------------------------------------------------------
+# Documentation & Knowledge
+# ------------------------------------------------------------------------------
+cask "obsidian"               # Markdown-based notes
+cask "zeal"                   # Offline API documentation
+
+# ------------------------------------------------------------------------------
+# File Management
+# ------------------------------------------------------------------------------
+cask "keka"                   # Archive utility
+brew "qlmarkdown"             # Quick Look plugin for Markdown
+brew "qlstephen"              # Quick Look plugin for text files
+brew "quicklook-json"         # Quick Look plugin for JSON
+
+# ------------------------------------------------------------------------------
+# Browsers
+# ------------------------------------------------------------------------------
+cask "firefox"                # Firefox Developer Edition
+cask "google-chrome"          # Chrome browser
+
+# ------------------------------------------------------------------------------
+# Security & Secrets
+# ------------------------------------------------------------------------------
+cask "bitwarden"              # Password manager
+
+# ------------------------------------------------------------------------------
+# PAID SOFTWARE (Install these last)
+# ------------------------------------------------------------------------------
+cask "little-snitch"          # Network firewall (paid)
+cask "tableplus"              # Universal database GUI (paid)
+cask "fork"                   # Git GUI (paid)
+cask "alfred"                 # Launcher/automation (paid, use Raycast instead if preferred)
+
