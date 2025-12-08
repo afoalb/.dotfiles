@@ -1,63 +1,53 @@
 ---
-- name: Install yabai
-  community.general.homebrew_tap:
-    tap: koekeishiya/formulae
-  tags: yabai
+# ==============================================================================
+# Yabai & Skhd Configuration Role
+# ==============================================================================
+# Configures yabai tiling window manager and skhd hotkey daemon
+# Installation handled by homebrew role via Brewfile
+# ==============================================================================
 
-- name: Install yabai via Homebrew
-  community.general.homebrew:
-    name: yabai
-    state: present
-  tags: yabai
-
-- name: Install skhd via Homebrew
-  community.general.homebrew:
-    name: skhd
-    state: present
-  tags: yabai
-
-- name: Deploy yabairc config
-  ansible.builtin.copy:
+- name: Deploy yabairc configuration
+  copy:
     src: yabairc
-    dest: "{{ ansible_facts['env']['HOME'] }}/.yabairc"
+    dest: "{{ ansible_env.HOME }}/.yabairc"
     mode: '0755'
-    owner: "{{ ansible_facts['env']['USER'] }}"
   tags: yabai
-  diff: yes
 
-- name: Deploy skhdrc config
-  ansible.builtin.copy:
+- name: Deploy skhdrc configuration
+  copy:
     src: skhdrc
-    dest: "{{ ansible_facts['env']['HOME'] }}/.skhdrc"
+    dest: "{{ ansible_env.HOME }}/.skhdrc"
     mode: '0644'
-    owner: "{{ ansible_facts['env']['USER'] }}"
-    force: yes
   tags: yabai
-  diff: yes
 
-- name: Confirm yabai is running
-  ansible.builtin.shell: launchctl list | grep yabai || true
+- name: Check if yabai is running
+  shell: launchctl list | grep yabai || true
   register: yabai_status
   changed_when: false
-  tags:
-    - yabai
+  tags: yabai
 
-- name: Confirm skhd is running
-  ansible.builtin.shell: launchctl list | grep skhd || true
+- name: Check if skhd is running
+  shell: launchctl list | grep skhd || true
   register: skhd_status
   changed_when: false
-  tags:
-    - yabai
+  tags: yabai
 
-# TODO: if yabai is runing, restart it
 - name: Start yabai service
-  ansible.builtin.command: yabai --start-service
-  changed_when: false
-  tags: 
-    - yabai
+  command: yabai --start-service
+  when: yabai_status.stdout == ""
+  tags: yabai
+
+- name: Restart yabai service if already running
+  command: yabai --restart-service
+  when: yabai_status.stdout != ""
+  tags: yabai
 
 - name: Start skhd service
-  ansible.builtin.command: skhd --start-service
-  changed_when: false
-  tags: 
-    - yabai 
+  command: skhd --start-service
+  when: skhd_status.stdout == ""
+  tags: yabai
+
+- name: Restart skhd service if already running
+  command: skhd --restart-service
+  when: skhd_status.stdout != ""
+  tags: yabai

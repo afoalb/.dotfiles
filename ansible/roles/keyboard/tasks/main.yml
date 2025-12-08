@@ -1,29 +1,28 @@
 ---
-- name: Install Karabiner-Elements
-  community.general.homebrew_cask:
-    name: karabiner-elements
-    state: present
-    sudo_password: "{{ sudo_pass }}"
-  tags: keyboard
+# ==============================================================================
+# Keyboard Customization Role
+# ==============================================================================
+# Configures Karabiner-Elements for keyboard remapping
+# Installation handled by homebrew role via Brewfile
+# ==============================================================================
 
-- name: Ensure Karabiner configuration directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts['env']['HOME'] }}/.config/karabiner"
+- name: Create Karabiner configuration directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config/karabiner"
     state: directory
     mode: "0755"
   tags: keyboard
 
-- name: Deploy Karabiner complex modifications config (CapsLock → Control)
-  ansible.builtin.template:
+- name: Deploy Karabiner configuration (CapsLock → Control)
+  template:
     src: karabiner.json.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.config/karabiner/karabiner.json"
+    dest: "{{ ansible_env.HOME }}/.config/karabiner/karabiner.json"
     mode: "0644"
   tags: keyboard
 
-# It opens Karabiner-Elements to finish setup that can't be automated
-# Karabiner-Elements guides you through the permissions. 
-- name: Open Karabiner-Elements
+- name: Open Karabiner-Elements for permissions setup
   shell: open -a "Karabiner-Elements"
+  ignore_errors: yes
   changed_when: false
   tags: keyboard
 
