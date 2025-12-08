@@ -18,7 +18,8 @@
   tags: shell
 
 - name: Set zsh as the default login shell
-  shell: "chsh -s /opt/homebrew/bin/zsh"
+  shell: "chsh -s /opt/homebrew/bin/zsh {{ ansible_facts['env']['USER'] }}"
+  become: yes
   when: ansible_facts['env']['SHELL'] != '/opt/homebrew/bin/zsh'
   tags: shell
 
