@@ -46,8 +46,8 @@
       com.fastrawviewer.FastRawViewer .dng all
 
       # Protocol handlers
-      org.mozilla.firefox http
-      org.mozilla.firefox https
+      org.mozilla.firefox http all
+      org.mozilla.firefox https all
     mode: '0644'
   tags: defaults
 
@@ -60,10 +60,4 @@
   file:
     path: /tmp/duti-config.txt
     state: absent
-  tags: defaults
-
-- name: Set Firefox as default browser
-  shell: |
-    /usr/bin/python3 -c "from LaunchServices import LSSetDefaultHandlerForURLScheme; LSSetDefaultHandlerForURLScheme('http', 'org.mozilla.firefox'); LSSetDefaultHandlerForURLScheme('https', 'org.mozilla.firefox')"
-  ignore_errors: yes
   tags: defaults
