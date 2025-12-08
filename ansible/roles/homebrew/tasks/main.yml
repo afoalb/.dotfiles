@@ -1,21 +1,69 @@
-
 ---
-# Homebrew installation and package management role
+# ==============================================================================
+# Homebrew Installation and Package Management Role
+# ==============================================================================
+# This role ensures Homebrew is installed and manages packages via Brewfile
+# ==============================================================================
 
-- name: Check if Homebrew is installed
+- name: Check if Homebrew is installed (Apple Silicon)
   stat:
     path: /opt/homebrew/bin/brew
-  register: brew_check
+  register: brew_apple_silicon
 
-- name: Install Homebrew (Apple Silicon)
-  when: not brew_check.stat.exists
+- name: Check if Homebrew is installed (Intel)
+  stat:
+    path: /usr/local/bin/brew
+  register: brew_intel
+
+- name: Install Homebrew
+  when: not brew_apple_silicon.stat.exists and not brew_intel.stat.exists
   shell: |
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   args:
     executable: /bin/bash
+  environment:
+    NONINTERACTIVE: "1"
 
-- name: Ensure brew bundle installs packages from Brewfile
-  shell: brew bundle --file="{{ playbook_dir }}/Brewfile"
+- name: Add Homebrew to PATH for Apple Silicon
+  when: brew_apple_silicon.stat.exists or (not brew_intel.stat.exists)
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bash_profile"
+    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    create: yes
+    mode: '0644'
+
+- name: Add Homebrew to PATH for Intel
+  when: brew_intel.stat.exists and not brew_apple_silicon.stat.exists
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.bash_profile"
+    line: 'eval "$(/usr/local/bin/brew shellenv)"'
+    create: yes
+    mode: '0644'
+
+- name: Update Homebrew
+  homebrew:
+    update_homebrew: yes
+  tags:
+    - homebrew
+
+- name: Install packages from Brewfile
+  shell: |
+    {% if brew_apple_silicon.stat.exists %}
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    {% else %}
+    eval "$(/usr/local/bin/brew shellenv)"
+    {% endif %}
+    brew bundle --file="{{ playbook_dir }}/Brewfile"
   args:
     executable: /bin/bash
+  tags:
+    - homebrew
+
+- name: Cleanup old Homebrew versions
+  shell: brew cleanup
+  args:
+    executable: /bin/bash
+  tags:
+    - homebrew
+    - cleanup
 

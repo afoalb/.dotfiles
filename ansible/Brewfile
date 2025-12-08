@@ -1,7 +1,38 @@
+# ==============================================================================
+# macOS Development Environment Brewfile
+# ==============================================================================
+# This file is managed by Ansible and defines all packages to install via
+# Homebrew. It follows the specification in docs/specifications.md
+#
+# Usage: brew bundle --file=Brewfile
+# ==============================================================================
 
-# Homebrew packages (Phase 1 will fill this)
+# ------------------------------------------------------------------------------
+# Package Managers
+# ------------------------------------------------------------------------------
+brew "mas"                    # Mac App Store CLI
 
-brew "ansible"
-brew "git"
-cask "iterm2"
+# ------------------------------------------------------------------------------
+# CLI Tools & Utilities
+# ------------------------------------------------------------------------------
+brew "fzf"                    # Fuzzy finder
+brew "ripgrep"                # Fast code search (rg)
+brew "fd"                     # Modern find replacement
+brew "bat"                    # Cat with syntax highlighting
+brew "eza"                    # Modern ls replacement
+brew "zoxide"                 # Smart cd replacement
+brew "tldr"                   # Simplified man pages
+brew "jq"                     # JSON processor
+brew "yq"                     # YAML processor
+brew "mtr"                    # Network diagnostics
+brew "dog"                    # DNS client
+brew "curlie"                 # Curl with httpie syntax
+brew "httpie"                 # HTTP client
+brew "mosh"                   # Mobile shell (better SSH)
+
+# ------------------------------------------------------------------------------
+# Core System Tools
+# ------------------------------------------------------------------------------
+brew "ansible"                # Automation tool
+brew "git"                    # Version control
 
