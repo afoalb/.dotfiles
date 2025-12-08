@@ -8,6 +8,11 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
+# Taps (Third-party Repositories)
+# ------------------------------------------------------------------------------
+tap "hashicorp/tap"           # HashiCorp packages (Terraform, Packer, etc.)
+
+# ------------------------------------------------------------------------------
 # Package Managers
 # ------------------------------------------------------------------------------
 brew "mas"                    # Mac App Store CLI
@@ -101,7 +106,7 @@ brew "terraform-docs"         # Generate documentation from Terraform
 brew "tflint"                 # Terraform linter
 brew "tfsec"                  # Terraform security scanner
 brew "ansible-lint"           # Ansible best practices checker
-# Note: HashiCorp Packer is no longer available via Homebrew
+brew "hashicorp/tap/packer"   # Image creation tool (from HashiCorp tap)
 
 # ------------------------------------------------------------------------------
 # Database Tools
@@ -133,7 +138,7 @@ cask "aldente"                # Battery charge limiter
 # Documentation & Knowledge
 # ------------------------------------------------------------------------------
 cask "obsidian"               # Markdown-based notes
-# Note: Zeal is no longer available as a cask
+cask "devdocs"                # DevDocs Desktop - offline API documentation
 
 # ------------------------------------------------------------------------------
 # File Management
