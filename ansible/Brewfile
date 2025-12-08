@@ -43,3 +43,11 @@ brew "zsh"                    # Modern shell (local use)
 brew "bash"                   # Portable shell (remote compatibility)
 brew "starship"               # Cross-shell prompt
 
+# ------------------------------------------------------------------------------
+# Terminal & Multiplexing
+# ------------------------------------------------------------------------------
+cask "alacritty"              # GPU-accelerated terminal emulator
+brew "tmux"                   # Terminal multiplexer
+cask "font-fira-code"         # Monospace font with ligatures
+cask "font-jetbrains-mono"    # Alternative monospace font
+
