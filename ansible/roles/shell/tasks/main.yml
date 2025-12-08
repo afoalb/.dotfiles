@@ -1,58 +1,137 @@
 ---
-# ---------
-# Set bash as default shell
-# ---------
-- name: Ensure bash is available in /etc/shells
-  ansible.builtin.shell: |
-    grep -qx "/bin/bash" /etc/shells || echo "/bin/bash" | sudo tee -a /etc/shells
+# ==============================================================================
+# Shell Configuration Role
+# ==============================================================================
+# Configures bash, zsh, and starship prompt
+# Sets zsh as default shell with bash as fallback for portability
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Shell Setup
+# ------------------------------------------------------------------------------
+- name: Get Homebrew zsh path (Apple Silicon)
+  stat:
+    path: /opt/homebrew/bin/zsh
+  register: zsh_homebrew_arm
+
+- name: Get Homebrew zsh path (Intel)
+  stat:
+    path: /usr/local/bin/zsh
+  register: zsh_homebrew_intel
+
+- name: Set zsh path variable
+  set_fact:
+    zsh_path: "{{ '/opt/homebrew/bin/zsh' if zsh_homebrew_arm.stat.exists else '/usr/local/bin/zsh' if zsh_homebrew_intel.stat.exists else '/bin/zsh' }}"
+
+- name: Ensure zsh is available in /etc/shells
+  become: yes
+  lineinfile:
+    path: /etc/shells
+    line: "{{ zsh_path }}"
+    create: no
   tags: shell
 
-- name: Set bash as the default login shell
-  ansible.builtin.shell: chsh -s /bin/bash
-  when: ansible_facts['env']['SHELL'] != "/bin/bash"
+- name: Set zsh as the default login shell
+  shell: "chsh -s {{ zsh_path }}"
+  when: ansible_env.SHELL != zsh_path
   tags: shell
 
-# ---------
-# Deploy config files
-# ---------
+# ------------------------------------------------------------------------------
+# Bash Configuration (portable, remote-compatible)
+# ------------------------------------------------------------------------------
 - name: Deploy .bash_profile
-  ansible.builtin.template:
+  template:
     src: bash_profile.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
+    dest: "{{ ansible_env.HOME }}/.bash_profile"
     mode: "0644"
   tags: shell
 
 - name: Deploy .bashrc
-  ansible.builtin.template:
+  template:
     src: bashrc.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
+    dest: "{{ ansible_env.HOME }}/.bashrc"
     mode: "0644"
   tags: shell
 
+# ------------------------------------------------------------------------------
+# Zsh Configuration (local, enhanced)
+# ------------------------------------------------------------------------------
+- name: Deploy .zshrc
+  template:
+    src: zshrc.j2
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    mode: "0644"
+  tags: shell
+
+- name: Create .zshrc.local if it doesn't exist
+  file:
+    path: "{{ ansible_env.HOME }}/.zshrc.local"
+    state: touch
+    mode: "0644"
+    modification_time: preserve
+    access_time: preserve
+  tags: shell
+
+# ------------------------------------------------------------------------------
+# Starship Prompt Configuration
+# ------------------------------------------------------------------------------
+- name: Create starship config directory
+  file:
+    path: "{{ ansible_env.HOME }}/.config"
+    state: directory
+    mode: "0755"
+  tags: shell
+
+- name: Deploy starship configuration
+  template:
+    src: starship.toml.j2
+    dest: "{{ ansible_env.HOME }}/.config/starship.toml"
+    mode: "0644"
+  tags: shell
+
+# ------------------------------------------------------------------------------
+# FZF Setup
+# ------------------------------------------------------------------------------
+- name: Install fzf key bindings
+  shell: |
+    {{ '/opt/homebrew/opt/fzf/install' if zsh_homebrew_arm.stat.exists else '/usr/local/opt/fzf/install' }} --key-bindings --completion --no-update-rc
+  args:
+    creates: "{{ ansible_env.HOME }}/.fzf.zsh"
+  tags: shell
+
+# ------------------------------------------------------------------------------
+# Vim Configuration (basic, portable)
+# ------------------------------------------------------------------------------
 - name: Deploy .vimrc
-  ansible.builtin.template:
+  template:
     src: vimrc.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.vimrc"
+    dest: "{{ ansible_env.HOME }}/.vimrc"
     mode: "0644"
   tags: shell
 
+# ------------------------------------------------------------------------------
+# Git Configuration
+# ------------------------------------------------------------------------------
 - name: Deploy .gitconfig
-  ansible.builtin.template:
+  template:
     src: gitconfig.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.gitconfig"
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
     mode: "0644"
   tags: shell
 
+# ------------------------------------------------------------------------------
+# Tmux Configuration
+# ------------------------------------------------------------------------------
 - name: Install tmux
-  ansible.builtin.homebrew:
+  homebrew:
     name: tmux
     state: present
   tags: shell
 
 - name: Deploy .tmux.conf
-  ansible.builtin.template:
+  template:
     src: tmux.conf.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
     mode: "0644"
   tags: shell
 

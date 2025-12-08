@@ -48,6 +48,21 @@
   shell: defaults write com.apple.finder FXEnableExtensionChangeWarning -bool false
   #become_user: "{{ ansible_user }}"
 
+- name: Prevent .DS_Store files on USB drives
+  shell: defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+
+- name: Show Library folder
+  shell: chflags nohidden ~/Library
+
+- name: Keep folders on top when sorting
+  shell: defaults write com.apple.finder _FXSortFoldersFirst -bool true
+
+- name: Search current folder by default
+  shell: defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
+
+- name: Expand save panel by default
+  shell: defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+
 ##########################
 # Dock Tweaks
 ##########################
@@ -76,6 +91,29 @@
     defaults write com.apple.dock persistent-apps -array
     defaults write com.apple.dock persistent-others -array
 
+- name: Set Dock icon size
+  shell: defaults write com.apple.dock tilesize -int 36
+
+- name: Set Dock minimize animation to scale
+  shell: defaults write com.apple.dock mineffect -string "scale"
+
+##########################
+# Keyboard & Input
+##########################
+- name: Set key repeat rate (fast)
+  shell: defaults write NSGlobalDomain KeyRepeat -int 2
+
+- name: Set initial key repeat delay (short)
+  shell: defaults write NSGlobalDomain InitialKeyRepeat -int 15
+
+- name: Disable text completion
+  shell: defaults write NSGlobalDomain NSAutomaticTextCompletionEnabled -bool false
+
+- name: Enable full keyboard access for all controls
+  shell: defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+
+- name: Disable press-and-hold for special characters (enable key repeat)
+  shell: defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 ##########################
 # System-wide Auto-Correct & Text Substitutions
@@ -99,6 +137,77 @@
 - name: Disable period substitution (double-space -> period)
   shell: defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
   #become_user: "{{ ansible_user }}"
+
+##########################
+# System Preferences
+##########################
+- name: Disable UI animations
+  shell: defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
+
+- name: Reduce transparency
+  shell: defaults write com.apple.universalaccess reduceTransparency -bool true
+
+- name: Disable sound effects
+  shell: defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
+
+- name: Create Screenshots directory
+  file:
+    path: "{{ ansible_env.HOME }}/Screenshots"
+    state: directory
+    mode: '0755'
+
+- name: Set screenshots location
+  shell: defaults write com.apple.screencapture location -string "{{ ansible_env.HOME }}/Screenshots"
+
+- name: Set screenshots format to PNG
+  shell: defaults write com.apple.screencapture type -string "png"
+
+- name: Disable screenshot thumbnail preview
+  shell: defaults write com.apple.screencapture show-thumbnail -bool false
+
+- name: Enable three-finger drag (Accessibility)
+  shell: defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+
+- name: Set scroll direction to not natural (Linux-like)
+  shell: defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+
+##########################
+# Security
+##########################
+- name: Require password immediately after sleep
+  shell: defaults write com.apple.screensaver askForPasswordDelay -int 0
+
+- name: Enable firewall
+  shell: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
+  become: yes
+
+- name: Enable stealth mode
+  shell: sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
+  become: yes
+
+##########################
+# Menu Bar
+##########################
+- name: Show battery percentage
+  shell: defaults write com.apple.menuextra.battery ShowPercent -bool true
+
+- name: Use 24-hour time format
+  shell: defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
+
+##########################
+# Other System Settings
+##########################
+- name: Expand print dialog by default
+  shell: defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+
+- name: Disable resume system-wide
+  shell: defaults write com.apple.systempreferences NSQuitAlwaysKeepsWindows -bool false
+
+- name: Disable disk image verification
+  shell: defaults write com.apple.frameworks.diskimages skip-verify -bool true
+
+- name: Disable Time Machine prompts for new disks
+  shell: defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
 
 ##########################
 # Apply changes

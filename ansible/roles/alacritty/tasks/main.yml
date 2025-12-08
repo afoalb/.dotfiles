@@ -1,35 +1,26 @@
 ---
-- name: Ensure Homebrew is installed
-  shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  args:
-    creates: /opt/homebrew/bin/brew
-  register: brew_install
-  ignore_errors: true
+# ==============================================================================
+# Alacritty Terminal Configuration Role
+# ==============================================================================
+# Deploys Alacritty configuration (installation handled by homebrew role)
+# ==============================================================================
 
-- name: Ensure Alacritty is installed via Homebrew
-  community.general.homebrew:
-    name: alacritty
-    state: present
-
-- name: Ensure Alacritty config directory exists
+- name: Create Alacritty config directory
   file:
-    path: "{{ ansible_facts['env']['HOME'] }}/.config/alacritty"
+    path: "{{ ansible_env.HOME }}/.config/alacritty"
     state: directory
     mode: '0755'
+  tags: alacritty
 
 - name: Deploy Alacritty configuration
   template:
     src: alacritty.toml.j2
-    dest: "{{ ansible_facts['env']['HOME'] }}/.config/alacritty/alacritty.toml"
+    dest: "{{ ansible_env.HOME }}/.config/alacritty/alacritty.toml"
     mode: '0644'
+  tags: alacritty
 
-- name: Allow Apple to open Alacritty without checking for malicious software
+- name: Remove quarantine attribute from Alacritty.app
   command: xattr -dr com.apple.quarantine /Applications/Alacritty.app
-
-
-- name: Install Fira Code font
-  community.general.homebrew_cask:
-    name: font-fira-code
-    state: present
-
+  ignore_errors: yes
+  tags: alacritty
 

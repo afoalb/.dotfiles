@@ -1,0 +1,65 @@
+[
+  // ===========================================================================
+  // VS Code Keybindings
+  // ===========================================================================
+
+  // Terminal
+  {
+    "key": "ctrl+`",
+    "command": "workbench.action.terminal.toggleTerminal"
+  },
+  {
+    "key": "ctrl+shift+`",
+    "command": "workbench.action.terminal.new"
+  },
+
+  // File Explorer
+  {
+    "key": "cmd+b",
+    "command": "workbench.action.toggleSidebarVisibility"
+  },
+
+  // Quick Open
+  {
+    "key": "cmd+p",
+    "command": "workbench.action.quickOpen"
+  },
+
+  // Command Palette
+  {
+    "key": "cmd+shift+p",
+    "command": "workbench.action.showCommands"
+  },
+
+  // Split Editor
+  {
+    "key": "cmd+\\",
+    "command": "workbench.action.splitEditor"
+  },
+
+  // Focus Groups
+  {
+    "key": "cmd+1",
+    "command": "workbench.action.focusFirstEditorGroup"
+  },
+  {
+    "key": "cmd+2",
+    "command": "workbench.action.focusSecondEditorGroup"
+  },
+
+  // Navigate Tabs
+  {
+    "key": "cmd+shift+[",
+    "command": "workbench.action.previousEditor"
+  },
+  {
+    "key": "cmd+shift+]",
+    "command": "workbench.action.nextEditor"
+  },
+
+  // Close Editor
+  {
+    "key": "cmd+w",
+    "command": "workbench.action.closeActiveEditor"
+  }
+]

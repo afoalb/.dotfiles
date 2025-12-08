@@ -1,0 +1,237 @@
+# ==============================================================================
+# Starship Prompt Configuration
+# ==============================================================================
+# Cross-shell prompt configuration for bash and zsh
+# Documentation: https://starship.rs/config/
+# ==============================================================================
+
+# Use a preset as base (can be: bracketed-segments, plain-text-symbols, etc.)
+# "$schema" = 'https://starship.rs/config-schema.json'
+
+# Timeout for commands (milliseconds)
+command_timeout = 1000
+
+# Format of the prompt
+format = """
+[╭─](bold green)$username$hostname$directory$git_branch$git_status$git_state
+[╰─](bold green)$character"""
+
+# Right prompt (shown on the right side)
+right_format = """$cmd_duration$python$nodejs$rust$golang$terraform$docker_context"""
+
+# Continuation prompt (for multi-line commands)
+continuation_prompt = "[▶](bold yellow) "
+
+# ------------------------------------------------------------------------------
+# Character (the prompt symbol)
+# ------------------------------------------------------------------------------
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+
+# ------------------------------------------------------------------------------
+# Username
+# ------------------------------------------------------------------------------
+[username]
+format = "[$user]($style)@"
+style_user = "bold blue"
+style_root = "bold red"
+show_always = false
+disabled = false
+
+# ------------------------------------------------------------------------------
+# Hostname
+# ------------------------------------------------------------------------------
+[hostname]
+format = "[$hostname]($style) "
+style = "bold blue"
+ssh_only = true
+disabled = false
+
+# ------------------------------------------------------------------------------
+# Directory
+# ------------------------------------------------------------------------------
+[directory]
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+read_only = " 🔒"
+read_only_style = "red"
+truncation_length = 3
+truncate_to_repo = true
+fish_style_pwd_dir_length = 1
+
+# Special directory replacements
+[directory.substitutions]
+"~/Documents" = " 󰈙"
+"~/Downloads" = "  "
+"~/Music" = "  "
+"~/Pictures" = "  "
+"~/Development" = "  "
+"~/Projects" = "  "
+
+# ------------------------------------------------------------------------------
+# Git
+# ------------------------------------------------------------------------------
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold purple"
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+style = "bold yellow"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+up_to_date = "✓"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bold yellow"
+
+[git_commit]
+format = "[$hash$tag]($style) "
+style = "bold green"
+commit_hash_length = 7
+tag_symbol = " 🏷 "
+
+# ------------------------------------------------------------------------------
+# Programming Languages
+# ------------------------------------------------------------------------------
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = " "
+style = "yellow"
+pyenv_version_name = false
+python_binary = ["python3", "python"]
+
+[nodejs]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold green"
+detect_extensions = ["js", "mjs", "cjs", "ts"]
+
+[rust]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold red"
+
+[golang]
+format = "[$symbol($version )]($style)"
+symbol = " "
+style = "bold cyan"
+
+[terraform]
+format = "[$symbol$workspace]($style) "
+symbol = "󱁢 "
+style = "bold purple"
+
+# ------------------------------------------------------------------------------
+# Tools & Environments
+# ------------------------------------------------------------------------------
+[docker_context]
+format = "[$symbol$context]($style) "
+symbol = " "
+style = "bold blue"
+only_with_files = true
+
+[cmd_duration]
+format = "[⏱ $duration]($style) "
+min_time = 2000
+style = "bold yellow"
+show_milliseconds = false
+show_notifications = false
+
+# ------------------------------------------------------------------------------
+# SSH
+# ------------------------------------------------------------------------------
+[ssh]
+format = "[$user@$hostname]($style) "
+style = "bold orange"
+disabled = false
+
+# ------------------------------------------------------------------------------
+# Operating System
+# ------------------------------------------------------------------------------
+[os]
+format = "[$symbol]($style) "
+disabled = true
+
+[os.symbols]
+Macos = ""
+Linux = ""
+
+# ------------------------------------------------------------------------------
+# Status
+# ------------------------------------------------------------------------------
+[status]
+format = '[\[$symbol$status_common_meaning$status_signal_name$status_maybe_int\]]($style) '
+symbol = "✖ "
+style = "bold red"
+disabled = false
+map_symbol = true
+
+# ------------------------------------------------------------------------------
+# Time (disabled by default)
+# ------------------------------------------------------------------------------
+[time]
+format = "[$time]($style) "
+style = "bold white"
+disabled = true
+time_format = "%T"
+
+# ------------------------------------------------------------------------------
+# Package Version (disabled by default, can be slow)
+# ------------------------------------------------------------------------------
+[package]
+format = "[$symbol$version]($style) "
+symbol = "📦 "
+disabled = true
+
+# ------------------------------------------------------------------------------
+# Battery (for laptops)
+# ------------------------------------------------------------------------------
+[battery]
+format = "[$symbol$percentage]($style) "
+disabled = true
+
+[[battery.display]]
+threshold = 20
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 100
+style = "bold green"
+
+# ------------------------------------------------------------------------------
+# Additional Languages (disabled by default)
+# ------------------------------------------------------------------------------
+[java]
+disabled = true
+
+[ruby]
+disabled = true
+
+[php]
+disabled = true
+
+[c]
+disabled = true
+
+[cmake]
+disabled = true
+
+[lua]
+disabled = true

@@ -1,0 +1,51 @@
+---
+# ==============================================================================
+# VS Code Configuration Role
+# ==============================================================================
+# Configures VS Code with extensions
+# Installation handled by homebrew role via Brewfile
+# ==============================================================================
+
+- name: Install VS Code extensions
+  shell: code --install-extension {{ item }}
+  loop:
+    - ms-python.python
+    - ms-python.vscode-pylance
+    - ms-python.debugpy
+    - dbaeumer.vscode-eslint
+    - esbenp.prettier-vscode
+    - bradlc.vscode-tailwindcss
+    - HashiCorp.terraform
+    - redhat.ansible
+    - ms-azuretools.vscode-docker
+    - eamodio.gitlens
+    - vscodevim.vim
+    - shardulm94.trailing-spaces
+    - oderwat.indent-rainbow
+    - usernamehw.errorlens
+    - ms-vscode-remote.remote-ssh
+  ignore_errors: yes
+  tags: vscode
+
+- name: Create VS Code user settings directory
+  file:
+    path: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+    state: directory
+    mode: '0755'
+  tags: vscode
+
+- name: Deploy VS Code settings
+  copy:
+    src: settings.json
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/settings.json"
+    mode: '0644'
+  ignore_errors: yes
+  tags: vscode
+
+- name: Deploy VS Code keybindings
+  copy:
+    src: keybindings.json
+    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/keybindings.json"
+    mode: '0644'
+  ignore_errors: yes
+  tags: vscode

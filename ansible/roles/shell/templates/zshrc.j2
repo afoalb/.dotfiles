@@ -1,0 +1,233 @@
+# ==============================================================================
+# Zsh Configuration (.zshrc)
+# ==============================================================================
+# Modern zsh configuration for local macOS use with enhanced features
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Environment Variables
+# ------------------------------------------------------------------------------
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
+
+# XDG Base Directory specification
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# PATH configuration
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+# ------------------------------------------------------------------------------
+# Zsh Options
+# ------------------------------------------------------------------------------
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+setopt EXTENDED_HISTORY          # Write timestamps to history
+setopt HIST_EXPIRE_DUPS_FIRST    # Expire duplicate entries first
+setopt HIST_IGNORE_DUPS          # Don't record duplicate entries
+setopt HIST_IGNORE_SPACE         # Don't record entries starting with space
+setopt HIST_VERIFY               # Show command with history expansion before running
+setopt SHARE_HISTORY             # Share history between sessions
+
+# Directory navigation
+setopt AUTO_CD                   # Type directory name to cd
+setopt AUTO_PUSHD                # Make cd push old directory onto stack
+setopt PUSHD_IGNORE_DUPS         # Don't push duplicates
+setopt PUSHD_SILENT              # Don't print directory stack
+
+# Completion
+setopt ALWAYS_TO_END             # Move cursor to end after completion
+setopt AUTO_LIST                 # List choices on ambiguous completion
+setopt AUTO_MENU                 # Show completion menu on tab
+setopt COMPLETE_IN_WORD          # Complete from both ends of word
+setopt GLOB_COMPLETE             # Show menu for glob matches
+
+# Other
+setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
+setopt MULTIOS                   # Perform multiple redirections
+setopt NO_BEEP                   # No beeping
+
+# ------------------------------------------------------------------------------
+# Zsh Completion System
+# ------------------------------------------------------------------------------
+autoload -Uz compinit
+compinit
+
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
+# Menu selection
+zstyle ':completion:*' menu select
+
+# Colors in completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+# Verbose completion
+zstyle ':completion:*' verbose yes
+
+# Group matches
+zstyle ':completion:*' group-name ''
+
+# Descriptions
+zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
+zstyle ':completion:*:warnings' format '%F{red}-- no matches found --%f'
+
+# ------------------------------------------------------------------------------
+# Key Bindings
+# ------------------------------------------------------------------------------
+# Use emacs key bindings (can change to bindkey -v for vim mode)
+bindkey -e
+
+# Better history search
+bindkey '^R' history-incremental-search-backward
+bindkey '^S' history-incremental-search-forward
+
+# Edit command line in editor
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
+
+# ------------------------------------------------------------------------------
+# Enhanced CLI Tools
+# ------------------------------------------------------------------------------
+# ls -> eza
+if (( $+commands[eza] )); then
+    alias ls='eza --group-directories-first --icons'
+    alias ll='eza -lah --git --group-directories-first --icons'
+    alias la='eza -a --group-directories-first --icons'
+    alias l='eza -lh --git --group-directories-first --icons'
+    alias lt='eza -T --group-directories-first --icons'
+    alias tree='eza -T --group-directories-first --icons'
+else
+    alias ls='ls -GFh'
+    alias ll='ls -lah'
+    alias la='ls -A'
+    alias l='ls -CF'
+fi
+
+# cat -> bat
+if (( $+commands[bat] )); then
+    alias cat='bat --style=auto'
+    export BAT_THEME="Monokai Extended"
+    export BAT_PAGER="less -RF"
+fi
+
+# find -> fd
+if (( $+commands[fd] )); then
+    alias find='fd'
+fi
+
+# grep -> ripgrep
+if (( $+commands[rg] )); then
+    alias grep='rg'
+else
+    alias grep='grep --color=auto'
+fi
+
+# ------------------------------------------------------------------------------
+# Directory Navigation
+# ------------------------------------------------------------------------------
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+# Directory stack shortcuts
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
+
+# ------------------------------------------------------------------------------
+# Common Aliases
+# ------------------------------------------------------------------------------
+alias h='history'
+alias c='clear'
+alias reload='source ~/.zshrc && echo "Zshrc reloaded"'
+
+# Safety nets
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias ln='ln -i'
+
+# Convenience
+alias mkdir='mkdir -p'
+alias which='whence -p'
+alias path='echo -e ${PATH//:/\\n}'
+
+# ------------------------------------------------------------------------------
+# Git Aliases
+# ------------------------------------------------------------------------------
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git pull'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+alias glog='git log --oneline --graph --decorate'
+alias glg='git log --graph --oneline --decorate --all'
+
+# ------------------------------------------------------------------------------
+# FZF Integration
+# ------------------------------------------------------------------------------
+if (( $+commands[fzf] )); then
+    # Load fzf key bindings
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+    # Use fd for fzf if available
+    if (( $+commands[fd] )); then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    fi
+
+    # fzf color scheme and options
+    export FZF_DEFAULT_OPTS='
+        --height 40%
+        --layout=reverse
+        --border
+        --preview "bat --style=numbers --color=always --line-range :500 {}"
+        --preview-window=right:50%:wrap
+    '
+fi
+
+# ------------------------------------------------------------------------------
+# Zoxide Integration (smart cd)
+# ------------------------------------------------------------------------------
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh)"
+fi
+
+# ------------------------------------------------------------------------------
+# Starship Prompt
+# ------------------------------------------------------------------------------
+if (( $+commands[starship] )); then
+    eval "$(starship init zsh)"
+fi
+
+# ------------------------------------------------------------------------------
+# Homebrew Integration
+# ------------------------------------------------------------------------------
+# Apple Silicon
+if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Intel
+if [ -f /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# ------------------------------------------------------------------------------
+# Local Overrides
+# ------------------------------------------------------------------------------
+# Source local zshrc for machine-specific configurations
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local

@@ -1,39 +1,193 @@
-# --- General ---
+# ==============================================================================
+# Tmux Configuration
+# ==============================================================================
+# Modern tmux configuration with vi bindings and quality-of-life improvements
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# General Settings
+# ------------------------------------------------------------------------------
+# Enable mouse support
 set -g mouse on
-set -g history-limit 10000
+
+# Increase scrollback buffer size
+set -g history-limit 50000
+
+# Set default terminal to 256 colors
 set -g default-terminal "screen-256color"
+set -ga terminal-overrides ",*256col*:Tc"
 
-# --- Vi mode for copy/paste ---
+# Enable true color support
+set -as terminal-overrides ',xterm*:Tc:sitm=\E[3m'
+
+# Start window and pane numbering at 1
+set -g base-index 1
+setw -g pane-base-index 1
+
+# Renumber windows when one is closed
+set -g renumber-windows on
+
+# Increase display time for messages
+set -g display-time 2000
+
+# Increase repeat time for repeatable commands
+set -g repeat-time 600
+
+# Enable focus events (for vim compatibility)
+set -g focus-events on
+
+# Aggressive resize (useful when multiple clients are attached)
+setw -g aggressive-resize on
+
+# Don't wait for escape sequences
+set -sg escape-time 0
+
+# ------------------------------------------------------------------------------
+# Key Bindings
+# ------------------------------------------------------------------------------
+# Remap prefix from Ctrl-b to Ctrl-a (more ergonomic)
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+# Reload configuration
+bind r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded!"
+
+# ------------------------------------------------------------------------------
+# Vi Mode
+# ------------------------------------------------------------------------------
+# Use vi keys in copy mode
+setw -g mode-keys vi
 set -g status-keys vi
-set -g mode-keys vi
 
-# --- Pane Splits ---
-bind | split-window -h
-bind - split-window -v
+# Vi-style copy/paste
+bind -T copy-mode-vi v send -X begin-selection
+bind -T copy-mode-vi y send -X copy-selection-and-cancel
+bind -T copy-mode-vi C-v send -X rectangle-toggle
+
+# Enter copy mode with prefix + [
+bind [ copy-mode
+bind ] paste-buffer
+
+# ------------------------------------------------------------------------------
+# Window Management
+# ------------------------------------------------------------------------------
+# Create new window
+bind c new-window -c "#{pane_current_path}"
+
+# Split windows (maintain current path)
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
 unbind '"'
 unbind %
 
-# Move between panes using Ctrl + hjkl
-bind -n C-h select-pane -L
-bind -n C-j select-pane -D
-bind -n C-k select-pane -U
-bind -n C-l select-pane -R
+# Navigate windows
+bind -r C-h select-window -t :-
+bind -r C-l select-window -t :+
 
-# --- Reload config ---
-bind r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded"
+# Swap windows
+bind -r "<" swap-window -d -t -1
+bind -r ">" swap-window -d -t +1
 
-# --- Status bar ---
-set -g status-bg colour234
-set -g status-fg white
+# Kill window
+bind X confirm-before -p "kill-window #W? (y/n)" kill-window
+
+# ------------------------------------------------------------------------------
+# Pane Management
+# ------------------------------------------------------------------------------
+# Navigate panes with vim keys (without prefix)
+bind -n M-h select-pane -L
+bind -n M-j select-pane -D
+bind -n M-k select-pane -U
+bind -n M-l select-pane -R
+
+# Resize panes with vim keys
+bind -r H resize-pane -L 5
+bind -r J resize-pane -D 5
+bind -r K resize-pane -U 5
+bind -r L resize-pane -R 5
+
+# Toggle pane synchronization
+bind S set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
+
+# Zoom pane
+bind z resize-pane -Z
+
+# Kill pane
+bind x confirm-before -p "kill-pane #P? (y/n)" kill-pane
+
+# ------------------------------------------------------------------------------
+# Status Bar
+# ------------------------------------------------------------------------------
+# Update status bar every 5 seconds
 set -g status-interval 5
-set -g status-left-length 30
-set -g status-right-length 150
 
-set -g status-left "#[fg=green]#S"
-set -g status-right "#[fg=cyan]%Y-%m-%d #[fg=yellow]%H:%M"
+# Status bar position
+set -g status-position bottom
 
-# --- Window titles ---
-set -g automatic-rename on
-set -g renumber-windows on
+# Status bar colors
+set -g status-style "fg=#fcfcfa,bg=#2d2a2e"
 
+# Left status bar
+set -g status-left-length 40
+set -g status-left "#[fg=#a9dc76,bold] #S #[fg=#78dce8]❯ #[default]"
 
+# Right status bar
+set -g status-right-length 100
+set -g status-right "#[fg=#ab9df2]#{?client_prefix,⌨ ,} #[fg=#ffd866]%Y-%m-%d #[fg=#ff6188]%H:%M "
+
+# Window status
+setw -g window-status-format "#[fg=#727072] #I:#W "
+setw -g window-status-current-format "#[fg=#fcfcfa,bold,bg=#5b595c] #I:#W "
+setw -g window-status-separator ""
+
+# ------------------------------------------------------------------------------
+# Pane Borders
+# ------------------------------------------------------------------------------
+set -g pane-border-style "fg=#5b595c"
+set -g pane-active-border-style "fg=#a9dc76"
+
+# Pane number display
+set -g display-panes-active-colour "#a9dc76"
+set -g display-panes-colour "#ab9df2"
+
+# ------------------------------------------------------------------------------
+# Messages
+# ------------------------------------------------------------------------------
+set -g message-style "fg=#fcfcfa,bg=#5b595c"
+set -g message-command-style "fg=#fcfcfa,bg=#5b595c"
+
+# ------------------------------------------------------------------------------
+# Clock Mode
+# ------------------------------------------------------------------------------
+setw -g clock-mode-colour "#78dce8"
+setw -g clock-mode-style 24
+
+# ------------------------------------------------------------------------------
+# Activity Monitoring
+# ------------------------------------------------------------------------------
+# Monitor for activity in windows
+setw -g monitor-activity on
+set -g visual-activity off
+
+# Bell
+set -g visual-bell off
+set -g bell-action none
+
+# ------------------------------------------------------------------------------
+# Copy Mode
+# ------------------------------------------------------------------------------
+# Highlight current line in copy mode
+setw -g mode-style "fg=#fcfcfa,bg=#5b595c"
+
+# ------------------------------------------------------------------------------
+# Session Management
+# ------------------------------------------------------------------------------
+# Choose session
+bind s choose-session
+
+# Create new session
+bind C command-prompt -p "New session:" "new-session -s '%%'"
+
+# Kill session
+bind Q confirm-before -p "kill-session #S? (y/n)" kill-session
