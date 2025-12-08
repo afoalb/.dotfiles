@@ -148,6 +148,13 @@ cask "keka"                   # Archive utility
 # Note: Quick Look plugins are deprecated in modern macOS and no longer available
 
 # ------------------------------------------------------------------------------
+# Media & Entertainment
+# ------------------------------------------------------------------------------
+cask "netflix"                # Netflix streaming
+cask "spotify"                # Music streaming
+cask "shottr"                 # Screenshot tool
+
+# ------------------------------------------------------------------------------
 # Browsers
 # ------------------------------------------------------------------------------
 cask "firefox"                # Firefox Developer Edition
@@ -165,4 +172,5 @@ cask "little-snitch"          # Network firewall (paid)
 cask "tableplus"              # Universal database GUI (paid)
 cask "fork"                   # Git GUI (paid)
 cask "alfred"                 # Launcher/automation (paid, use Raycast instead if preferred)
+cask "fastrawviewer"          # RAW and JPEG image viewer (paid)
 
