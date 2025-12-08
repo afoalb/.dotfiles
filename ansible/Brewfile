@@ -117,7 +117,7 @@ brew "pgcli"                  # PostgreSQL CLI with autocomplete
 # ------------------------------------------------------------------------------
 # API Development
 # ------------------------------------------------------------------------------
-cask "httpie"                 # HTTPie Desktop
+cask "httpie-desktop"         # HTTPie Desktop (renamed from httpie)
 # httpie CLI already installed in CLI Tools section
 
 # ------------------------------------------------------------------------------
@@ -138,7 +138,8 @@ cask "aldente"                # Battery charge limiter
 # Documentation & Knowledge
 # ------------------------------------------------------------------------------
 cask "obsidian"               # Markdown-based notes
-cask "devdocs"                # DevDocs Desktop - offline API documentation
+# Note: DevDocs Desktop discontinued upstream (disabled 2024-12-16)
+# Alternative: Dash (paid) or Velocity (open source)
 
 # ------------------------------------------------------------------------------
 # File Management
