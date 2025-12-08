@@ -3,20 +3,16 @@
 # Homebrew Installation and Package Management Role
 # ==============================================================================
 # This role ensures Homebrew is installed and manages packages via Brewfile
+# Assumes macOS on Apple Silicon (/opt/homebrew)
 # ==============================================================================
 
-- name: Check if Homebrew is installed (Apple Silicon)
+- name: Check if Homebrew is installed
   stat:
     path: /opt/homebrew/bin/brew
-  register: brew_apple_silicon
-
-- name: Check if Homebrew is installed (Intel)
-  stat:
-    path: /usr/local/bin/brew
-  register: brew_intel
+  register: brew_installed
 
 - name: Install Homebrew
-  when: not brew_apple_silicon.stat.exists and not brew_intel.stat.exists
+  when: not brew_installed.stat.exists
   shell: |
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   args:
@@ -24,19 +20,10 @@
   environment:
     NONINTERACTIVE: "1"
 
-- name: Add Homebrew to PATH for Apple Silicon
-  when: brew_apple_silicon.stat.exists or (not brew_intel.stat.exists)
+- name: Add Homebrew to PATH
   lineinfile:
     path: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
-    create: yes
-    mode: '0644'
-
-- name: Add Homebrew to PATH for Intel
-  when: brew_intel.stat.exists and not brew_apple_silicon.stat.exists
-  lineinfile:
-    path: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
-    line: 'eval "$(/usr/local/bin/brew shellenv)"'
     create: yes
     mode: '0644'
 
@@ -48,11 +35,7 @@
 
 - name: Install packages from Brewfile
   shell: |
-    {% if brew_apple_silicon.stat.exists %}
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    {% else %}
-    eval "$(/usr/local/bin/brew shellenv)"
-    {% endif %}
     brew bundle --file="{{ playbook_dir }}/Brewfile"
   args:
     executable: /bin/bash
