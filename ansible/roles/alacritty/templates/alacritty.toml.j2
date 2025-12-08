@@ -12,6 +12,13 @@
 TERM = "xterm-256color"
 
 # ------------------------------------------------------------------------------
+# Shell Configuration
+# ------------------------------------------------------------------------------
+[shell]
+program = "/opt/homebrew/bin/zsh"
+args = ["-l"]
+
+# ------------------------------------------------------------------------------
 # Window Configuration
 # ------------------------------------------------------------------------------
 [window]
@@ -28,7 +35,7 @@ dynamic_padding = true
 decorations = "buttonless"
 
 # Background opacity (0.0 - 1.0)
-opacity = 0.95
+opacity = 0.93
 
 # Startup mode: "Windowed" | "Maximized" | "Fullscreen"
 startup_mode = "Windowed"
@@ -83,10 +90,10 @@ glyph_offset = { x = 0, y = 0 }
 builtin_box_drawing = true
 
 # ------------------------------------------------------------------------------
-# Colors (Monokai Pro)
+# Colors (Black background with Monokai Pro colors)
 # ------------------------------------------------------------------------------
 [colors.primary]
-background = "#2d2a2e"
+background = "#000000"
 foreground = "#fcfcfa"
 
 # Bright and dim foreground colors (optional)

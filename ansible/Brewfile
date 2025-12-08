@@ -48,9 +48,9 @@ brew "starship"               # Cross-shell prompt
 # ------------------------------------------------------------------------------
 cask "alacritty"              # GPU-accelerated terminal emulator
 brew "tmux"                   # Terminal multiplexer
-cask "font-fira-code"         # Monospace font with ligatures
-cask "font-jetbrains-mono"    # Alternative monospace font
-cask "font-hack-nerd-font"    # Nerd Font for terminal icons
+cask "font-fira-code-nerd-font"    # FiraCode with Nerd Font icons
+cask "font-jetbrains-mono-nerd-font" # JetBrains Mono with Nerd Font icons
+cask "font-hack-nerd-font"    # Hack Nerd Font for terminal icons
 
 # ------------------------------------------------------------------------------
 # Window Management
