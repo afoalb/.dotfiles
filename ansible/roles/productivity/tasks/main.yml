@@ -49,27 +49,112 @@
 
 - name: Configure Alfred to replace Spotlight
   block:
-    - name: Disable Spotlight search shortcut (Cmd+Space)
+    - name: Get current user for preference paths
+      set_fact:
+        current_user: "{{ ansible_facts['env']['USER'] }}"
+        home_dir: "{{ ansible_facts['env']['HOME'] }}"
+
+    - name: Create backup of symbolic hotkeys preferences
       shell: |
-        defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '{enabled = 0; value = { parameters = (65535, 49, 1048576); type = standard; }; }'
+        cp "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist" \
+           "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist.backup" || true
       ignore_errors: yes
 
-    - name: Disable Finder search window shortcut
+    - name: Disable Spotlight search shortcut (Cmd+Space) using PlistBuddy
       shell: |
-        defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 '{enabled = 0; value = { parameters = (65535, 49, 1572864); type = standard; }; }'
+        /usr/libexec/PlistBuddy -c "Delete :AppleSymbolicHotKeys:64" "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist" 2>/dev/null || true
+        /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:64:enabled bool false" "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist"
       ignore_errors: yes
 
-    - name: Restart SystemUIServer to apply shortcut changes
-      shell: killall SystemUIServer || true
-      ignore_errors: yes
-
-    - name: Set Alfred hotkey to Cmd+Space
+    - name: Disable Finder search window shortcut (Opt+Cmd+Space) using PlistBuddy
       shell: |
-        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -int 49
-        defaults write com.runningwithcrayons.Alfred-Preferences hotkeyMod -int 1048576
+        /usr/libexec/PlistBuddy -c "Delete :AppleSymbolicHotKeys:65" "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist" 2>/dev/null || true
+        /usr/libexec/PlistBuddy -c "Add :AppleSymbolicHotKeys:65:enabled bool false" "{{ home_dir }}/Library/Preferences/com.apple.symbolichotkeys.plist"
       ignore_errors: yes
 
-    - name: Start Alfred to apply settings
-      shell: open -a "Alfred 5" || open -a "Alfred"
+    - name: Kill cfprefsd to clear preferences cache (CRITICAL)
+      shell: |
+        killall cfprefsd || true
       ignore_errors: yes
+
+    - name: Restart SystemUIServer to apply changes
+      shell: |
+        killall SystemUIServer || true
+      ignore_errors: yes
+
+    - name: Wait for services to restart
+      pause:
+        seconds: 2
+
+    - name: Find Alfred preferences file location
+      shell: |
+        find "{{ home_dir }}/Library/Application Support/Alfred" -name "*.alfredpreferences" -type d 2>/dev/null | head -1
+      register: alfred_prefs_dir
+      ignore_errors: yes
+
+    - name: Set Alfred hotkey to Cmd+Space in preferences (Method 1 - Alfred 5)
+      shell: |
+        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict \
+          key -int 49 \
+          mod -int 1048576 \
+          string -string " "
+      when: alfred_prefs_dir.stdout == ""
+      ignore_errors: yes
+
+    - name: Set Alfred hotkey using preferences bundle (Method 2 - if preferences folder found)
+      shell: |
+        PREFS_DIR="{{ alfred_prefs_dir.stdout }}"
+        if [ -d "$PREFS_DIR" ]; then
+          PREFS_FILE="$PREFS_DIR/preferences/features/defaultresults/prefs.plist"
+          if [ -f "$PREFS_FILE" ]; then
+            /usr/libexec/PlistBuddy -c "Delete :hotkey" "$PREFS_FILE" 2>/dev/null || true
+            /usr/libexec/PlistBuddy -c "Add :hotkey dict" "$PREFS_FILE"
+            /usr/libexec/PlistBuddy -c "Add :hotkey:key integer 49" "$PREFS_FILE"
+            /usr/libexec/PlistBuddy -c "Add :hotkey:mod integer 1048576" "$PREFS_FILE"
+            /usr/libexec/PlistBuddy -c "Add :hotkey:string string ' '" "$PREFS_FILE"
+          fi
+        fi
+      when: alfred_prefs_dir.stdout != ""
+      ignore_errors: yes
+
+    - name: Alternative - Write directly to Alfred's main preferences
+      shell: |
+        defaults write com.runningwithcrayons.Alfred-Preferences-5 hotkey -dict \
+          key -int 49 \
+          mod -int 1048576
+      ignore_errors: yes
+
+    - name: Kill cfprefsd again to ensure Alfred preferences are cached
+      shell: |
+        killall cfprefsd || true
+      ignore_errors: yes
+
+    - name: Quit Alfred if running
+      shell: |
+        osascript -e 'quit app "Alfred 5"' 2>/dev/null || osascript -e 'quit app "Alfred"' 2>/dev/null || true
+      ignore_errors: yes
+
+    - name: Wait before restarting Alfred
+      pause:
+        seconds: 1
+
+    - name: Start Alfred to load new settings
+      shell: |
+        open -a "Alfred 5" 2>/dev/null || open -a "Alfred" 2>/dev/null || true
+      ignore_errors: yes
+
+    - name: Display instructions for manual verification
+      debug:
+        msg: |
+          Alfred/Spotlight configuration has been applied.
+
+          To verify the changes:
+          1. Log out and log back in (changes may require re-login)
+          2. Open System Settings > Keyboard > Keyboard Shortcuts > Spotlight
+          3. Verify both shortcuts are unchecked
+          4. Open Alfred preferences and verify Cmd+Space is set as the hotkey
+
+          If changes don't take effect, you may need to:
+          - Manually disable Spotlight shortcuts in System Settings
+          - Manually set Alfred hotkey in Alfred Preferences > General
   tags: productivity
