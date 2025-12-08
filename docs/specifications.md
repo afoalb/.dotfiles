@@ -23,7 +23,7 @@
 - Font: FiraCode Nerd Font, 14pt
 - Color scheme: Monokai Pro with pure black background (#000000)
 - Background opacity: 0.87 (13% transparent)
-- Default shell: zsh with login flag (using terminal.shell configuration)
+- Default shell: zsh with tmux auto-start (attaches to existing session or creates new)
 - Window decorations: buttonless
 - Scrollback: 50,000 lines
 - Vi mode enabled
@@ -146,6 +146,7 @@
 
 ## Browsers
 - Firefox Developer Edition
+  - Bitwarden extension (auto-installed via policies)
 - Google Chrome
 
 ## Security & Secrets
@@ -223,6 +224,21 @@
 - Disable Time Machine prompts for new disks
 - Enable full keyboard access for all controls
 - Disable press-and-hold for special characters (enable key repeat)
+
+### Startup Applications
+- Alfred 5 (launcher)
+- Maccy (clipboard manager)
+- AlDente (battery limiter)
+- Ice (menu bar manager)
+- Little Snitch (firewall)
+- Stats (system monitor)
+- SketchyBar (status bar)
+
+### Background Apps (Menu Bar Only)
+- AlDente: Configured with LSUIElement to hide from dock
+- Maccy: Configured with LSUIElement to hide from dock
+- Stats: Configured with LSUIElement to hide from dock
+- Ice: Configured with LSUIElement to hide from dock
 
 ## SSH Configuration
 - ControlMaster auto

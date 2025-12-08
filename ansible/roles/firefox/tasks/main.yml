@@ -1,0 +1,32 @@
+---
+# ==============================================================================
+# Firefox Configuration Role
+# ==============================================================================
+# Configures Firefox with extensions and preferences
+# ==============================================================================
+
+- name: Create Firefox policies directory
+  file:
+    path: /Applications/Firefox.app/Contents/Resources/distribution
+    state: directory
+    mode: '0755'
+  ignore_errors: yes
+  tags: firefox
+
+- name: Deploy Firefox policies to auto-install extensions
+  copy:
+    dest: /Applications/Firefox.app/Contents/Resources/distribution/policies.json
+    content: |
+      {
+        "policies": {
+          "ExtensionSettings": {
+            "{446900e4-71c2-419f-a6a7-df9c091e268b}": {
+              "installation_mode": "force_installed",
+              "install_url": "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi"
+            }
+          }
+        }
+      }
+    mode: '0644'
+  ignore_errors: yes
+  tags: firefox

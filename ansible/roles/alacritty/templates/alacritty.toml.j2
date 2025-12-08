@@ -16,7 +16,7 @@ TERM = "xterm-256color"
 # ------------------------------------------------------------------------------
 [terminal.shell]
 program = "/opt/homebrew/bin/zsh"
-args = ["-l"]
+args = ["-l", "-c", "tmux attach || tmux new-session"]
 
 # ------------------------------------------------------------------------------
 # Window Configuration
