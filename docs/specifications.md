@@ -19,6 +19,25 @@
 - bash (remote compatibility, portable configs)
 - starship (cross-shell prompt)
 
+### Alacritty Configuration
+- Font: FiraCode Nerd Font, 14pt
+- Color scheme: Monokai Pro with pure black background (#000000)
+- Background opacity: 0.87 (13% transparent)
+- Default shell: zsh with login flag (using terminal.shell configuration)
+- Window decorations: buttonless
+- Scrollback: 50,000 lines
+- Vi mode enabled
+- GPU acceleration
+
+### Zsh Configuration
+- History: 10,000 entries with timestamps
+- Word characters: Excludes '/' for better path navigation (Ctrl-W/Alt-Backspace stops at directories)
+- Key bindings: Emacs mode with enhanced history search
+- Completion: Case-insensitive with menu selection
+- Prompt: Starship
+- Tool integrations: fzf, zoxide (initialized at end), Homebrew
+- Enhanced CLI aliases: eza for ls, bat for cat, fd for find, ripgrep for grep
+
 ## CLI Tools & Utilities
 - fzf (fuzzy finder)
 - ripgrep (code search)
@@ -36,7 +55,7 @@
 - mosh (mobile shell, better SSH)
 
 ## Text Editors & IDEs
-- Neovim with LazyVim distribution
+- Neovim with LazyVim distribution (idempotent installation - preserves existing configuration)
 - VS Code with extensions
 
 ## Neovim Plugins (via LazyVim)
@@ -170,7 +189,7 @@
 - Minimize animation: scale effect
 - Show delay removed
 - Hide delay removed
-- Icon size: 48 pixels
+- Icon size: 56 pixels
 - Show recent applications: disabled
 - Minimize to application icon
 
