@@ -144,7 +144,6 @@
 
 ## File Management
 - Keka (archive utility)
-- Quick Look plugins (note: deprecated in modern macOS, limited availability)
 
 ## Browsers
 - Firefox Developer Edition
@@ -257,4 +256,25 @@
 - Delta as pager
 - GPG signing (optional)
 - Aliases for common commands
+
+
+## Default Applications
+
+### File Associations
+- Text files (.txt, .md, .log): Neovim
+- Code files (.py, .js, .ts, .yml, .json): Neovim
+- Archives (.zip, .rar, .7z): Keka
+
+### Protocol Handlers
+- http/https: Firefox Developer Edition
+- ssh: Alacritty with tmux
+
+### Apps
+- Default terminal: Alacritty
+- Default browser: Firefox  
+- Screenshots: Shottr
+
+### Launcher
+- Application launcher: Alfred Powerpack
+- Quick actions: Alfred Powerpack
 

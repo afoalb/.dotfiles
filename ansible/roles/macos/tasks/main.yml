@@ -145,7 +145,7 @@
   shell: defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
 - name: Reduce transparency
-  shell: defaults write com.apple.universalaccess reduceTransparency -bool true
+  shell: defaults write NSGlobalDomain AppleReduceTransparency -bool true
 
 - name: Disable sound effects
   shell: defaults write com.apple.systemsound "com.apple.sound.uiaudio.enabled" -int 0
