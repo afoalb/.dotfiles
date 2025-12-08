@@ -155,8 +155,7 @@
   - Set as default for camera images (.jpg, .jpeg, .raw, .cr2, .nef, .arw, .raf, .dng)
 
 ## Browsers
-- Firefox Developer Edition
-  - Bitwarden extension (auto-installed via policies)
+- Firefox Developer Edition (extensions synced via profile)
 - Google Chrome
 
 ## Security & Secrets

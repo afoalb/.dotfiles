@@ -49,13 +49,27 @@
 
 - name: Configure Alfred to replace Spotlight
   block:
-    - name: Disable Spotlight keyboard shortcut (Cmd+Space)
+    - name: Disable Spotlight search shortcut (Cmd+Space)
       shell: |
-        /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><false/></dict>"
+        defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '{enabled = 0; value = { parameters = (65535, 49, 1048576); type = standard; }; }'
+      ignore_errors: yes
+
+    - name: Disable Finder search window shortcut
+      shell: |
+        defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 65 '{enabled = 0; value = { parameters = (65535, 49, 1572864); type = standard; }; }'
+      ignore_errors: yes
+
+    - name: Restart SystemUIServer to apply shortcut changes
+      shell: killall SystemUIServer || true
       ignore_errors: yes
 
     - name: Set Alfred hotkey to Cmd+Space
       shell: |
-        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict-add default "<dict><key>key</key><integer>49</integer><key>mod</key><integer>1048576</integer><key>string</key><string> </string></dict>"
+        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -int 49
+        defaults write com.runningwithcrayons.Alfred-Preferences hotkeyMod -int 1048576
+      ignore_errors: yes
+
+    - name: Start Alfred to apply settings
+      shell: open -a "Alfred 5" || open -a "Alfred"
       ignore_errors: yes
   tags: productivity
