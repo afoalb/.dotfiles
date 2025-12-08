@@ -63,3 +63,9 @@ cask "karabiner-elements"              # Keyboard customization
 cask "hammerspoon"                     # Automation engine
 cask "ice"                             # Menu bar icon manager
 
+# ------------------------------------------------------------------------------
+# Text Editors & IDEs
+# ------------------------------------------------------------------------------
+brew "neovim"                 # Modern vim with Lua support
+cask "visual-studio-code"     # VS Code editor
+

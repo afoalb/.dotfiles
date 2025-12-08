@@ -7,8 +7,10 @@
   roles:
     - homebrew
     - macos
-    - shell 
+    - shell
     - yabai
     - sketchybar
     - keyboard
     - alacritty
+    - neovim
+    - vscode
