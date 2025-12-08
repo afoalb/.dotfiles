@@ -43,21 +43,21 @@
   register: sketchybar_status
   changed_when: false
   environment:
-    PATH: "/opt/homebrew/bin:{{ ansible_env.PATH }}"
+    PATH: "/opt/homebrew/bin:{{ ansible_facts['env']['PATH'] }}"
   tags: sketchybar
 
 - name: Start SketchyBar service
   command: brew services start sketchybar
   when: sketchybar_status.stdout == ""
   environment:
-    PATH: "/opt/homebrew/bin:{{ ansible_env.PATH }}"
+    PATH: "/opt/homebrew/bin:{{ ansible_facts['env']['PATH'] }}"
   tags: sketchybar
 
 - name: Restart SketchyBar service if already running
   command: brew services restart sketchybar
   when: sketchybar_status.stdout != ""
   environment:
-    PATH: "/opt/homebrew/bin:{{ ansible_env.PATH }}"
+    PATH: "/opt/homebrew/bin:{{ ansible_facts['env']['PATH'] }}"
   tags: sketchybar
 
 - name: Auto-hide macOS menu bar

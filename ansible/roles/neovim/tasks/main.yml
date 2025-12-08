@@ -8,14 +8,14 @@
 
 - name: Remove existing Neovim configuration (for clean LazyVim install)
   file:
-    path: "{{ ansible_env.HOME }}/.config/nvim"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     state: absent
   when: lazyvim_clean_install | default(false)
   tags: neovim
 
 - name: Create Neovim config directory
   file:
-    path: "{{ ansible_env.HOME }}/.config/nvim"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     state: directory
     mode: '0755'
   tags: neovim
@@ -23,20 +23,20 @@
 - name: Clone LazyVim starter template
   git:
     repo: 'https://github.com/LazyVim/starter'
-    dest: "{{ ansible_env.HOME }}/.config/nvim"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     version: main
     update: no
   tags: neovim
 
 - name: Remove LazyVim starter .git directory (to make it your own)
   file:
-    path: "{{ ansible_env.HOME }}/.config/nvim/.git"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/.git"
     state: absent
   tags: neovim
 
 - name: Create LazyVim lua/plugins directory for custom plugins
   file:
-    path: "{{ ansible_env.HOME }}/.config/nvim/lua/plugins"
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins"
     state: directory
     mode: '0755'
   tags: neovim
@@ -44,7 +44,7 @@
 - name: Deploy custom LazyVim configuration
   copy:
     src: "{{ item }}"
-    dest: "{{ ansible_env.HOME }}/.config/nvim/lua/{{ item }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/{{ item }}"
     mode: '0644'
   loop:
     - config/options.lua
@@ -55,14 +55,14 @@
 - name: Deploy custom plugin configurations
   copy:
     src: plugins/
-    dest: "{{ ansible_env.HOME }}/.config/nvim/lua/plugins/"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/"
     mode: '0644'
   ignore_errors: yes
   tags: neovim
 
 - name: Create Neovim data directory
   file:
-    path: "{{ ansible_env.HOME }}/.local/share/nvim"
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/share/nvim"
     state: directory
     mode: '0755'
   tags: neovim

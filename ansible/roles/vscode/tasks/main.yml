@@ -29,7 +29,7 @@
 
 - name: Create VS Code user settings directory
   file:
-    path: "{{ ansible_env.HOME }}/Library/Application Support/Code/User"
+    path: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User"
     state: directory
     mode: '0755'
   tags: vscode
@@ -37,7 +37,7 @@
 - name: Deploy VS Code settings
   copy:
     src: settings.json
-    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/settings.json"
+    dest: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User/settings.json"
     mode: '0644'
   ignore_errors: yes
   tags: vscode
@@ -45,7 +45,7 @@
 - name: Deploy VS Code keybindings
   copy:
     src: keybindings.json
-    dest: "{{ ansible_env.HOME }}/Library/Application Support/Code/User/keybindings.json"
+    dest: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/Code/User/keybindings.json"
     mode: '0644'
   ignore_errors: yes
   tags: vscode
