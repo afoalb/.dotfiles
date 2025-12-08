@@ -170,7 +170,7 @@
 - Minimize animation: scale effect
 - Show delay removed
 - Hide delay removed
-- Icon size: 36 pixels
+- Icon size: 48 pixels
 - Show recent applications: disabled
 - Minimize to application icon
 
