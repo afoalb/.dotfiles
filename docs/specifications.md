@@ -123,7 +123,7 @@
 - pgcli (PostgreSQL CLI)
 
 ## API Development
-- HTTPie Desktop
+- HTTPie Desktop (cask: httpie-desktop, renamed from httpie)
 - httpie (CLI)
 
 ## Monitoring & System Tools
@@ -139,7 +139,8 @@
 
 ## Documentation & Knowledge
 - Obsidian (notes, markdown-based)
-- DevDocs Desktop (offline API documentation, replaces Zeal)
+- DevDocs Desktop: discontinued upstream (as of 2024-12-16)
+  - Alternatives: Dash (paid), Velocity (open source), or Zeal (deprecated)
 
 ## File Management
 - Keka (archive utility)
