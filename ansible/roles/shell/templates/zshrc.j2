@@ -200,13 +200,6 @@ if (( $+commands[fzf] )); then
 fi
 
 # ------------------------------------------------------------------------------
-# Zoxide Integration (smart cd)
-# ------------------------------------------------------------------------------
-if (( $+commands[zoxide] )); then
-    eval "$(zoxide init zsh)"
-fi
-
-# ------------------------------------------------------------------------------
 # Starship Prompt
 # ------------------------------------------------------------------------------
 if (( $+commands[starship] )); then
@@ -225,3 +218,11 @@ fi
 # ------------------------------------------------------------------------------
 # Source local zshrc for machine-specific configurations
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# ------------------------------------------------------------------------------
+# Zoxide Integration (must be at the very end)
+# ------------------------------------------------------------------------------
+# Zoxide should be initialized after all other shell modifications
+if (( $+commands[zoxide] )); then
+    eval "$(zoxide init zsh)"
+fi
