@@ -133,6 +133,7 @@
 
 ## Productivity & Utilities
 - Alfred Powerpack (launcher, paid software)
+  - Configured to replace Spotlight with Cmd+Space hotkey
 - Maccy (clipboard manager)
 - espanso (text expander - installed via direct download from GitHub releases v2.2.1)
 - AlDente (battery charge limiter, free tier, limit to 80%, configured as background app)
@@ -145,6 +146,13 @@
 ## File Management
 - Keka (archive utility)
 - Quick Look plugins (note: deprecated in modern macOS, limited availability)
+
+## Media & Entertainment
+- Netflix (streaming)
+- Spotify (music streaming)
+- Shottr (screenshot tool)
+- FastRawViewer (RAW and JPEG image viewer, paid software)
+  - Set as default for camera images (.jpg, .jpeg, .raw, .cr2, .nef, .arw, .raf, .dng)
 
 ## Browsers
 - Firefox Developer Edition

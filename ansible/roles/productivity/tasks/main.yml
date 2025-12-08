@@ -46,3 +46,16 @@
         - SketchyBar
       ignore_errors: yes
   tags: productivity
+
+- name: Configure Alfred to replace Spotlight
+  block:
+    - name: Disable Spotlight keyboard shortcut (Cmd+Space)
+      shell: |
+        /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><false/></dict>"
+      ignore_errors: yes
+
+    - name: Set Alfred hotkey to Cmd+Space
+      shell: |
+        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict-add default "<dict><key>key</key><integer>49</integer><key>mod</key><integer>1048576</integer><key>string</key><string> </string></dict>"
+      ignore_errors: yes
+  tags: productivity

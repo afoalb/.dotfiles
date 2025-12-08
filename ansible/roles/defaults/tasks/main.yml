@@ -1,0 +1,69 @@
+---
+# ==============================================================================
+# Default Applications Configuration Role
+# ==============================================================================
+# Sets default applications for file types, protocols, and system handlers
+# ==============================================================================
+
+- name: Install duti for managing default applications
+  homebrew:
+    name: duti
+    state: present
+  tags: defaults
+
+- name: Create duti configuration file
+  copy:
+    dest: /tmp/duti-config.txt
+    content: |
+      # Text files
+      io.neovim.nvim .txt all
+      io.neovim.nvim .md all
+      io.neovim.nvim .log all
+
+      # Code files
+      io.neovim.nvim .py all
+      io.neovim.nvim .js all
+      io.neovim.nvim .ts all
+      io.neovim.nvim .yml all
+      io.neovim.nvim .yaml all
+      io.neovim.nvim .json all
+
+      # Archives
+      com.aone.keka .zip all
+      com.aone.keka .rar all
+      com.aone.keka .7z all
+      com.aone.keka .tar all
+      com.aone.keka .gz all
+
+      # Images (FastRawViewer for camera files)
+      com.fastrawviewer.FastRawViewer .jpg all
+      com.fastrawviewer.FastRawViewer .jpeg all
+      com.fastrawviewer.FastRawViewer .raw all
+      com.fastrawviewer.FastRawViewer .cr2 all
+      com.fastrawviewer.FastRawViewer .nef all
+      com.fastrawviewer.FastRawViewer .arw all
+      com.fastrawviewer.FastRawViewer .raf all
+      com.fastrawviewer.FastRawViewer .dng all
+
+      # Protocol handlers
+      org.mozilla.firefox http
+      org.mozilla.firefox https
+    mode: '0644'
+  tags: defaults
+
+- name: Apply default applications using duti
+  shell: duti /tmp/duti-config.txt
+  ignore_errors: yes
+  tags: defaults
+
+- name: Remove temporary duti config
+  file:
+    path: /tmp/duti-config.txt
+    state: absent
+  tags: defaults
+
+- name: Set Firefox as default browser
+  shell: |
+    /usr/bin/python3 -c "from LaunchServices import LSSetDefaultHandlerForURLScheme; LSSetDefaultHandlerForURLScheme('http', 'org.mozilla.firefox'); LSSetDefaultHandlerForURLScheme('https', 'org.mozilla.firefox')"
+  ignore_errors: yes
+  tags: defaults
