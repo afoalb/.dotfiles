@@ -139,11 +139,10 @@
 
 ## Documentation & Knowledge
 - Obsidian (notes, markdown-based)
-- DevDocs Desktop (offline API documentation, replaces Zeal)
+- DevDocs Desktop (offline API documentation)
 
 ## File Management
 - Keka (archive utility)
-- Quick Look plugins (note: deprecated in modern macOS, limited availability)
 
 ## Browsers
 - Firefox Developer Edition
