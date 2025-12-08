@@ -47,15 +47,46 @@
       ignore_errors: yes
   tags: productivity
 
+
+##########################
+
 - name: Configure Alfred to replace Spotlight
   block:
-    - name: Disable Spotlight keyboard shortcut (Cmd+Space)
+    - name: Install Homebrew (if not already installed)
       shell: |
-        /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "<dict><key>enabled</key><false/></dict>"
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      args:
+        creates: /opt/homebrew/bin/brew
+      tags: productivity
+
+    - name: Install Alfred via Homebrew Cask
+      homebrew_cask:
+        name: alfred
+        state: present
+        install_options: "no-quarantine"
+      tags: productivity
+
+    - name: Disable Spotlight Cmd+Space shortcut
+      shell: |
+        /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 \
+        '{ enabled = 0; value = { parameters = (49, 49, 1048576); type = "standard"; }; }'
       ignore_errors: yes
+      tags: productivity
 
     - name: Set Alfred hotkey to Cmd+Space
       shell: |
-        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict-add default "<dict><key>key</key><integer>49</integer><key>mod</key><integer>1048576</integer><key>string</key><string> </string></dict>"
+        /usr/bin/defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict-add default \
+        '<dict><key>key</key><integer>49</integer><key>mod</key><integer>1048576</integer><key>string</key><string> </string></dict>'
       ignore_errors: yes
-  tags: productivity
+      tags: productivity
+
+    - name: Ensure Alfred is not quarantined
+      shell: |
+        xattr -cr /Applications/Alfred.app || true
+      tags: productivity
+
+    - name: Restart macOS UI services to apply shortcuts
+      shell: |
+        killall SystemUIServer || true
+        killall Dock || true
+      tags: productivity

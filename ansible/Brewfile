@@ -150,7 +150,6 @@ cask "keka"                   # Archive utility
 # ------------------------------------------------------------------------------
 # Media & Entertainment
 # ------------------------------------------------------------------------------
-cask "netflix"                # Netflix streaming
 cask "spotify"                # Music streaming
 cask "shottr"                 # Screenshot tool
 
@@ -166,11 +165,11 @@ cask "google-chrome"          # Chrome browser
 cask "bitwarden"              # Password manager
 
 # ------------------------------------------------------------------------------
-# PAID SOFTWARE (Install these last)
+# PAID SOFTWARE
 # ------------------------------------------------------------------------------
 cask "little-snitch"          # Network firewall (paid)
 cask "tableplus"              # Universal database GUI (paid)
 cask "fork"                   # Git GUI (paid)
-cask "alfred"                 # Launcher/automation (paid, use Raycast instead if preferred)
+cask "alfred"                 # Launcher/automation (paid)
 cask "fastrawviewer"          # RAW and JPEG image viewer (paid)
 
