@@ -25,7 +25,7 @@ brew "tldr"                   # Simplified man pages
 brew "jq"                     # JSON processor
 brew "yq"                     # YAML processor
 brew "mtr"                    # Network diagnostics
-brew "dog"                    # DNS client
+brew "doggo"                  # DNS client
 brew "curlie"                 # Curl with httpie syntax
 brew "httpie"                 # HTTP client
 brew "mosh"                   # Mobile shell (better SSH)
@@ -61,7 +61,7 @@ tap "FelixKratz/formulae"              # SketchyBar tap
 brew "FelixKratz/formulae/sketchybar"  # Custom menu bar
 cask "karabiner-elements"              # Keyboard customization
 cask "hammerspoon"                     # Automation engine
-cask "ice"                             # Menu bar icon manager
+cask "jordanbaird-ice"                 # Menu bar icon manager
 
 # ------------------------------------------------------------------------------
 # Text Editors & IDEs
@@ -101,7 +101,7 @@ brew "terraform-docs"         # Generate documentation from Terraform
 brew "tflint"                 # Terraform linter
 brew "tfsec"                  # Terraform security scanner
 brew "ansible-lint"           # Ansible best practices checker
-brew "packer"                 # Image builder
+# Note: HashiCorp Packer is no longer available via Homebrew
 
 # ------------------------------------------------------------------------------
 # Database Tools
@@ -126,22 +126,20 @@ brew "glances"                # Alternative system monitor
 # Productivity & Utilities
 # ------------------------------------------------------------------------------
 cask "maccy"                  # Clipboard manager
-brew "espanso"                # Text expander
+# Note: espanso is no longer available via Homebrew
 cask "aldente"                # Battery charge limiter
 
 # ------------------------------------------------------------------------------
 # Documentation & Knowledge
 # ------------------------------------------------------------------------------
 cask "obsidian"               # Markdown-based notes
-cask "zeal"                   # Offline API documentation
+# Note: Zeal is no longer available as a cask
 
 # ------------------------------------------------------------------------------
 # File Management
 # ------------------------------------------------------------------------------
 cask "keka"                   # Archive utility
-brew "qlmarkdown"             # Quick Look plugin for Markdown
-brew "qlstephen"              # Quick Look plugin for text files
-brew "quicklook-json"         # Quick Look plugin for JSON
+# Note: Quick Look plugins are deprecated in modern macOS and no longer available
 
 # ------------------------------------------------------------------------------
 # Browsers
