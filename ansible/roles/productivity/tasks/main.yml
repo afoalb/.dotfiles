@@ -2,24 +2,47 @@
 # ==============================================================================
 # Productivity Apps Configuration Role
 # ==============================================================================
-# Configures productivity applications like AlDente, Espanso
+# Configures productivity applications and menu bar apps
 # ==============================================================================
 
-- name: Configure AlDente to run as background app (hide from dock)
+- name: Configure menu bar apps to run as background apps (hide from dock)
   block:
-    - name: Check if AlDente is installed
+    - name: Check if app is installed
       stat:
-        path: /Applications/AlDente.app
-      register: aldente_app
+        path: "/Applications/{{ item }}.app"
+      register: app_check
+      loop:
+        - AlDente
+        - Maccy
+        - Stats
+        - Ice
 
-    - name: Set AlDente as background app (LSUIElement)
+    - name: Set apps as background apps (LSUIElement)
       shell: |
-        /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" /Applications/AlDente.app/Contents/Info.plist 2>/dev/null || \
-        /usr/libexec/PlistBuddy -c "Set :LSUIElement true" /Applications/AlDente.app/Contents/Info.plist
-      when: aldente_app.stat.exists
+        /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "/Applications/{{ item.item }}.app/Contents/Info.plist" 2>/dev/null || \
+        /usr/libexec/PlistBuddy -c "Set :LSUIElement true" "/Applications/{{ item.item }}.app/Contents/Info.plist"
+      loop: "{{ app_check.results }}"
+      when: item.stat.exists
       ignore_errors: yes
 
-    - name: Touch AlDente.app to update Launch Services database
-      shell: touch /Applications/AlDente.app
-      when: aldente_app.stat.exists
+    - name: Touch apps to update Launch Services database
+      shell: touch "/Applications/{{ item.item }}.app"
+      loop: "{{ app_check.results }}"
+      when: item.stat.exists
+  tags: productivity
+
+- name: Configure startup applications
+  block:
+    - name: Add apps to login items
+      shell: |
+        osascript -e 'tell application "System Events" to make login item at end with properties {path:"/Applications/{{ item }}.app", hidden:false}'
+      loop:
+        - Alfred 5
+        - Maccy
+        - AlDente
+        - Ice
+        - Little Snitch
+        - Stats
+        - SketchyBar
+      ignore_errors: yes
   tags: productivity
