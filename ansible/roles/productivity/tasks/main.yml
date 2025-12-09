@@ -90,47 +90,59 @@
       pause:
         seconds: 2
 
-    - name: Find Alfred preferences file location
+    - name: Check if Alfred has been launched (prefs.json exists)
+      stat:
+        path: "{{ home_dir }}/Library/Application Support/Alfred/prefs.json"
+      register: alfred_prefs_json
+
+    - name: Warn if Alfred prefs.json not found
+      debug:
+        msg: "WARNING: Alfred prefs.json not found. Please launch Alfred at least once before running this playbook."
+      when: not alfred_prefs_json.stat.exists
+
+    - name: Get Alfred local hash from prefs.json
       shell: |
-        find "{{ home_dir }}/Library/Application Support/Alfred" -name "*.alfredpreferences" -type d 2>/dev/null | head -1
-      register: alfred_prefs_dir
+        python3 -c "import json; print(json.load(open('{{ home_dir }}/Library/Application Support/Alfred/prefs.json'))['localhash'])"
+      register: alfred_localhash
+      when: alfred_prefs_json.stat.exists
       ignore_errors: yes
 
-    - name: Set Alfred hotkey to Cmd+Space in preferences (Method 1 - Alfred 5)
+    - name: Get Alfred preferences bundle path
       shell: |
-        defaults write com.runningwithcrayons.Alfred-Preferences hotkey -dict \
-          key -int 49 \
-          mod -int 1048576 \
-          string -string " "
-      when: alfred_prefs_dir.stdout == ""
+        python3 -c "import json; print(json.load(open('{{ home_dir }}/Library/Application Support/Alfred/prefs.json'))['current'])"
+      register: alfred_prefs_path
+      when: alfred_prefs_json.stat.exists
       ignore_errors: yes
 
-    - name: Set Alfred hotkey using preferences bundle (Method 2 - if preferences folder found)
-      shell: |
-        PREFS_DIR="{{ alfred_prefs_dir.stdout }}"
-        if [ -d "$PREFS_DIR" ]; then
-          PREFS_FILE="$PREFS_DIR/preferences/features/defaultresults/prefs.plist"
-          if [ -f "$PREFS_FILE" ]; then
-            /usr/libexec/PlistBuddy -c "Delete :hotkey" "$PREFS_FILE" 2>/dev/null || true
-            /usr/libexec/PlistBuddy -c "Add :hotkey dict" "$PREFS_FILE"
-            /usr/libexec/PlistBuddy -c "Add :hotkey:key integer 49" "$PREFS_FILE"
-            /usr/libexec/PlistBuddy -c "Add :hotkey:mod integer 1048576" "$PREFS_FILE"
-            /usr/libexec/PlistBuddy -c "Add :hotkey:string string ' '" "$PREFS_FILE"
-          fi
-        fi
-      when: alfred_prefs_dir.stdout != ""
+    - name: Create Alfred hotkey preferences directory
+      file:
+        path: "{{ alfred_prefs_path.stdout }}/preferences/local/{{ alfred_localhash.stdout }}/hotkey"
+        state: directory
+        mode: '0755'
+      when: alfred_prefs_json.stat.exists and alfred_localhash.stdout | default('') != "" and alfred_prefs_path.stdout | default('') != ""
       ignore_errors: yes
 
-    - name: Alternative - Write directly to Alfred's main preferences
-      shell: |
-        defaults write com.runningwithcrayons.Alfred-Preferences-5 hotkey -dict \
-          key -int 49 \
-          mod -int 1048576
-      ignore_errors: yes
-
-    - name: Kill cfprefsd again to ensure Alfred preferences are cached
-      shell: |
-        killall cfprefsd || true
+    - name: Write Alfred hotkey preferences (Cmd+Space)
+      copy:
+        dest: "{{ alfred_prefs_path.stdout }}/preferences/local/{{ alfred_localhash.stdout }}/hotkey/prefs.plist"
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+          	<key>default</key>
+          	<dict>
+          		<key>key</key>
+          		<integer>49</integer>
+          		<key>mod</key>
+          		<integer>1048576</integer>
+          		<key>string</key>
+          		<string> </string>
+          	</dict>
+          </dict>
+          </plist>
+        mode: '0644'
+      when: alfred_prefs_json.stat.exists and alfred_localhash.stdout | default('') != "" and alfred_prefs_path.stdout | default('') != ""
       ignore_errors: yes
 
     - name: Quit Alfred if running
@@ -147,18 +159,16 @@
         open -a "Alfred 5" 2>/dev/null || open -a "Alfred" 2>/dev/null || true
       ignore_errors: yes
 
-    - name: Display instructions for manual verification
+    - name: Display configuration status
       debug:
         msg: |
           Alfred/Spotlight configuration has been applied.
 
-          To verify the changes:
-          1. Log out and log back in (changes may require re-login)
-          2. Open System Settings > Keyboard > Keyboard Shortcuts > Spotlight
-          3. Verify both shortcuts are unchecked
-          4. Open Alfred preferences and verify Cmd+Space is set as the hotkey
+          Spotlight shortcuts have been disabled.
+          Alfred hotkey has been set to Cmd+Space.
 
-          If changes don't take effect, you may need to:
-          - Manually disable Spotlight shortcuts in System Settings
-          - Manually set Alfred hotkey in Alfred Preferences > General
+          Press Cmd+Space to verify Alfred opens.
+
+          Note: If Alfred hotkey was not set, ensure Alfred has been launched
+          at least once before running this playbook (to create prefs.json).
   tags: productivity
