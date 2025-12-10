@@ -1,97 +1,89 @@
-# ==============================================================================
-# Bash Configuration (.bashrc)
-# ==============================================================================
-# Portable bash configuration that works on both macOS and Linux
-# Enhanced for local use with modern CLI tools, but degrades gracefully
-# ==============================================================================
+# ==================
+# Bash Configuration
+# ==================
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Environment Variables
-# ------------------------------------------------------------------------------
-export EDITOR=vim
-export VISUAL=vim
+# ------------------
+export EDITOR=nvim
+export VISUAL=nvim
 export PAGER=less
 
-# XDG Base Directory specification
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 
-# PATH configuration
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
-# ------------------------------------------------------------------------------
-# Shell Options
-# ------------------------------------------------------------------------------
-# History
-export HISTCONTROL=ignoredups:erasedups
+# ------------------
+# Bash History Settings
+# ------------------
+export HISTFILE="$HOME/.bash_history"
 export HISTSIZE=10000
-export HISTFILESIZE=20000
-export HISTTIMEFORMAT="%Y-%m-%d %H:%M:%S  "
-shopt -s histappend         # Append to history, don't overwrite
-shopt -s cmdhist            # Save multi-line commands as one command
+export HISTFILESIZE=10000
+export HISTCONTROL=ignoredups:ignorespace
+export HISTTIMEFORMAT="[%F %T] "
+shopt -s histappend
 
-# Shell behavior
-shopt -s checkwinsize       # Update LINES and COLUMNS after each command
-shopt -s cdspell            # Autocorrect typos in path names
-shopt -s dirspell           # Autocorrect directory names during completion
-shopt -s globstar           # Enable ** recursive glob
-shopt -s nocaseglob         # Case-insensitive globbing
+# ------------------
+# Shell Behavior
+# ------------------
+shopt -s autocd                  # like Zsh AUTO_CD
+shopt -s cdable_vars
+shopt -s dirspell                # fix small typos in cd
+shopt -s checkwinsize
+shopt -s globstar                # ** recursive globbing like Zsh
+shopt -s extglob                 # extended globs
 
-# ------------------------------------------------------------------------------
-# Enhanced CLI Tools (with fallbacks)
-# ------------------------------------------------------------------------------
-# ls -> eza (if available)
-if command -v eza &> /dev/null; then
-    alias ls='eza --group-directories-first --icons'
-    alias ll='eza -lah --git --group-directories-first --icons'
-    alias la='eza -a --group-directories-first --icons'
-    alias l='eza -lh --git --group-directories-first --icons'
-    alias lt='eza -T --group-directories-first --icons'
-    alias tree='eza -T --group-directories-first --icons'
-else
-    alias ls='ls -GFh'
-    alias ll='ls -lah'
-    alias la='ls -A'
-    alias l='ls -CF'
+# ------------------
+# Basic Completion System
+# ------------------
+# Bash has no zstyle. Uses programmable completion instead.
+if [ -f /opt/homebrew/etc/bash_completion ]; then
+    source /opt/homebrew/etc/bash_completion
+elif [ -f /usr/local/etc/bash_completion ]; then
+    source /usr/local/etc/bash_completion
 fi
 
-# cat -> bat (if available)
-if command -v bat &> /dev/null; then
-    alias cat='bat --style=auto'
-    export BAT_THEME="Monokai Extended"
-    export BAT_PAGER="less -RF"
-fi
+# ------------------
+# Keybindings (Bash equivalent)
+# ------------------
+bind 'set show-all-if-ambiguous on'
+bind 'set completion-ignore-case on'
+bind '"\C-r": reverse-search-history'
+bind '"\C-s": forward-search-history'
 
-# find -> fd (if available)
-if command -v fd &> /dev/null; then
-    alias find='fd'
-fi
+# Open command line in $EDITOR
+edit-current-line() {
+    local tmp=$(mktemp)
+    printf "%s" "$READLINE_LINE" > "$tmp"
+    "$EDITOR" "$tmp"
+    READLINE_LINE=$(cat "$tmp")
+    READLINE_POINT=${#READLINE_LINE}
+    rm -f "$tmp"
+}
+bind -x '"\C-x\C-e":edit-current-line'
 
-# grep enhancements
-if command -v rg &> /dev/null; then
-    alias grep='rg'
-else
-    alias grep='grep --color=auto'
-fi
 
-# ------------------------------------------------------------------------------
-# Directory Navigation
-# ------------------------------------------------------------------------------
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias ~='cd ~'
-alias -- -='cd -'
-
-# ------------------------------------------------------------------------------
+# ------------------
 # Common Aliases
-# ------------------------------------------------------------------------------
-alias h='history'
-alias j='jobs -l'
-alias c='clear'
-alias reload='source ~/.bashrc && echo "Bashrc reloaded"'
+# ------------------
+
+# Basic listing
+alias ls='ls -GFh'
+alias l='ls -CF'
+alias la='ls -A'
+alias l1='ls -1'
+
+# Long listings (directories first with sort)
+alias ll='ls -laF | sort -k1,1r -k9,9V'
+alias lh='ls -lh   | sort -k1,1r -k9,9V'
+alias lt='ls -lt   | sort -k1,1r'
+alias ltr='ls -ltr | sort -k1,1r'
+
+# Directories / files only
+alias ld='ls -d */ | sort -V'
+alias lf='ls -p | grep -v / | sort -V'
 
 # Safety nets
 alias rm='rm -i'
@@ -99,76 +91,124 @@ alias mv='mv -i'
 alias cp='cp -i'
 alias ln='ln -i'
 
-# Convenience
-alias mkdir='mkdir -p'
-alias which='command -v'
-alias path='echo -e ${PATH//:/\\n}'
-
-# ------------------------------------------------------------------------------
-# Git Aliases (portable)
-# ------------------------------------------------------------------------------
+# Git
 alias g='git'
 alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git pull'
-alias gd='git diff'
-alias gco='git checkout'
 alias gb='git branch'
+alias gco='git checkout'
 alias glog='git log --oneline --graph --decorate'
+alias glogall='git log --oneline --graph --decorate --all'
 
-# ------------------------------------------------------------------------------
-# Bash Completion
-# ------------------------------------------------------------------------------
-# macOS Homebrew completion
-if [ -f /opt/homebrew/etc/bash_completion ]; then
-    . /opt/homebrew/etc/bash_completion
+# zoxide list
+alias zz='zoxide query --list'
+
+# Misc
+alias which='type -p'
+alias mkdir='mkdir -p'
+alias h='history'
+alias path='echo -e "${PATH//:/\n}"'
+alias grep='grep --color=auto'
+alias reload='source ~/.bashrc && echo "Bashrc reloaded"'
+
+
+# ------------------
+# Directory stack shortcuts (Bash version)
+# ------------------
+alias d='dirs -v'
+
+for i in {1..9}; do
+    alias "$i"="cd +$i"
+done
+unset i
+
+
+# ------------------
+# Enhanced CLI Tools
+# ------------------
+
+# eza
+if command -v eza >/dev/null 2>&1; then
+    EZA_COMMON="--group-directories-first --icons=never --color=auto"
+
+    alias sls="eza $EZA_COMMON"
+    alias sl="eza --long --classify $EZA_COMMON"
+    alias sla="eza --all $EZA_COMMON"
+    alias sl1="eza --oneline $EZA_COMMON"
+
+    alias sll="eza --all --long --classify $EZA_COMMON"
+    alias slh="eza --long --all $EZA_COMMON"
+    alias slt="eza --long --sort=modified $EZA_COMMON"
+    alias sltr="eza --long --sort=modified --reverse $EZA_COMMON"
+
+    alias sld="eza --dirs-only $EZA_COMMON"
+    alias slf="eza --only-files $EZA_COMMON"
+
+    alias stree="eza --tree --level=2 --long $EZA_COMMON"
 fi
 
-# Linux system completion
-if [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
+# bat
+if command -v bat >/dev/null 2>&1; then
+    alias scat='bat --style=auto'
+    export BAT_THEME="Monokai Extended"
+    export BAT_PAGER="less -RF"
 fi
 
-# ------------------------------------------------------------------------------
-# FZF Integration (if available)
-# ------------------------------------------------------------------------------
-if command -v fzf &> /dev/null; then
-    # Load fzf key bindings and completion
+# ripgrep
+if command -v rg >/dev/null 2>&1; then
+    alias sgrep='rg'
+fi
+
+
+# ------------------
+# FZF Integration
+# ------------------
+if command -v fzf >/dev/null 2>&1; then
+
+    # Load key bindings
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-    # Use fd for fzf if available
-    if command -v fd &> /dev/null; then
+    # fd + fzf
+    if command -v fd >/dev/null 2>&1; then
         export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
         export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
         export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
     fi
 
-    # fzf color scheme
-    export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+    export FZF_DEFAULT_OPTS="
+        --height 40%
+        --layout=reverse
+        --border
+        --preview 'bat --style=numbers --color=always --line-range :500 {}'
+        --preview-window=right:50%:wrap
+    "
 fi
 
-# ------------------------------------------------------------------------------
-# Zoxide Integration (smart cd)
-# ------------------------------------------------------------------------------
-if command -v zoxide &> /dev/null; then
-    eval "$(zoxide init bash)"
-    alias cd='z'
-fi
 
-# ------------------------------------------------------------------------------
-# Starship Prompt (cross-shell)
-# ------------------------------------------------------------------------------
-if command -v starship &> /dev/null; then
+# ------------------
+# Starship Prompt
+# ------------------
+if command -v starship >/dev/null 2>&1; then
     eval "$(starship init bash)"
-else
-    # Fallback to basic prompt if starship not available
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 fi
 
-# ------------------------------------------------------------------------------
+
+# ------------------
+# Homebrew Integration
+# ------------------
+if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+
+# ------------------
 # Local Overrides
-# ------------------------------------------------------------------------------
-# Source local bashrc for machine-specific configurations
+# ------------------
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+
+# ------------------
+# Zoxide (must be at the end)
+# ------------------
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init bash)"
+fi
