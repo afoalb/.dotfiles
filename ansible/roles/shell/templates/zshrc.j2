@@ -20,7 +20,7 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 # ------------------
 # Zsh Options
 # ------------------
-# Word Characters - Define what's considered part of a word 
+# Word Characters - Define what's considered part of a word
 # for word-based navigation
 # Removing '/' makes Ctrl-W and Alt-Backspace stop at path separators
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
@@ -97,7 +97,7 @@ bindkey '^X^E' edit-command-line
 
 # ------------------
 # Common Aliases
-# ------------------ 
+# ------------------
 # Basic listing
 alias ls='ls -GFh'       # colorize, classify, human-readable sizes
 alias l='ls -CF'         # compact view, classify (/ @ *)
@@ -139,11 +139,6 @@ alias h='history'
 alias path='echo -e ${PATH//:/\\n}'
 alias grep='grep --color=auto'
 alias reload='source ~/.zshrc && echo "Zshrc reloaded"'
-
-# Directory stack
-alias d='dirs -v'  
-# Jump to a directory in the stack by typing its number (as shown by `d`)
-for index ({1..9}) alias "$index"="cd +${index}"; unset index
 
 
 # ------------------
@@ -236,8 +231,42 @@ fi
 
 
 # ------------------
-# Zoxide Integration (must be at the very end)
+# Directory Navigation (Stack Navigation) (zoxide-style)
 # ------------------
+unalias d 2>/dev/null
+
+# dd -> display directory stack
+dd() {
+    dirs -v
+}
+
+# d [n] -> jump to a directory from stack
+d() {
+    # No argument → show stack
+    if [ -z "$1" ]; then
+        dirs -v
+        return
+    fi
+
+    # Argument is a number?
+    case "$1" in
+        ''|*[!0-9]*)
+            # Not a number → error
+            printf "Usage:\n  d        # show directory stack\n  d <num>  # jump to directory number\n"
+            return 1
+            ;;
+        *)
+            # Valid number → cd to it
+            cd +"$1"
+            ;;
+    esac
+}
+
+
+# ------------------
+# Directory Navigation (Zoxide)
+# ------------------
+# NOTE: Config must be at the very end
 # Zoxide should be initialized after all other shell modifications
 if (( $+commands[zoxide] )); then
     eval "$(zoxide init zsh)"

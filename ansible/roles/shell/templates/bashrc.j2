@@ -112,17 +112,6 @@ alias reload='source ~/.bashrc && echo "Bashrc reloaded"'
 
 
 # ------------------
-# Directory stack shortcuts (Bash version)
-# ------------------
-alias d='dirs -v'
-
-for i in {1..9}; do
-    alias "$i"="cd +$i"
-done
-unset i
-
-
-# ------------------
 # Enhanced CLI Tools
 # ------------------
 
@@ -204,6 +193,39 @@ fi
 # Local Overrides
 # ------------------
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+
+# ------------------
+# Directory Navigation (Stack Navigation) (zoxide-style)
+# ------------------
+unalias d 2>/dev/null
+
+# dd -> display directory stack
+dd() {
+    dirs -v
+}
+
+# d [n] -> jump to a directory from stack
+d() {
+    # No argument → show stack
+    if [ -z "$1" ]; then
+        dirs -v
+        return
+    fi
+
+    # Argument is a number?
+    case "$1" in
+        ''|*[!0-9]*)
+            # Not a number → error
+            printf "Usage:\n  d        # show directory stack\n  d <num>  # jump to directory number\n"
+            return 1
+            ;;
+        *)
+            # Valid number → cd to it
+            cd +"$1"
+            ;;
+    esac
+}
 
 
 # ------------------
