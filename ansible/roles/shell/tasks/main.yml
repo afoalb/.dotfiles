@@ -42,7 +42,7 @@
   tags: shell
 
 # ------------------
-# Zsh Configuration (local, enhanced)
+# Zsh Configuration (local)
 # ------------------
 - name: Deploy .zshrc
   template:

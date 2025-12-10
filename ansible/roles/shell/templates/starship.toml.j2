@@ -1,9 +1,9 @@
-# ==============================================================================
+# ====================
 # Starship Prompt Configuration
-# ==============================================================================
+# ====================
 # Cross-shell prompt configuration for bash and zsh
 # Documentation: https://starship.rs/config/
-# ==============================================================================
+# ====================
 
 # Use a preset as base (can be: bracketed-segments, plain-text-symbols, etc.)
 # "$schema" = 'https://starship.rs/config-schema.json'
@@ -22,17 +22,17 @@ right_format = """$cmd_duration$python$nodejs$rust$golang$terraform$docker_conte
 # Continuation prompt (for multi-line commands)
 continuation_prompt = "[▶](bold yellow) "
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Character (the prompt symbol)
-# ------------------------------------------------------------------------------
+# ------------------
 [character]
 success_symbol = "[❯](bold green)"
 error_symbol = "[❯](bold red)"
 vimcmd_symbol = "[❮](bold green)"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Username
-# ------------------------------------------------------------------------------
+# ------------------
 [username]
 format = "[$user]($style)@"
 style_user = "bold blue"
@@ -40,18 +40,18 @@ style_root = "bold red"
 show_always = false
 disabled = false
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Hostname
-# ------------------------------------------------------------------------------
+# ------------------
 [hostname]
 format = "[$hostname]($style) "
 style = "bold blue"
 ssh_only = true
 disabled = false
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Directory
-# ------------------------------------------------------------------------------
+# ------------------
 [directory]
 format = "[$path]($style)[$read_only]($read_only_style) "
 style = "bold cyan"
@@ -70,9 +70,9 @@ fish_style_pwd_dir_length = 1
 "~/Development" = "  "
 "~/Projects" = "  "
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Git
-# ------------------------------------------------------------------------------
+# ------------------
 [git_branch]
 format = "[$symbol$branch(:$remote_branch)]($style) "
 symbol = " "
@@ -103,9 +103,9 @@ style = "bold green"
 commit_hash_length = 7
 tag_symbol = " 🏷 "
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Programming Languages
-# ------------------------------------------------------------------------------
+# ------------------
 [python]
 format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
 symbol = " "
@@ -134,9 +134,9 @@ format = "[$symbol$workspace]($style) "
 symbol = "󱁢 "
 style = "bold purple"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Tools & Environments
-# ------------------------------------------------------------------------------
+# ------------------
 [docker_context]
 format = "[$symbol$context]($style) "
 symbol = " "
@@ -150,9 +150,9 @@ style = "bold yellow"
 show_milliseconds = false
 show_notifications = false
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Operating System
-# ------------------------------------------------------------------------------
+# ------------------
 [os]
 format = "[$symbol]($style) "
 disabled = true
@@ -161,9 +161,9 @@ disabled = true
 Macos = ""
 Linux = ""
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Status
-# ------------------------------------------------------------------------------
+# ------------------
 [status]
 format = '[\[$symbol$status_common_meaning$status_signal_name$status_maybe_int\]]($style) '
 symbol = "✖ "
@@ -171,26 +171,26 @@ style = "bold red"
 disabled = false
 map_symbol = true
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Time (disabled by default)
-# ------------------------------------------------------------------------------
+# ------------------
 [time]
 format = "[$time]($style) "
 style = "bold white"
 disabled = true
 time_format = "%T"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Package Version (disabled by default, can be slow)
-# ------------------------------------------------------------------------------
+# ------------------
 [package]
 format = "[$symbol$version]($style) "
 symbol = "📦 "
 disabled = true
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Battery (for laptops)
-# ------------------------------------------------------------------------------
+# ------------------
 [battery]
 format = "[$symbol$percentage]($style) "
 disabled = true
@@ -207,9 +207,9 @@ style = "bold yellow"
 threshold = 100
 style = "bold green"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Additional Languages (disabled by default)
-# ------------------------------------------------------------------------------
+# ------------------
 [java]
 disabled = true
 

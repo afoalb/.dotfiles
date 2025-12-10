@@ -1,10 +1,10 @@
 ---
-# ==============================================================================
+# ==================
 # Neovim with LazyVim Configuration Role
-# ==============================================================================
+# ==================
 # Sets up Neovim with LazyVim distribution
 # Installation handled by homebrew role via Brewfile
-# ==============================================================================
+# ==================
 
 - name: Remove existing Neovim configuration (for clean LazyVim install)
   file:
