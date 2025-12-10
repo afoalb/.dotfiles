@@ -48,8 +48,8 @@ unbind C-b
 set -g prefix C-a
 bind C-a send-prefix # bind=Ctrl-a
 
-# Reload config
-bind r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded!"
+# Reload config & display errors (if any)
+bind r run-shell 'tmux source-file ~/.tmux.conf 2>/tmp/tmux_reload_errors && tmux display-message "tmux.conf reloaded!" || tmux display-message "Error reloading tmux.conf: $(cat /tmp/tmux_reload_errors)"'
 
 # Create new window / split panes
 bind c new-window -c "#{pane_current_path}"
@@ -109,45 +109,88 @@ bind -T copy-mode-vi C-v send -X rectangle-toggle
 bind S set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
 
 # ------------------
-# Status Bar
+# TMUX STATUS BAR CONFIGURATION
 # ------------------
-# Update status bar every 5 seconds
+#
+# Color Palette
+# Background:    #0B0E14  (Dark background)
+# Inactive text: #394150  (Muted gray)
+# Active text:   #B1AEAA  (Light beige/gray)
+# Accent color:  #5AAAD2  (Blue - rgb(90,170,210))
+# Session text:  #D4D7DD  (Light gray)
+# Separator:     #394150  (Muted gray - same as inactive text)
+#
+# Note: tmux doesn't support native variables. To change, search and replace the hex values throughout this config file
+
+# Status Bar General Settings
+# ----------------------------
 set -g status-interval 5
+set -g status-position top
+set -g status-style "bg=#0B0E14,fg=#394150"
+# Center the window list for balanced appearance
+set -g status-justify centre
 
-# Status bar position
-set -g status-position bottom
 
-# Status bar colors
-set -g status-style "fg=#fcfcfa,bg=#2d2a2e"
+# Left Status Section
+# --------------------
+# Displays: Session name
+set -g status-left-length 10
+set -g status-left "#[fg=#D4D7DD,bg=#0B0E14] #S "
 
-# Left status bar
-set -g status-left-length 40
-set -g status-left "#[fg=#a9dc76,bold] #S #[fg=#78dce8]❯ #[default]"
 
-# Right status bar
-set -g status-right-length 100
-set -g status-right "#[fg=#ab9df2]#{?client_prefix,⌨ ,} #[fg=#ffd866]%Y-%m-%d #[fg=#ff6188]%H:%M "
+# Right Status Section
+# --------------------
+# Displays: Keyboard indicator (when prefix is active) + Time
+# - Uses absolute positioning to prevent layout shift
+# - Keyboard icon (⌨) overlays the time when prefix is pressed
+# - Both keyboard icon and time use fixed width to maintain spacing
+set -g status-right-length 20
+set -g status-right "#{?client_prefix,#[fg=#5AAAD2]⌨ #[fg=#394150],#[fg=#394150]  }%H:%M "
 
-# Window status
-setw -g window-status-format "#[fg=#727072] #I:#W "
-setw -g window-status-current-format "#[fg=#fcfcfa,bold,bg=#5b595c] #I:#W "
-setw -g window-status-separator ""
+
+# Window List - Inactive Windows
+# -------------------------------
+# Format: Plain window name in muted color
+setw -g window-status-format "#[fg=#394150,bg=#0B0E14] #W "
+
+
+# Window List - Active Window
+# ----------------------------
+# Format: Icon (» or 󰊓 if zoomed) + Window name
+# - Icon appears in accent color (#5AAAD2)
+# - » = Normal window (widely supported)
+# - 󰊓 = Zoomed/maximized pane
+# - Window name appears in active text color
+setw -g window-status-current-format \
+"#[fg=#5AAAD2,bg=#0B0E14]#{?window_zoomed_flag,󰊓,»} #[fg=#B1AEAA,bg=#0B0E14]#W "
+
+
+# Window Separator
+# ----------------
+# Dot symbol (•) separates all windows in the list
+setw -g window-status-separator "#[fg=#394150,bg=#0B0E14] • "
+
 
 # ------------------
 # Pane Borders
 # ------------------
 set -g pane-border-style "fg=#5b595c"
-set -g pane-active-border-style "fg=#a9dc76"
+set -g pane-active-border-style "fg=#5AAAD2"
 
 # Pane number display
-set -g display-panes-active-colour "#a9dc76"
+set -g display-panes-active-colour "#5AAAD2"
 set -g display-panes-colour "#ab9df2"
 
 # ------------------
-# Messages
+# Messages & Alerts
 # ------------------
-set -g message-style "fg=#fcfcfa,bg=#5b595c"
-set -g message-command-style "fg=#fcfcfa,bg=#5b595c"
+# Message style (for notifications like "tmux.conf reloaded!")
+# - Blue background with white text for consistency with accent color
+set -g message-style "fg=#fcfcfa,bg=#5AAAD2"
+
+# Command prompt style (for confirmations like kill-window/kill-pane)
+# - Same style as messages for visual consistency
+set -g message-command-style "fg=#fcfcfa,bg=#5AAAD2"
 
 # ------------------
 # Clock Mode
