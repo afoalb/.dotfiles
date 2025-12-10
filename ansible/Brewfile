@@ -1,25 +1,47 @@
-# ==============================================================================
+# =============
 # macOS Development Environment Brewfile
-# ==============================================================================
+# =============
+#
 # This file is managed by Ansible and defines all packages to install via
 # Homebrew. It follows the specification in docs/specifications.md
 #
 # Usage: brew bundle --file=Brewfile
-# ==============================================================================
+# -------------
 
-# ------------------------------------------------------------------------------
+# -------------
 # Taps (Third-party Repositories)
-# ------------------------------------------------------------------------------
+# -------------
 tap "hashicorp/tap"           # HashiCorp packages (Terraform, Packer, etc.)
 
-# ------------------------------------------------------------------------------
+# -------------
 # Package Managers
-# ------------------------------------------------------------------------------
+# -------------
 brew "mas"                    # Mac App Store CLI
 
-# ------------------------------------------------------------------------------
+# -------------
+# Shell Environment
+# -------------
+brew "zsh"                    # Modern shell (local use)
+brew "bash"                   # Portable shell (remote compatibility)
+brew "starship"               # Cross-shell prompt
+
+# -------------
+# Core System Tools
+# -------------
+brew "ansible"                # Automation tool
+
+# -------------
+# Terminal & Multiplexing
+# -------------
+cask "alacritty"              # GPU-accelerated terminal emulator
+brew "tmux"                   # Multiplexer
+cask "font-fira-code-nerd-font"    # FiraCode with Nerd Font icons
+cask "font-jetbrains-mono-nerd-font" # For starship
+cask "font-hack-nerd-font"    # For starship (terminal icons)
+
+# -------------
 # CLI Tools & Utilities
-# ------------------------------------------------------------------------------
+# -------------
 brew "fzf"                    # Fuzzy finder
 brew "ripgrep"                # Fast code search (rg)
 brew "fd"                     # Modern find replacement
@@ -35,72 +57,56 @@ brew "curlie"                 # Curl with httpie syntax
 brew "httpie"                 # HTTP client
 brew "mosh"                   # Mobile shell (better SSH)
 
-# ------------------------------------------------------------------------------
-# Core System Tools
-# ------------------------------------------------------------------------------
-brew "ansible"                # Automation tool
-brew "git"                    # Version control
-
-# ------------------------------------------------------------------------------
-# Shell Environment
-# ------------------------------------------------------------------------------
-brew "zsh"                    # Modern shell (local use)
-brew "bash"                   # Portable shell (remote compatibility)
-brew "starship"               # Cross-shell prompt
-
-# ------------------------------------------------------------------------------
-# Terminal & Multiplexing
-# ------------------------------------------------------------------------------
-cask "alacritty"              # GPU-accelerated terminal emulator
-brew "tmux"                   # Terminal multiplexer
-cask "font-fira-code-nerd-font"    # FiraCode with Nerd Font icons
-cask "font-jetbrains-mono-nerd-font" # JetBrains Mono with Nerd Font icons
-cask "font-hack-nerd-font"    # Hack Nerd Font for terminal icons
-
-# ------------------------------------------------------------------------------
+# -------------
 # Window Management
-# ------------------------------------------------------------------------------
+# -------------
 brew "koekeishiya/formulae/yabai"      # Tiling window manager
 brew "koekeishiya/formulae/skhd"       # Hotkey daemon
 tap "FelixKratz/formulae"              # SketchyBar tap
 brew "FelixKratz/formulae/sketchybar"  # Custom menu bar
 cask "karabiner-elements"              # Keyboard customization
 cask "hammerspoon"                     # Automation engine
-cask "jordanbaird-ice"                 # Menu bar icon manager
+cask "jordanbaird-ice"                 # Manages icon visibility
 
-# ------------------------------------------------------------------------------
+# -------------
+# API Development
+# -------------
+cask "httpie-desktop"         # httpie CLI in CLI Tools section
+
+# -------------
 # Text Editors & IDEs
-# ------------------------------------------------------------------------------
+# -------------
 brew "neovim"                 # Modern vim with Lua support
 cask "visual-studio-code"     # VS Code editor
 
-# ------------------------------------------------------------------------------
+# -------------
 # Version Control & Git Tools
-# ------------------------------------------------------------------------------
+# -------------
+brew "git"                    # Version control
 brew "lazygit"                # Terminal UI for git
 brew "git-delta"              # Better diff viewer
 brew "gh"                     # GitHub CLI
 brew "tig"                    # Text-mode interface for git
 
-# ------------------------------------------------------------------------------
+# -------------
 # Language Runtimes & Version Managers
-# ------------------------------------------------------------------------------
+# -------------
 brew "pyenv"                  # Python version management
 brew "poetry"                 # Python dependency management
 brew "pipx"                   # Install Python apps in isolated environments
 brew "fnm"                    # Fast Node.js version manager
 brew "direnv"                 # Automatic environment variable loading
 
-# ------------------------------------------------------------------------------
+# -------------
 # Containers & Virtualization
-# ------------------------------------------------------------------------------
+# -------------
 brew "colima"                 # Container runtime
 brew "podman"                 # Container CLI
 cask "utm"                    # Virtual machine manager (QEMU frontend)
 
-# ------------------------------------------------------------------------------
+# -------------
 # Infrastructure as Code
-# ------------------------------------------------------------------------------
+# -------------
 brew "terraform"              # Infrastructure provisioning
 brew "terraform-docs"         # Generate documentation from Terraform
 brew "tflint"                 # Terraform linter
@@ -108,68 +114,59 @@ brew "tfsec"                  # Terraform security scanner
 brew "ansible-lint"           # Ansible best practices checker
 brew "hashicorp/tap/packer"   # Image creation tool (from HashiCorp tap)
 
-# ------------------------------------------------------------------------------
+# -------------
 # Database Tools
-# ------------------------------------------------------------------------------
+# -------------
 brew "mycli"                  # MySQL CLI with autocomplete
 brew "pgcli"                  # PostgreSQL CLI with autocomplete
 
-# ------------------------------------------------------------------------------
-# API Development
-# ------------------------------------------------------------------------------
-cask "httpie-desktop"         # HTTPie Desktop (renamed from httpie)
-# httpie CLI already installed in CLI Tools section
-
-# ------------------------------------------------------------------------------
+# -------------
 # Monitoring & System Tools
-# ------------------------------------------------------------------------------
+# -------------
 brew "btop"                   # System monitor
 cask "stats"                  # Menu bar system monitor
 brew "glances"                # Alternative system monitor
 
-# ------------------------------------------------------------------------------
+# -------------
 # Productivity & Utilities
-# ------------------------------------------------------------------------------
+# -------------
 cask "maccy"                  # Clipboard manager
-# Note: espanso is no longer available via Homebrew
 cask "aldente"                # Battery charge limiter
 
-# ------------------------------------------------------------------------------
-# Documentation & Knowledge
-# ------------------------------------------------------------------------------
+# -------------
+# Notes & Documentation
+# -------------
 cask "obsidian"               # Markdown-based notes
-# Note: DevDocs Desktop discontinued upstream (disabled 2024-12-16)
-# Alternative: Dash (paid) or Velocity (open source)
+# TODO: find a good offline docs 
 
-# ------------------------------------------------------------------------------
+# -------------
 # File Management
-# ------------------------------------------------------------------------------
+# -------------
 cask "keka"                   # Archive utility
-# Note: Quick Look plugins are deprecated in modern macOS and no longer available
 
-# ------------------------------------------------------------------------------
-# Media & Entertainment
-# ------------------------------------------------------------------------------
-cask "spotify"                # Music streaming
-cask "shottr"                 # Screenshot tool
-
-# ------------------------------------------------------------------------------
+# -------------
 # Browsers
-# ------------------------------------------------------------------------------
+# -------------
 cask "firefox"                # Firefox Developer Edition
 cask "google-chrome"          # Chrome browser
 
-# ------------------------------------------------------------------------------
+# -------------
 # Security & Secrets
-# ------------------------------------------------------------------------------
+# -------------
 cask "bitwarden"              # Password manager
 
-# ------------------------------------------------------------------------------
+# -------------
+# Media & Entertainment
+# -------------
+cask "spotify"                # Music streaming
+cask "shottr"                 # Screenshot tool
+
+# -------------
 # PAID SOFTWARE
-# ------------------------------------------------------------------------------
-cask "little-snitch"          # Network firewall (paid)
-cask "tableplus"              # Universal database GUI (paid)
-cask "fork"                   # Git GUI (paid)
-cask "alfred"                 # Launcher/automation (paid)
-cask "fastrawviewer"          # RAW and JPEG image viewer (paid)
+# -------------
+cask "alfred"                 # Launcher/automation
+cask "fork"                   # Git GUI
+cask "tableplus"              # Universal database GUI
+cask "little-snitch"          # Network firewall
+cask "fastrawviewer"          # RAW and JPEG image viewer
 
