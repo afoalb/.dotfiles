@@ -1,12 +1,10 @@
-# ==============================================================================
+# ==============
 # Tmux Configuration
-# ==============================================================================
-# Modern tmux configuration with vi bindings and quality-of-life improvements
-# ==============================================================================
+# ==============
 
-# ------------------------------------------------------------------------------
+# ------------------
 # General Settings
-# ------------------------------------------------------------------------------
+# ------------------
 # Enable mouse support
 set -g mouse on
 
@@ -42,21 +40,63 @@ setw -g aggressive-resize on
 # Don't wait for escape sequences
 set -sg escape-time 0
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Key Bindings
-# ------------------------------------------------------------------------------
-# Remap prefix from Ctrl-b to Ctrl-a (more ergonomic)
+# ------------------
+# Key Activator (Ctrl-a)
 unbind C-b
 set -g prefix C-a
-bind C-a send-prefix
+bind C-a send-prefix # bind=Ctrl-a
 
-# Reload configuration
+# Reload config
 bind r source-file ~/.tmux.conf \; display-message "tmux.conf reloaded!"
 
-# ------------------------------------------------------------------------------
-# Vi Mode
-# ------------------------------------------------------------------------------
-# Use vi keys in copy mode
+# Create new window / split panes
+bind c new-window -c "#{pane_current_path}"
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+# Rename window
+bind / command-prompt -I "#W" "rename-window '%%'"
+
+# Kill window/pane
+bind X confirm-before -p "kill-window #W? (y/n)" kill-window
+bind x confirm-before -p "kill-pane #P? (y/n)" kill-pane
+
+# Window navigation
+bind n next-window
+bind p previous-window
+
+# Swap windows
+bind -r "<" swap-window -d -t -1   # Ctrl-a < → swap with previous window
+bind -r ">" swap-window -d -t +1   # Ctrl-a > → swap with next window
+
+# Pane navigation (vim keys)
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+# Resize panes with Ctrl + h/j/k/l
+bind -r C-h resize-pane -L 5
+bind -r C-j resize-pane -D 5
+bind -r C-k resize-pane -U 5
+bind -r C-l resize-pane -R 5
+
+# Swap panes numerically Shift + H/J/K/L
+bind -r J swap-pane -D 
+bind -r K swap-pane -U
+
+# Zoom pane (full screen)
+bind m resize-pane -Z
+
+# Enter copy mode
+bind [ copy-mode
+bind ] paste-buffer
+
+# use vi keys in copy mode
 setw -g mode-keys vi
 set -g status-keys vi
 
@@ -65,60 +105,12 @@ bind -T copy-mode-vi v send -X begin-selection
 bind -T copy-mode-vi y send -X copy-selection-and-cancel
 bind -T copy-mode-vi C-v send -X rectangle-toggle
 
-# Enter copy mode with prefix + [
-bind [ copy-mode
-bind ] paste-buffer
-
-# ------------------------------------------------------------------------------
-# Window Management
-# ------------------------------------------------------------------------------
-# Create new window
-bind c new-window -c "#{pane_current_path}"
-
-# Split windows (maintain current path)
-bind | split-window -h -c "#{pane_current_path}"
-bind - split-window -v -c "#{pane_current_path}"
-unbind '"'
-unbind %
-
-# Navigate windows
-bind -r C-h select-window -t :-
-bind -r C-l select-window -t :+
-
-# Swap windows
-bind -r "<" swap-window -d -t -1
-bind -r ">" swap-window -d -t +1
-
-# Kill window
-bind X confirm-before -p "kill-window #W? (y/n)" kill-window
-
-# ------------------------------------------------------------------------------
-# Pane Management
-# ------------------------------------------------------------------------------
-# Navigate panes with vim keys (without prefix)
-bind -n M-h select-pane -L
-bind -n M-j select-pane -D
-bind -n M-k select-pane -U
-bind -n M-l select-pane -R
-
-# Resize panes with vim keys
-bind -r H resize-pane -L 5
-bind -r J resize-pane -D 5
-bind -r K resize-pane -U 5
-bind -r L resize-pane -R 5
-
-# Toggle pane synchronization
+# Toggle synchronize panes
 bind S set-window-option synchronize-panes\; display-message "synchronize-panes is now #{?pane_synchronized,on,off}"
 
-# Zoom pane
-bind z resize-pane -Z
-
-# Kill pane
-bind x confirm-before -p "kill-pane #P? (y/n)" kill-pane
-
-# ------------------------------------------------------------------------------
+# ------------------
 # Status Bar
-# ------------------------------------------------------------------------------
+# ------------------
 # Update status bar every 5 seconds
 set -g status-interval 5
 
@@ -141,9 +133,9 @@ setw -g window-status-format "#[fg=#727072] #I:#W "
 setw -g window-status-current-format "#[fg=#fcfcfa,bold,bg=#5b595c] #I:#W "
 setw -g window-status-separator ""
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Pane Borders
-# ------------------------------------------------------------------------------
+# ------------------
 set -g pane-border-style "fg=#5b595c"
 set -g pane-active-border-style "fg=#a9dc76"
 
@@ -151,21 +143,21 @@ set -g pane-active-border-style "fg=#a9dc76"
 set -g display-panes-active-colour "#a9dc76"
 set -g display-panes-colour "#ab9df2"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Messages
-# ------------------------------------------------------------------------------
+# ------------------
 set -g message-style "fg=#fcfcfa,bg=#5b595c"
 set -g message-command-style "fg=#fcfcfa,bg=#5b595c"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Clock Mode
-# ------------------------------------------------------------------------------
+# ------------------
 setw -g clock-mode-colour "#78dce8"
 setw -g clock-mode-style 24
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Activity Monitoring
-# ------------------------------------------------------------------------------
+# ------------------
 # Monitor for activity in windows
 setw -g monitor-activity on
 set -g visual-activity off
@@ -174,15 +166,15 @@ set -g visual-activity off
 set -g visual-bell off
 set -g bell-action none
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Copy Mode
-# ------------------------------------------------------------------------------
+# ------------------
 # Highlight current line in copy mode
 setw -g mode-style "fg=#fcfcfa,bg=#5b595c"
 
-# ------------------------------------------------------------------------------
+# ------------------
 # Session Management
-# ------------------------------------------------------------------------------
+# ------------------
 # Choose session
 bind s choose-session
 
