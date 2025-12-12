@@ -94,6 +94,6 @@ brew install ansible
 # Step 4: Run the Ansible playbook
 # ----------------------------
 echo "[first-run] Running Ansible playbook..."
-ansible-playbook "$ANSIBLE_DIR/macos.yml" --vault-password-file "$VAULT_PASS_FILE"
+ansible-playbook "$ANSIBLE_DIR/macos.yml" --tags neovim --vault-password-file "$VAULT_PASS_FILE"
 
 echo "[first-run] Setup complete!"

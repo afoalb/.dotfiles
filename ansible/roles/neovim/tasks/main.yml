@@ -1,81 +1,49 @@
 ---
 # ==================
-# Neovim with LazyVim Configuration Role
+# Neovim Minimal Configuration Role
 # ==================
-# Sets up Neovim with LazyVim distribution
+
 # Installation handled by homebrew role via Brewfile
-# ==================
 
-- name: Remove existing Neovim configuration (for clean LazyVim install)
+- name: Remove existing Neovim configuration (if clean install requested)
   file:
     path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
     state: absent
-  when: lazyvim_clean_install | default(false)
+  when: nvim_clean_install | default(false)
   tags: neovim
 
-- name: Check if Neovim config directory exists
-  stat:
+- name: Create Neovim config directory
+  file:
     path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
-  register: nvim_config_dir
-  tags: neovim
-
-- name: Clone LazyVim starter template
-  git:
-    repo: 'https://github.com/LazyVim/starter'
-    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim"
-    version: main
-    update: no
-  when: not nvim_config_dir.stat.exists
-  tags: neovim
-
-- name: Remove LazyVim starter .git directory (to make it your own)
-  file:
-    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/.git"
-    state: absent
-  tags: neovim
-
-- name: Create LazyVim lua/plugins directory for custom plugins
-  file:
-    path: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins"
     state: directory
     mode: '0755'
   tags: neovim
 
-- name: Deploy custom LazyVim configuration
+- name: Deploy init.lua configuration
   copy:
-    src: "{{ item }}"
-    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/{{ item }}"
+    src: init.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/init.lua"
     mode: '0644'
-  loop:
-    - config/options.lua
-    - config/keymaps.lua
-  ignore_errors: yes
   tags: neovim
 
-- name: Deploy custom plugin configurations
-  copy:
-    src: plugins/
-    dest: "{{ ansible_facts['env']['HOME'] }}/.config/nvim/lua/plugins/"
-    mode: '0644'
-  ignore_errors: yes
-  tags: neovim
-
-- name: Create Neovim data directory
+- name: Create Neovim data directory (for undo history, etc)
   file:
     path: "{{ ansible_facts['env']['HOME'] }}/.local/share/nvim"
     state: directory
     mode: '0755'
   tags: neovim
 
-- name: Display LazyVim setup message
+- name: Display Neovim setup message
   debug:
     msg: |
-      LazyVim has been installed. On first run, Neovim will automatically
-      install plugins. Run 'nvim' to complete the setup.
-
-      Useful LazyVim commands:
-        :Lazy - Plugin manager
-        :Mason - LSP/formatter/linter installer
-        :LazyHealth - Check health
-        <leader> (space) - Opens which-key menu
+      Neovim has been configured. On first run, Lazy.nvim will automatically
+      bootstrap and install all plugins. This takes 30-60 seconds.
+      
+      Run 'nvim' to complete the setup.
+      
+      Useful commands after installation:
+        :Lazy - Plugin manager UI
+        :Mason - LSP/formatter installer UI
+        :checkhealth - Check Neovim health
+        :LspInfo - Check LSP status for current buffer
   tags: neovim

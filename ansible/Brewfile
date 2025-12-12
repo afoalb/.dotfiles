@@ -43,8 +43,8 @@ cask "font-hack-nerd-font"    # For starship (terminal icons)
 # CLI Tools & Utilities
 # -------------
 brew "fzf"                    # Fuzzy finder
-brew "ripgrep"                # Fast code search (rg)
-brew "fd"                     # Modern find replacement
+brew "ripgrep"                # Fast code search (rg) (neovim telescope requires)
+brew "fd"                     # Modern find replacement (neovim telescope would like)
 brew "bat"                    # Cat with syntax highlighting
 brew "eza"                    # Modern ls replacement
 brew "zoxide"                 # Smart cd replacement
@@ -95,6 +95,9 @@ brew "pyenv"                  # Python version management
 brew "poetry"                 # Python dependency management
 brew "pipx"                   # Install Python apps in isolated environments
 brew "fnm"                    # Fast Node.js version manager
+brew "node"                   # JS runtime env. 
+brew "npm"                    # JS package manager
+brew "python3"                # Python
 brew "direnv"                 # Automatic environment variable loading
 
 # -------------
