@@ -2,11 +2,12 @@
 -- MINIMAL NEOVIM CONFIG FOR LSP DEVELOPMENT
 -- ------------------
 
+
 -- -----------------
 -- BASIC OPTIONS
 -- -----------------
-vim.g.mapleader = '\\'              -- Space as leader key (must be set before plugins)
-vim.g.maplocalleader = ' '         -- Local leader also space
+vim.g.mapleader = '\\'              -- Backslash as leader key (must be set before plugins)
+vim.g.maplocalleader = ' '         -- Local leader is space
 
 vim.opt.number = true              -- Show line numbers
 vim.opt.relativenumber = true      -- Relative line numbers for quick navigation
@@ -27,10 +28,9 @@ vim.opt.splitright = true          -- Vertical splits go right
 vim.opt.splitbelow = true          -- Horizontal splits go below
 vim.opt.clipboard = 'unnamedplus'  -- Use system clipboard
 
-# ------------------
+-- ------------------
 -- LAZY.NVIM BOOTSTRAP
-# ------------------
--- Auto-install lazy.nvim if not present
+-- ------------------
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -57,7 +57,7 @@ require('lazy').setup({
         },
     },
 
-    -- Autocompletion (used via Ctrl+X Ctrl+O)
+    -- Autocompletion
     {
         'hrsh7th/nvim-cmp',
         dependencies = {
@@ -80,7 +80,7 @@ require('lazy').setup({
     { 'lewis6991/gitsigns.nvim' },
     { 'tpope/vim-fugitive' },
 
-    -- Colorscheme (optional - remove if you want default)
+    -- Colorscheme
     {
         'folke/tokyonight.nvim',
         lazy = false,
@@ -89,12 +89,230 @@ require('lazy').setup({
             vim.cmd([[colorscheme tokyonight-night]])
         end,
     },
+
+    -- Treesitter for better syntax highlighting
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ':TSUpdate',
+        lazy = false,
+        priority = 100,
+        config = function()
+            local status_ok, configs = pcall(require, 'nvim-treesitter.configs')
+            if not status_ok then
+                vim.notify('Treesitter not installed yet. Run :Lazy sync', vim.log.levels.WARN)
+                return
+            end
+
+            configs.setup({
+                ensure_installed = { 
+                    'python', 
+                    'typescript', 
+                    'tsx', 
+                    'javascript', 
+                    'lua', 
+                    'yaml', 
+                    'hcl', 
+                    'bash',
+                },
+                highlight = { enable = true },
+                indent = { enable = true },
+            })
+        end,
+    },
+
+    -- Auto-formatting
+    {
+        'stevearc/conform.nvim',
+        event = { 'BufWritePre' },
+        cmd = { 'ConformInfo' },
+        keys = {
+            {
+                '<leader>f',
+                function()
+                    require('conform').format({ async = true, lsp_fallback = true })
+                end,
+                mode = '',
+                desc = 'Format buffer',
+            },
+        },
+        opts = {
+            formatters_by_ft = {
+                python = { 'black' },
+                javascript = { 'prettier' },
+                typescript = { 'prettier' },
+                typescriptreact = { 'prettier' },
+                yaml = { 'prettier' },
+                terraform = { 'terraform_fmt' },
+                hcl = { 'terraform_fmt' },
+            },
+            format_on_save = {
+                timeout_ms = 3000,
+                lsp_fallback = true,
+            },
+        },
+    },
+
+    -- Comments
+    {
+        'numToStr/Comment.nvim',
+        opts = {},
+        lazy = false,
+    },
+
+    -- Which-key
+    {
+        'folke/which-key.nvim',
+        event = 'VeryLazy',
+        config = function()
+            local wk = require('which-key')
+            wk.setup({
+                icons = { mappings = false },
+            })
+
+            -- Register groups for leader key mappings
+            wk.add({
+                { "<leader>f", group = "Find/Format" },
+                { "<leader>g", group = "Git" },
+                { "<leader>s", group = "Search/Replace" },
+                { "<leader>c", group = "Code/Quickfix" },
+                { "<leader>r", group = "Refactor" },
+            })
+
+            -- =====================================================
+            -- CHEATSHEET: Document Vim built-in commands here
+            -- Press <leader>? to see all registered keymaps
+            -- =====================================================
+            wk.add({
+                -- Window management (Ctrl-w prefix)
+                { "<C-w>", group = "Windows" },
+                { "<C-w>w", desc = "Next window" },
+                { "<C-w>h", desc = "Go to left window" },
+                { "<C-w>j", desc = "Go to below window" },
+                { "<C-w>k", desc = "Go to above window" },
+                { "<C-w>l", desc = "Go to right window" },
+                { "<C-w>c", desc = "Close current window" },
+                { "<C-w>o", desc = "Close all OTHER windows" },
+                { "<C-w>s", desc = "Split horizontal" },
+                { "<C-w>v", desc = "Split vertical" },
+                { "<C-w>=", desc = "Equal size windows" },
+                { "<C-w>_", desc = "Max height" },
+                { "<C-w>|", desc = "Max width" },
+                { "<C-w>r", desc = "Rotate windows" },
+                { "<C-w>T", desc = "Move window to tab" },
+
+                -- Navigation
+                { "g", group = "Go to / LSP" },
+                { "gd", desc = "Go to definition (LSP)" },
+                { "gr", desc = "Go to references (LSP)" },
+                { "gI", desc = "Go to implementation (LSP)" },
+                { "gg", desc = "Go to first line" },
+                { "G", desc = "Go to last line" },
+                { "gf", desc = "Go to file under cursor" },
+                { "gi", desc = "Go to last insert position" },
+
+                -- Marks and jumps
+                { "'", group = "Marks" },
+                { "''", desc = "Jump to last position" },
+                { "'.", desc = "Jump to last change" },
+                { "m", group = "Set mark (m + letter)" },
+
+                -- Text objects (visual mode / operators)
+                { "i", group = "Inner text object", mode = { "o", "v" } },
+                { "iw", desc = "Inner word", mode = { "o", "v" } },
+                { "iW", desc = "Inner WORD", mode = { "o", "v" } },
+                { "ib", desc = "Inner parentheses ()", mode = { "o", "v" } },
+                { "iB", desc = "Inner braces {}", mode = { "o", "v" } },
+                { 'i"', desc = "Inner double quotes", mode = { "o", "v" } },
+                { "i'", desc = "Inner single quotes", mode = { "o", "v" } },
+                { "it", desc = "Inner tag <tag></tag>", mode = { "o", "v" } },
+                { "ip", desc = "Inner paragraph", mode = { "o", "v" } },
+
+                { "a", group = "Around text object", mode = { "o", "v" } },
+                { "aw", desc = "Around word", mode = { "o", "v" } },
+                { "ab", desc = "Around parentheses ()", mode = { "o", "v" } },
+                { "aB", desc = "Around braces {}", mode = { "o", "v" } },
+                { 'a"', desc = "Around double quotes", mode = { "o", "v" } },
+                { "at", desc = "Around tag", mode = { "o", "v" } },
+                { "ap", desc = "Around paragraph", mode = { "o", "v" } },
+
+                -- Folding
+                { "z", group = "Folds/View" },
+                { "za", desc = "Toggle fold" },
+                { "zo", desc = "Open fold" },
+                { "zc", desc = "Close fold" },
+                { "zR", desc = "Open ALL folds" },
+                { "zM", desc = "Close ALL folds" },
+                { "zz", desc = "Center cursor line" },
+                { "zt", desc = "Cursor line to top" },
+                { "zb", desc = "Cursor line to bottom" },
+
+                -- Quickfix (with bqf)
+                { "]q", desc = "Next quickfix item" },
+                { "[q", desc = "Prev quickfix item" },
+                { "]Q", desc = "Last quickfix item" },
+                { "[Q", desc = "First quickfix item" },
+
+                -- Diagnostics
+                { "]d", desc = "Next diagnostic" },
+                { "[d", desc = "Prev diagnostic" },
+
+                -- Comment.nvim
+                { "gc", group = "Comment" },
+                { "gcc", desc = "Toggle line comment" },
+                { "gbc", desc = "Toggle block comment" },
+                { "gc", desc = "Comment selection", mode = "v" },
+
+                -- Search
+                { "/", desc = "Search forward" },
+                { "?", desc = "Search backward" },
+                { "n", desc = "Next search result" },
+                { "N", desc = "Prev search result" },
+                { "*", desc = "Search word under cursor (forward)" },
+                { "#", desc = "Search word under cursor (backward)" },
+
+                -- Registers
+                { '"', group = "Registers" },
+                { '"+', desc = "System clipboard", mode = { "n", "v" } },
+                { '"0', desc = "Yank register (last yank)", mode = { "n", "v" } },
+
+                -- Macros
+                { "q", desc = "Record macro (q + register)" },
+                { "@", group = "Play macro" },
+                { "@@", desc = "Repeat last macro" },
+
+                -- Useful combos
+                { "ciw", desc = "Change inner word" },
+                { "diw", desc = "Delete inner word" },
+                { "yiw", desc = "Yank inner word" },
+                { "ci(", desc = "Change inside ()" },
+                { "ci{", desc = "Change inside {}" },
+                { 'ci"', desc = 'Change inside ""' },
+                { "da(", desc = "Delete around ()" },
+                { "va{", desc = "Select around {}" },
+            })
+        end,
+    },
+
+    -- Autopairs (auto-close brackets, quotes, etc)
+    {
+        'windwp/nvim-autopairs',
+        event = 'InsertEnter',
+        config = true,
+    },
+
+    -- Better Quickfix List
+    -- Usage: After :grep, :vimgrep, or LSP references, open with :copen
+    -- Keys in quickfix: o=open, p=preview, zf=fuzzy filter, <Tab>=select
+    {
+        'kevinhwang91/nvim-bqf',
+        ft = 'qf',
+    },
+
 })
 
 -- -----------------
 -- LSP SETUP
 -- -----------------
--- Ensure npm is in PATH for Mason
 local homebrew_paths = {
     '/opt/homebrew/bin',
     '/opt/homebrew/opt/node/bin',
@@ -108,7 +326,6 @@ for _, path in ipairs(homebrew_paths) do
     end
 end
 
--- Mason: Auto-install language servers
 require('mason').setup()
 require('mason-lspconfig').setup({
     ensure_installed = {
@@ -120,10 +337,8 @@ require('mason-lspconfig').setup({
     automatic_installation = true,
 })
 
--- Get default capabilities for LSP
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- Helper function to configure LSP servers
 local function setup_lsp(server_name, settings)
     vim.lsp.config(server_name, {
         capabilities = capabilities,
@@ -132,7 +347,6 @@ local function setup_lsp(server_name, settings)
     vim.lsp.enable(server_name)
 end
 
--- Python (Django)
 setup_lsp('pyright', {
     python = {
         analysis = {
@@ -145,10 +359,8 @@ setup_lsp('pyright', {
     }
 })
 
--- TypeScript/React
 setup_lsp('ts_ls')
 
--- YAML (Ansible)
 setup_lsp('yamlls', {
     yaml = {
         schemas = {
@@ -157,10 +369,8 @@ setup_lsp('yamlls', {
     }
 })
 
--- Terraform
 setup_lsp('terraformls')
 
--- LSP Keybindings (set when LSP attaches to buffer)
 vim.api.nvim_create_autocmd('LspAttach', {
     group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
     callback = function(event)
@@ -180,7 +390,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- -----------------
 -- AUTOCOMPLETION SETUP
 -- -----------------
--- Simple setup: completions via Ctrl+X Ctrl+O (Vim's native omnifunc)
 local cmp = require('cmp')
 local luasnip = require('luasnip')
 
@@ -222,18 +431,268 @@ cmp.setup({
 -- -----------------
 -- TELESCOPE SETUP
 -- -----------------
+-- DEFENSIVE CODING NOTE (Dec 2024):
+-- This implementation is intentionally defensive due to a subtle Telescope bug.
+--
+-- THE PROBLEM:
+-- When using live_grep on a file OUTSIDE the current working directory (e.g.,
+-- editing ~/.config/nvim/init.lua while CWD is ~/projects/myapp), Telescope's
+-- previewer creates a temporary buffer with a malformed name (just "]").
+-- If you select a grep result from that file, entry.filename returns "]" instead
+-- of the actual file path. A naive implementation would then run `:edit ]`,
+-- creating a REAL FILE named "]" in your CWD — which then appears in future
+-- grep results, perpetuating the bug.
+--
+-- THE FIX:
+-- 1. Capture the original buffer/window BEFORE Telescope opens (not after close)
+-- 2. Validate extracted filenames (reject "]", "[", or paths ending in brackets)
+-- 3. Fall back to navigating within the original buffer when filename is invalid
+--
+-- -----------------
 local telescope = require('telescope')
+local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
+
+-- Helper: Get canonical path
+local function get_canonical_path(path)
+    if not path or path == '' or type(path) ~= 'string' then return nil end
+    local expanded = vim.fn.expand(path)
+    local resolved = vim.fn.resolve(expanded)
+    return vim.fn.fnamemodify(resolved, ':p')
+end
+
+-- Helper: Check if a filename is valid (not garbage like "]")
+local function is_valid_filename(filename)
+    if not filename or type(filename) ~= 'string' then return false end
+    if #filename < 2 then return false end  -- Too short
+    if filename:match('^[%[%]]+$') then return false end  -- Just brackets
+    if filename:match('[%[%]]$') then return false end  -- Ends with bracket
+    return true
+end
+
+-- Helper: Extract valid file path from telescope entry
+local function get_entry_path(entry, cwd)
+    if not entry then return nil end
+    
+    -- Try entry.filename first
+    if is_valid_filename(entry.filename) then
+        local full_path
+        if vim.fn.fnamemodify(entry.filename, ':p') == entry.filename then
+            -- Already absolute
+            full_path = entry.filename
+        else
+            -- Relative - combine with cwd
+            full_path = (cwd or vim.fn.getcwd()) .. '/' .. entry.filename
+        end
+        if vim.fn.filereadable(full_path) == 1 then
+            return get_canonical_path(full_path)
+        end
+    end
+    
+    -- Try entry.path
+    if is_valid_filename(entry.path) then
+        local full_path = entry.path
+        if vim.fn.filereadable(full_path) == 1 then
+            return get_canonical_path(full_path)
+        end
+    end
+    
+    -- Cannot extract valid path
+    return nil
+end
+
+-- Global storage for pre-Telescope context
+_G._telescope_ctx = nil
+
+local function capture_context()
+    _G._telescope_ctx = {
+        bufnr = vim.api.nvim_get_current_buf(),
+        winnr = vim.api.nvim_get_current_win(),
+        file = get_canonical_path(vim.api.nvim_buf_get_name(0)),
+    }
+end
+
+-- Custom select action
+local function smart_open(prompt_bufnr)
+    local entry = action_state.get_selected_entry()
+    if not entry then
+        actions.close(prompt_bufnr)
+        return
+    end
+    
+    -- Get the picker's cwd (from entry metatable)
+    local picker_cwd = nil
+    local mt = getmetatable(entry)
+    if mt and mt.cwd then
+        picker_cwd = mt.cwd
+    end
+    
+    -- Extract target info
+    local target_file = get_entry_path(entry, picker_cwd)
+    local target_line = entry.lnum or 1
+    local target_col = (entry.col or 1) - 1
+    
+    local orig = _G._telescope_ctx
+    
+    -- Close Telescope first
+    actions.close(prompt_bufnr)
+    
+    vim.schedule(function()
+        -- CASE 1: Invalid/corrupted filename (like "]")
+        -- If we have original context, assume user is searching in current file
+        if not target_file then
+            if orig and orig.file and orig.bufnr then
+                -- Navigate in original buffer
+                if vim.api.nvim_win_is_valid(orig.winnr) then
+                    vim.api.nvim_set_current_win(orig.winnr)
+                end
+                if vim.api.nvim_buf_is_valid(orig.bufnr) then
+                    vim.api.nvim_set_current_buf(orig.bufnr)
+                end
+                
+                local line_count = vim.api.nvim_buf_line_count(0)
+                local safe_line = math.min(math.max(1, target_line), line_count)
+                local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
+                local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
+                
+                vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
+                vim.cmd('normal! zz')
+                
+                _G._telescope_ctx = nil
+                return
+            else
+                -- No context, nothing we can do
+                vim.notify("Could not determine target file", vim.log.levels.WARN)
+                _G._telescope_ctx = nil
+                return
+            end
+        end
+        
+        -- CASE 2: Valid filename extracted
+        local is_same_file = orig 
+            and orig.file 
+            and target_file 
+            and orig.file == target_file
+        
+        if is_same_file then
+            -- Same file: navigate in original buffer
+            if vim.api.nvim_win_is_valid(orig.winnr) then
+                vim.api.nvim_set_current_win(orig.winnr)
+            end
+            if vim.api.nvim_buf_is_valid(orig.bufnr) then
+                vim.api.nvim_set_current_buf(orig.bufnr)
+            end
+            
+            local line_count = vim.api.nvim_buf_line_count(0)
+            local safe_line = math.min(math.max(1, target_line), line_count)
+            local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
+            local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
+            
+            vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
+            vim.cmd('normal! zz')
+        else
+            -- Different file: open it
+            if orig and vim.api.nvim_win_is_valid(orig.winnr) then
+                vim.api.nvim_set_current_win(orig.winnr)
+            end
+            
+            vim.cmd('edit ' .. vim.fn.fnameescape(target_file))
+            local line_count = vim.api.nvim_buf_line_count(0)
+            local safe_line = math.min(math.max(1, target_line), line_count)
+            vim.api.nvim_win_set_cursor(0, { safe_line, math.max(0, target_col) })
+            vim.cmd('normal! zz')
+        end
+        
+        _G._telescope_ctx = nil
+    end)
+end
+
 telescope.setup({
     defaults = {
         file_ignore_patterns = { 'node_modules', '.git', '__pycache__' },
-    }
+        mappings = {
+            i = {
+                ['<CR>'] = smart_open,
+                ['<C-x>'] = actions.select_horizontal,
+                ['<C-v>'] = actions.select_vertical,
+                -- Swapped navigation: C-p goes down, C-n goes up
+                ['<C-p>'] = actions.move_selection_next,
+                ['<C-n>'] = actions.move_selection_previous,
+            },
+            n = {
+                ['<CR>'] = smart_open,
+                ['<C-x>'] = actions.select_horizontal,
+                ['<C-v>'] = actions.select_vertical,
+                -- Swapped navigation: C-p goes down, C-n goes up
+                ['<C-p>'] = actions.move_selection_next,
+                ['<C-n>'] = actions.move_selection_previous,
+            },
+        },
+    },
 })
 
+-- Keymaps with context capture
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Find Files' })
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Grep Files' })
-vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Find Buffers' })
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Find Help' })
+
+vim.keymap.set('n', '<leader>ff', function()
+    capture_context()
+    builtin.find_files()
+end, { desc = 'Find Files' })
+
+vim.keymap.set('n', '<leader>fg', function()
+    capture_context()
+    builtin.live_grep()
+end, { desc = 'Grep Files' })
+
+vim.keymap.set('n', '<leader>fb', function()
+    capture_context()
+    builtin.buffers()
+end, { desc = 'Find Buffers' })
+
+vim.keymap.set('n', '<leader>fh', function()
+    capture_context()
+    builtin.help_tags()
+end, { desc = 'Find Help' })
+
+-- -----------------
+-- QUICKFIX KEYMAPS (for use with nvim-bqf)
+-- -----------------
+vim.keymap.set('n', '<leader>co', ':copen<CR>', { desc = 'Open Quickfix' })
+vim.keymap.set('n', '<leader>cc', ':cclose<CR>', { desc = 'Close Quickfix' })
+vim.keymap.set('n', ']q', ':cnext<CR>zz', { desc = 'Next Quickfix' })
+vim.keymap.set('n', '[q', ':cprev<CR>zz', { desc = 'Prev Quickfix' })
+vim.keymap.set('n', ']Q', ':clast<CR>zz', { desc = 'Last Quickfix' })
+vim.keymap.set('n', '[Q', ':cfirst<CR>zz', { desc = 'First Quickfix' })
+
+-- -----------------
+-- UTILITY COMMANDS
+-- -----------------
+vim.api.nvim_create_user_command('FixSyntax', function()
+    local buf = vim.api.nvim_get_current_buf()
+    local ft = vim.bo[buf].filetype
+    if ft == '' then
+        ft = vim.filetype.match({ buf = buf }) or ''
+    end
+    if ft ~= '' then
+        pcall(vim.treesitter.start, buf, ft)
+    end
+    vim.cmd('syntax sync fromstart')
+    print('Syntax refreshed: ' .. ft)
+end, {})
+
+vim.api.nvim_create_user_command('DebugBuffers', function()
+    print("Current: buf=" .. vim.api.nvim_get_current_buf() .. " file='" .. vim.api.nvim_buf_get_name(0) .. "'")
+    print("Buffers:")
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) then
+            print(string.format("  [%d] '%s' ft=%s listed=%s", 
+                buf, 
+                vim.api.nvim_buf_get_name(buf),
+                vim.bo[buf].filetype,
+                tostring(vim.bo[buf].buflisted)))
+        end
+    end
+end, {})
 
 -- -----------------
 -- GIT INTEGRATION
@@ -263,6 +722,19 @@ vim.api.nvim_create_autocmd('TermOpen', {
 })
 
 -- -----------------
+-- SEARCH & REPLACE (words that cursor is currently on)
+-- -----------------
+-- Search for word under cursor across project
+vim.keymap.set('n', '<leader>sw', function()
+    capture_context()
+    require('telescope.builtin').grep_string()
+end, { desc = 'Search Word' })
+
+-- Search and replace in current buffer
+vim.keymap.set('n', '<leader>sr', ':%s/<C-r><C-w>//g<Left><Left>', { desc = 'Search Replace' })
+
+
+-- -----------------
 -- DIAGNOSTIC CONFIGURATION
 -- -----------------
 vim.diagnostic.config({
@@ -272,6 +744,7 @@ vim.diagnostic.config({
     underline = true,
     severity_sort = true,
 })
+
 
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })

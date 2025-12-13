@@ -99,6 +99,8 @@ brew "node"                   # JS runtime env.
 brew "npm"                    # JS package manager
 brew "python3"                # Python
 brew "direnv"                 # Automatic environment variable loading
+brew "black"                  # Python formatter
+brew "prettier"               # JS/TS/YAML formatter
 
 # -------------
 # Containers & Virtualization
