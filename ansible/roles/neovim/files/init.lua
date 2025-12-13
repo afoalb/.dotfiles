@@ -6,8 +6,8 @@
 -- -----------------
 -- BASIC OPTIONS
 -- -----------------
-vim.g.mapleader = '\\'              -- Backslash as leader key (must be set before plugins)
-vim.g.maplocalleader = ' '         -- Local leader is space
+vim.g.mapleader = ' '               -- Space as leader key (must be set before plugins)
+vim.g.maplocalleader = '\\'         -- Backslash as local leader
 
 vim.opt.number = true              -- Show line numbers
 vim.opt.relativenumber = true      -- Relative line numbers for quick navigation
@@ -85,7 +85,14 @@ require('lazy').setup({
         'folke/tokyonight.nvim',
         lazy = false,
         priority = 1000,
-        config = function()
+        opts = {
+            on_highlights = function(hl, c)
+                -- Make Python docstrings green like comments
+                hl['@string.documentation.python'] = { fg = c.comment }
+            end,
+        },
+        config = function(_, opts)
+            require('tokyonight').setup(opts)
             vim.cmd([[colorscheme tokyonight-night]])
         end,
     },
@@ -104,14 +111,14 @@ require('lazy').setup({
             end
 
             configs.setup({
-                ensure_installed = { 
-                    'python', 
-                    'typescript', 
-                    'tsx', 
-                    'javascript', 
-                    'lua', 
-                    'yaml', 
-                    'hcl', 
+                ensure_installed = {
+                    'python',
+                    'typescript',
+                    'tsx',
+                    'javascript',
+                    'lua',
+                    'yaml',
+                    'hcl',
                     'bash',
                 },
                 highlight = { enable = true },
@@ -127,7 +134,7 @@ require('lazy').setup({
         cmd = { 'ConformInfo' },
         keys = {
             {
-                '<leader>f',
+                '<leader>fm',
                 function()
                     require('conform').format({ async = true, lsp_fallback = true })
                 end,
@@ -159,6 +166,60 @@ require('lazy').setup({
         lazy = false,
     },
 
+    -- TODO Comments Highlighting
+    -- Highlights TODO, FIX, HACK, WARN, PERF, NOTE, TEST in comments
+    -- Usage:
+    --   :TodoQuickFix  - Show all TODOs in quickfix
+    --   :TodoTelescope - Search TODOs with Telescope
+    --   ]t / [t        - Jump to next/prev TODO
+    {
+        'folke/todo-comments.nvim',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        event = 'VeryLazy',
+        opts = {
+            signs = true,      -- Show signs in the gutter
+            sign_priority = 8,
+            keywords = {
+                FIX =  { icon = ' ', color = 'error', alt = { 'FIXME', 'BUG', 'FIXIT', 'ISSUE' } },
+                TODO = { icon = ' ', color = 'info' },
+                HACK = { icon = ' ', color = 'warning' },
+                WARN = { icon = ' ', color = 'warning', alt = { 'WARNING', 'XXX' } },
+                PERF = { icon = ' ', color = 'default', alt = { 'OPTIM', 'PERFORMANCE', 'OPTIMIZE' } },
+                NOTE = { icon = ' ', color = 'hint', alt = { 'INFO' } },
+                TEST = { icon = '⏲ ', color = 'test', alt = { 'TESTING', 'PASSED', 'FAILED' } },
+            },
+            highlight = {
+                multiline = true,
+                multiline_pattern = '^.',
+                multiline_context = 10,
+                before = '',           -- Don't highlight before the keyword
+                keyword = 'wide',      -- Highlight the keyword and surrounding characters
+                after = 'fg',          -- Highlight text after the keyword
+                pattern = [[.*<(KEYWORDS)\s*:]],  -- Pattern: "TODO:" or "# TODO:"
+                comments_only = true,  -- Only highlight in comments
+            },
+            colors = {
+                error = { 'DiagnosticError', 'ErrorMsg', '#DC2626' },
+                warning = { 'DiagnosticWarn', 'WarningMsg', '#FBBF24' },
+                info = { 'DiagnosticInfo', '#2563EB' },
+                hint = { 'DiagnosticHint', '#10B981' },
+                default = { 'Identifier', '#7C3AED' },
+                test = { 'Identifier', '#FF00FF' },
+            },
+            search = {
+                command = 'rg',
+                args = {
+                    '--color=never',
+                    '--no-heading',
+                    '--with-filename',
+                    '--line-number',
+                    '--column',
+                },
+                pattern = [[\b(KEYWORDS):]],  -- ripgrep pattern
+            },
+        },
+    },
+
     -- Which-key
     {
         'folke/which-key.nvim',
@@ -171,16 +232,18 @@ require('lazy').setup({
 
             -- Register groups for leader key mappings
             wk.add({
-                { "<leader>f", group = "Find/Format" },
+                { "<leader>f", group = "Find/Files" },
                 { "<leader>g", group = "Git" },
                 { "<leader>s", group = "Search/Replace" },
                 { "<leader>c", group = "Code/Quickfix" },
                 { "<leader>r", group = "Refactor" },
+                { "<leader>b", group = "Buffers/Tabs" },
+                { "<leader>t", group = "TODOs" },
             })
 
             -- =====================================================
             -- CHEATSHEET: Document Vim built-in commands here
-            -- Press <leader>? to see all registered keymaps
+            -- Press <leader> and wait to see all registered keymaps
             -- =====================================================
             wk.add({
                 -- Window management (Ctrl-w prefix)
@@ -256,6 +319,10 @@ require('lazy').setup({
                 { "]d", desc = "Next diagnostic" },
                 { "[d", desc = "Prev diagnostic" },
 
+                -- TODOs
+                { "]t", desc = "Next TODO comment" },
+                { "[t", desc = "Prev TODO comment" },
+
                 -- Comment.nvim
                 { "gc", group = "Comment" },
                 { "gcc", desc = "Toggle line comment" },
@@ -289,6 +356,24 @@ require('lazy').setup({
                 { 'ci"', desc = 'Change inside ""' },
                 { "da(", desc = "Delete around ()" },
                 { "va{", desc = "Select around {}" },
+
+                -- nvim-tree (inside tree window)
+                -- a     = Create file/folder (end with / for folder)
+                -- d     = Delete
+                -- r     = Rename
+                -- x     = Cut
+                -- c     = Copy
+                -- p     = Paste
+                -- y     = Copy filename
+                -- Y     = Copy relative path
+                -- gy    = Copy absolute path
+                -- <CR>  = Open file
+                -- <C-v> = Open in vertical split
+                -- <C-x> = Open in horizontal split
+                -- I     = Toggle hidden files
+                -- H     = Toggle dotfiles
+                -- R     = Refresh
+                -- ?     = Show help
             })
         end,
     },
@@ -301,11 +386,136 @@ require('lazy').setup({
     },
 
     -- Better Quickfix List
-    -- Usage: After :grep, :vimgrep, or LSP references, open with :copen
+    -- Usage: After :grep, :vimgrep, :TodoQuickFix, or LSP references, open with :copen
     -- Keys in quickfix: o=open, p=preview, zf=fuzzy filter, <Tab>=select
     {
         'kevinhwang91/nvim-bqf',
         ft = 'qf',
+    },
+
+    -- File Explorer
+    {
+        'nvim-tree/nvim-tree.lua',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            require('nvim-tree').setup({
+                view = {
+                    width = 35,
+                    side = 'left',
+                },
+                renderer = {
+                    group_empty = true,  -- Collapse empty folders
+                    icons = {
+                        show = {
+                            file = false,
+                            folder = false,
+                            folder_arrow = true,
+                            git = true,
+                        },
+                    },
+                },
+                filters = {
+                    dotfiles = false,
+                    custom = { '__pycache__', 'node_modules', '.git' },
+                },
+                update_focused_file = {
+                    enable = true,       -- Highlight current file in tree
+                    update_cwd = false,
+                },
+                git = {
+                    enable = true,
+                    ignore = false,      -- Show git-ignored files (greyed out)
+                },
+                actions = {
+                    open_file = {
+                        quit_on_open = false,  -- Keep tree open when opening file
+                        resize_window = true,
+                    },
+                },
+                on_attach = function(bufnr)
+                    local api = require('nvim-tree.api')
+
+                    -- Default mappings
+                    api.config.mappings.default_on_attach(bufnr)
+
+                    -- Custom mapping for help
+                    local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Show help' }
+                    vim.keymap.set('n', '?', api.tree.toggle_help, opts)
+                end,
+            })
+        end,
+    },
+
+    -- Tab Bar (Buffer Line)
+    {
+        'akinsho/bufferline.nvim',
+        version = '*',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        config = function()
+            require('bufferline').setup({
+                options = {
+                    mode = 'buffers',                    -- Show buffers (not tabs)
+                    numbers = 'ordinal',                 -- Show buffer numbers (1, 2, 3...)
+                    close_command = 'bdelete! %d',
+                    right_mouse_command = 'bdelete! %d',
+                    left_mouse_command = 'buffer %d',
+                    middle_mouse_command = nil,
+
+                    indicator = {
+                        style = 'icon',
+                        icon = '▎',
+                    },
+
+                    buffer_close_icon = '×',
+                    modified_icon = '●',
+                    close_icon = '',
+                    left_trunc_marker = '',
+                    right_trunc_marker = '',
+
+                    max_name_length = 30,
+                    max_prefix_length = 15,
+                    truncate_names = true,
+                    tab_size = 20,
+
+                    diagnostics = 'nvim_lsp',            -- Show LSP diagnostics in tabs
+                    diagnostics_update_in_insert = false,
+                    diagnostics_indicator = function(count, level)
+                        local icon = level:match('error') and ' ' or ' '
+                        return ' ' .. icon .. count
+                    end,
+
+                    -- Don't show bufferline over nvim-tree
+                    offsets = {
+                        {
+                            filetype = 'NvimTree',
+                            text = 'File Explorer',
+                            text_align = 'center',
+                            separator = true,
+                        },
+                    },
+
+                    color_icons = true,
+                    show_buffer_icons = true,
+                    show_buffer_close_icons = true,
+                    show_close_icon = false,
+                    show_tab_indicators = true,
+                    show_duplicate_prefix = true,
+                    persist_buffer_sort = true,
+
+                    separator_style = 'thin',            -- 'slant', 'thick', 'thin', 'padded_slant'
+                    enforce_regular_tabs = false,
+                    always_show_bufferline = true,
+
+                    hover = {
+                        enabled = true,
+                        delay = 200,
+                        reveal = { 'close' },
+                    },
+
+                    sort_by = 'insert_after_current',
+                },
+            })
+        end,
     },
 
 })
@@ -473,7 +683,7 @@ end
 -- Helper: Extract valid file path from telescope entry
 local function get_entry_path(entry, cwd)
     if not entry then return nil end
-    
+
     -- Try entry.filename first
     if is_valid_filename(entry.filename) then
         local full_path
@@ -488,7 +698,7 @@ local function get_entry_path(entry, cwd)
             return get_canonical_path(full_path)
         end
     end
-    
+
     -- Try entry.path
     if is_valid_filename(entry.path) then
         local full_path = entry.path
@@ -496,7 +706,7 @@ local function get_entry_path(entry, cwd)
             return get_canonical_path(full_path)
         end
     end
-    
+
     -- Cannot extract valid path
     return nil
 end
@@ -519,24 +729,24 @@ local function smart_open(prompt_bufnr)
         actions.close(prompt_bufnr)
         return
     end
-    
+
     -- Get the picker's cwd (from entry metatable)
     local picker_cwd = nil
     local mt = getmetatable(entry)
     if mt and mt.cwd then
         picker_cwd = mt.cwd
     end
-    
+
     -- Extract target info
     local target_file = get_entry_path(entry, picker_cwd)
     local target_line = entry.lnum or 1
     local target_col = (entry.col or 1) - 1
-    
+
     local orig = _G._telescope_ctx
-    
+
     -- Close Telescope first
     actions.close(prompt_bufnr)
-    
+
     vim.schedule(function()
         -- CASE 1: Invalid/corrupted filename (like "]")
         -- If we have original context, assume user is searching in current file
@@ -549,15 +759,15 @@ local function smart_open(prompt_bufnr)
                 if vim.api.nvim_buf_is_valid(orig.bufnr) then
                     vim.api.nvim_set_current_buf(orig.bufnr)
                 end
-                
+
                 local line_count = vim.api.nvim_buf_line_count(0)
                 local safe_line = math.min(math.max(1, target_line), line_count)
                 local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
                 local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
-                
+
                 vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
                 vim.cmd('normal! zz')
-                
+
                 _G._telescope_ctx = nil
                 return
             else
@@ -567,13 +777,13 @@ local function smart_open(prompt_bufnr)
                 return
             end
         end
-        
+
         -- CASE 2: Valid filename extracted
-        local is_same_file = orig 
-            and orig.file 
-            and target_file 
+        local is_same_file = orig
+            and orig.file
+            and target_file
             and orig.file == target_file
-        
+
         if is_same_file then
             -- Same file: navigate in original buffer
             if vim.api.nvim_win_is_valid(orig.winnr) then
@@ -582,12 +792,12 @@ local function smart_open(prompt_bufnr)
             if vim.api.nvim_buf_is_valid(orig.bufnr) then
                 vim.api.nvim_set_current_buf(orig.bufnr)
             end
-            
+
             local line_count = vim.api.nvim_buf_line_count(0)
             local safe_line = math.min(math.max(1, target_line), line_count)
             local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
             local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
-            
+
             vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
             vim.cmd('normal! zz')
         else
@@ -595,14 +805,14 @@ local function smart_open(prompt_bufnr)
             if orig and vim.api.nvim_win_is_valid(orig.winnr) then
                 vim.api.nvim_set_current_win(orig.winnr)
             end
-            
+
             vim.cmd('edit ' .. vim.fn.fnameescape(target_file))
             local line_count = vim.api.nvim_buf_line_count(0)
             local safe_line = math.min(math.max(1, target_line), line_count)
             vim.api.nvim_win_set_cursor(0, { safe_line, math.max(0, target_col) })
             vim.cmd('normal! zz')
         end
-        
+
         _G._telescope_ctx = nil
     end)
 end
@@ -655,6 +865,22 @@ vim.keymap.set('n', '<leader>fh', function()
 end, { desc = 'Find Help' })
 
 -- -----------------
+-- TODO COMMENTS KEYMAPS
+-- -----------------
+vim.keymap.set('n', '<leader>tt', ':TodoTelescope<CR>', { desc = 'Search TODOs (Telescope)' })
+vim.keymap.set('n', '<leader>tq', ':TodoQuickFix<CR>', { desc = 'TODOs to Quickfix' })
+vim.keymap.set('n', '<leader>tl', ':TodoLocList<CR>', { desc = 'TODOs to Location List' })
+
+-- Jump between TODOs
+vim.keymap.set('n', ']t', function()
+    require('todo-comments').jump_next()
+end, { desc = 'Next TODO' })
+
+vim.keymap.set('n', '[t', function()
+    require('todo-comments').jump_prev()
+end, { desc = 'Previous TODO' })
+
+-- -----------------
 -- QUICKFIX KEYMAPS (for use with nvim-bqf)
 -- -----------------
 vim.keymap.set('n', '<leader>co', ':copen<CR>', { desc = 'Open Quickfix' })
@@ -663,6 +889,44 @@ vim.keymap.set('n', ']q', ':cnext<CR>zz', { desc = 'Next Quickfix' })
 vim.keymap.set('n', '[q', ':cprev<CR>zz', { desc = 'Prev Quickfix' })
 vim.keymap.set('n', ']Q', ':clast<CR>zz', { desc = 'Last Quickfix' })
 vim.keymap.set('n', '[Q', ':cfirst<CR>zz', { desc = 'First Quickfix' })
+
+-- -----------------
+-- FILE EXPLORER KEYMAPS
+-- -----------------
+vim.keymap.set('n', '<leader>e', ':NvimTreeToggle<CR>', { desc = 'Toggle File Tree' })
+vim.keymap.set('n', '<leader>E', ':NvimTreeFindFile<CR>', { desc = 'Find File in Tree' })
+
+-- -----------------
+-- BUFFER/TAB NAVIGATION (bufferline)
+-- -----------------
+vim.keymap.set('n', '<leader>bp', ':BufferLinePick<CR>', { desc = 'Pick Buffer' })
+vim.keymap.set('n', '<leader>bc', ':BufferLinePickClose<CR>', { desc = 'Pick Buffer to Close' })
+vim.keymap.set('n', '<leader>bo', ':BufferLineCloseOthers<CR>', { desc = 'Close Other Buffers' })
+vim.keymap.set('n', '<leader>bl', ':BufferLineCloseLeft<CR>', { desc = 'Close Buffers to Left' })
+vim.keymap.set('n', '<leader>br', ':BufferLineCloseRight<CR>', { desc = 'Close Buffers to Right' })
+
+-- Navigate between buffers
+vim.keymap.set('n', '<S-h>', ':BufferLineCyclePrev<CR>', { desc = 'Previous Buffer' })
+vim.keymap.set('n', '<S-l>', ':BufferLineCycleNext<CR>', { desc = 'Next Buffer' })
+
+-- Move buffers left/right in the tab bar
+vim.keymap.set('n', '<A-h>', ':BufferLineMovePrev<CR>', { desc = 'Move Buffer Left' })
+vim.keymap.set('n', '<A-l>', ':BufferLineMoveNext<CR>', { desc = 'Move Buffer Right' })
+
+-- Go to buffer by number (1-9)
+vim.keymap.set('n', '<leader>1', ':BufferLineGoToBuffer 1<CR>', { desc = 'Go to Buffer 1' })
+vim.keymap.set('n', '<leader>2', ':BufferLineGoToBuffer 2<CR>', { desc = 'Go to Buffer 2' })
+vim.keymap.set('n', '<leader>3', ':BufferLineGoToBuffer 3<CR>', { desc = 'Go to Buffer 3' })
+vim.keymap.set('n', '<leader>4', ':BufferLineGoToBuffer 4<CR>', { desc = 'Go to Buffer 4' })
+vim.keymap.set('n', '<leader>5', ':BufferLineGoToBuffer 5<CR>', { desc = 'Go to Buffer 5' })
+vim.keymap.set('n', '<leader>6', ':BufferLineGoToBuffer 6<CR>', { desc = 'Go to Buffer 6' })
+vim.keymap.set('n', '<leader>7', ':BufferLineGoToBuffer 7<CR>', { desc = 'Go to Buffer 7' })
+vim.keymap.set('n', '<leader>8', ':BufferLineGoToBuffer 8<CR>', { desc = 'Go to Buffer 8' })
+vim.keymap.set('n', '<leader>9', ':BufferLineGoToBuffer 9<CR>', { desc = 'Go to Buffer 9' })
+
+-- Close current buffer without closing window
+vim.keymap.set('n', '<leader>bd', ':bdelete<CR>', { desc = 'Delete Buffer' })
+vim.keymap.set('n', '<leader>bD', ':bdelete!<CR>', { desc = 'Force Delete Buffer' })
 
 -- -----------------
 -- UTILITY COMMANDS
@@ -685,8 +949,8 @@ vim.api.nvim_create_user_command('DebugBuffers', function()
     print("Buffers:")
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_loaded(buf) then
-            print(string.format("  [%d] '%s' ft=%s listed=%s", 
-                buf, 
+            print(string.format("  [%d] '%s' ft=%s listed=%s",
+                buf,
                 vim.api.nvim_buf_get_name(buf),
                 vim.bo[buf].filetype,
                 tostring(vim.bo[buf].buflisted)))
@@ -748,5 +1012,5 @@ vim.diagnostic.config({
 
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show Diagnostic' })
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Show Diagnostic' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Diagnostic List' })
