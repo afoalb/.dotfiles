@@ -175,10 +175,8 @@
 # ------------------
 # Night Shift
 # ------------------
-- name: Enable Night Shift with schedule (19:00 - 04:00)
-  shell: |
-    nightlight schedule 19:00 4:00
-    nightlight on
+- name: Configure Night Shift schedule (19:00 - 04:00)
+  shell: nightlight schedule 19:00 4:00
   args:
     executable: /bin/bash
   failed_when: false
