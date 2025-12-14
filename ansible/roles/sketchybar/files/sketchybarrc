@@ -10,7 +10,7 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 # -------------
 sketchybar --bar \
     position=top \
-    height=32 \
+    height=25 \
     color=0xcc1a1b26 \
     border_color=0xff3b4261 \
     border_width=1 \
@@ -19,7 +19,7 @@ sketchybar --bar \
     padding_right=10 \
     margin=8 \
     y_offset=4 \
-    corner_radius=10 \
+    corner_radius=3 \
     blur_radius=20
 
 # -------------
