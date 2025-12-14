@@ -81,10 +81,19 @@ sketchybar --add item front_app left \
            --subscribe front_app front_app_switched
 
 # -------------
-# RIGHT: Clock and battery
+# RIGHT: Battery then Clock (rightmost)
 # -------------
+# Items added to "right" appear in reverse order (last added = rightmost)
 
-# Battery (simple percentage)
+# Clock (added first = rightmost)
+sketchybar --add item clock right \
+           --set clock update_freq=30 \
+                      icon.drawing=off \
+                      label.font="Hack Nerd Font:Regular:13.0" \
+                      label.color=0xffa9b1d6 \
+                      script="$PLUGIN_DIR/clock.sh"
+
+# Battery (added second = left of clock)
 sketchybar --add item battery right \
            --set battery update_freq=60 \
                         icon.drawing=off \
@@ -92,14 +101,6 @@ sketchybar --add item battery right \
                         label.color=0xff9ece6a \
                         script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change
-
-# Clock
-sketchybar --add item clock right \
-           --set clock update_freq=30 \
-                      icon.drawing=off \
-                      label.font="Hack Nerd Font:Regular:13.0" \
-                      label.color=0xffa9b1d6 \
-                      script="$PLUGIN_DIR/clock.sh"
 
 # -------------
 # Initialise
