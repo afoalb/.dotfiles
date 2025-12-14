@@ -1,25 +1,26 @@
 #!/bin/bash
 
 # Minimalist SketchyBar configuration
-# Clean, distraction-free status bar
+# Floating, transparent status bar
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 
 # -------------
-# Bar appearance
+# Bar appearance (floating style)
 # -------------
 sketchybar --bar \
     position=top \
-    height=28 \
-    color=0xff1a1b26 \
-    border_color=0xff2a2b3d \
-    border_width=0 \
-    shadow=off \
-    padding_left=12 \
-    padding_right=12 \
-    margin=0 \
-    y_offset=0 \
-    corner_radius=0
+    height=32 \
+    color=0xcc1a1b26 \
+    border_color=0xff3b4261 \
+    border_width=1 \
+    shadow=on \
+    padding_left=10 \
+    padding_right=10 \
+    margin=8 \
+    y_offset=4 \
+    corner_radius=10 \
+    blur_radius=20
 
 # -------------
 # Default item settings
@@ -80,15 +81,6 @@ sketchybar --add item front_app left \
                           script="$PLUGIN_DIR/front_app.sh" \
            --subscribe front_app front_app_switched
 
-# Git branch (shows when in terminal/editor)
-sketchybar --add item git_branch left \
-           --set git_branch icon.drawing=off \
-                           label.color=0xffbb9af7 \
-                           label.font="Hack Nerd Font:Regular:12.0" \
-                           drawing=off \
-                           script="$PLUGIN_DIR/git_branch.sh" \
-           --subscribe git_branch front_app_switched
-
 # -------------
 # RIGHT: Battery then Clock (rightmost)
 # -------------
@@ -102,10 +94,12 @@ sketchybar --add item clock right \
                       label.color=0xffa9b1d6 \
                       script="$PLUGIN_DIR/clock.sh"
 
-# Battery (added second = left of clock)
+# Battery with icon (added second = left of clock)
 sketchybar --add item battery right \
            --set battery update_freq=60 \
-                        icon.drawing=off \
+                        icon.font="Hack Nerd Font:Regular:14.0" \
+                        icon.color=0xff9ece6a \
+                        icon.padding_right=2 \
                         label.font="Hack Nerd Font:Regular:12.0" \
                         label.color=0xff9ece6a \
                         script="$PLUGIN_DIR/battery.sh" \
