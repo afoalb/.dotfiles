@@ -1,0 +1,40 @@
+---
+# ==============================================================================
+# Hammerspoon Configuration Role
+# ==============================================================================
+# Configures Hammerspoon automation engine for hotkeys and app launching
+# Replaces skhd for better integration and more features
+# ==============================================================================
+
+- name: Create Hammerspoon config directory
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.hammerspoon"
+    state: directory
+    mode: '0755'
+  tags: hammerspoon
+
+- name: Deploy Hammerspoon init.lua configuration
+  copy:
+    src: init.lua
+    dest: "{{ ansible_facts['env']['HOME'] }}/.hammerspoon/init.lua"
+    mode: '0644'
+  tags: hammerspoon
+
+- name: Check if Hammerspoon is running
+  shell: pgrep -x Hammerspoon || true
+  register: hammerspoon_status
+  changed_when: false
+  tags: hammerspoon
+
+- name: Start Hammerspoon if not running
+  shell: open -a Hammerspoon
+  when: hammerspoon_status.stdout == ""
+  tags: hammerspoon
+
+- name: Reload Hammerspoon configuration
+  shell: |
+    osascript -e 'tell application "Hammerspoon" to execute lua code "hs.reload()"' 2>/dev/null || true
+  when: hammerspoon_status.stdout != ""
+  changed_when: false
+  failed_when: false
+  tags: hammerspoon

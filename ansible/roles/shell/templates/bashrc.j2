@@ -1,19 +1,12 @@
 # ==================
-# Bash Configuration
+# Bash Configuration (.bashrc)
 # ==================
 
 # ------------------
-# Environment Variables
+# Source Common Shell Configuration
 # ------------------
-export EDITOR=nvim
-export VISUAL=nvim
-export PAGER=less
+[ -f ~/.shell_common.sh ] && source ~/.shell_common.sh
 
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # ------------------
 # Bash History Settings
@@ -25,6 +18,7 @@ export HISTCONTROL=ignoredups:ignorespace
 export HISTTIMEFORMAT="[%F %T] "
 shopt -s histappend
 
+
 # ------------------
 # Shell Behavior
 # ------------------
@@ -35,8 +29,9 @@ shopt -s checkwinsize
 shopt -s globstar                # ** recursive globbing like Zsh
 shopt -s extglob                 # extended globs
 
+
 # ------------------
-# Basic Completion System
+# Bash Completion System
 # ------------------
 # Bash has no zstyle. Uses programmable completion instead.
 if [ -f /opt/homebrew/etc/bash_completion ]; then
@@ -44,6 +39,7 @@ if [ -f /opt/homebrew/etc/bash_completion ]; then
 elif [ -f /usr/local/etc/bash_completion ]; then
     source /usr/local/etc/bash_completion
 fi
+
 
 # ------------------
 # Keybindings (Bash equivalent)
@@ -66,126 +62,49 @@ bind -x '"\C-x\C-e":edit-current-line'
 
 
 # ------------------
-# Common Aliases
+# Bash-specific Listing Functions
 # ------------------
+# Note: Bash doesn't have zsh glob qualifiers, so we use simpler versions
+# For full functionality, use the eza-based sll/sld/slf aliases
 
-# Basic listing
-alias ls='ls -GFh'
-alias l='ls -CF'
-alias la='ls -A'
-alias l1='ls -1'
+# ll: long list with all files
+ll() {
+    ls -lhAF "$@"
+}
 
-# Long listings (directories first with sort)
-alias ll='ls -laF | sort -k1,1r -k9,9V'
-alias lh='ls -lh   | sort -k1,1r -k9,9V'
-alias lt='ls -lt   | sort -k1,1r'
-alias ltr='ls -ltr | sort -k1,1r'
+# lld: list only directories
+lld() {
+    local target="${1:-.}"
+    ls -lhFd "$target"/*/ 2>/dev/null
+}
 
-# Directories / files only
-alias ld='ls -d */ | sort -V'
-alias lf='ls -p | grep -v / | sort -V'
+# llf: list only files (basic version for bash)
+llf() {
+    local target="${1:-.}"
+    # Use find to get only files, then ls -ld on each
+    find "$target" -maxdepth 1 -type f -exec ls -lhF {} + 2>/dev/null
+}
 
-# Safety nets
-alias rm='rm -i'
-alias mv='mv -i'
-alias cp='cp -i'
-alias ln='ln -i'
+# lldot: list only dotfiles
+lldot() {
+    local target="${1:-.}"
+    ls -lhFd "$target"/.* 2>/dev/null | tail -n +3
+}
 
-# Git
-alias g='git'
-alias gs='git status'
-alias gb='git branch'
-alias gco='git checkout'
-alias glog='git log --oneline --graph --decorate'
-alias glogall='git log --oneline --graph --decorate --all'
 
-# zoxide list
-alias zz='zoxide query --list'
-
-# Misc
+# ------------------
+# Bash-specific Aliases
+# ------------------
 alias which='type -p'
-alias mkdir='mkdir -p'
-alias h='history'
 alias path='echo -e "${PATH//:/\n}"'
-alias grep='grep --color=auto'
 alias reload='source ~/.bashrc && echo "Bashrc reloaded"'
 
 
 # ------------------
-# Enhanced CLI Tools
-# ------------------
-
-# eza
-if command -v eza >/dev/null 2>&1; then
-    EZA_COMMON="--group-directories-first --icons=never --color=auto"
-
-    alias sls="eza $EZA_COMMON"
-    alias sl="eza --long --classify $EZA_COMMON"
-    alias sla="eza --all $EZA_COMMON"
-    alias sl1="eza --oneline $EZA_COMMON"
-
-    alias sll="eza --all --long --classify $EZA_COMMON"
-    alias slh="eza --long --all $EZA_COMMON"
-    alias slt="eza --long --sort=modified $EZA_COMMON"
-    alias sltr="eza --long --sort=modified --reverse $EZA_COMMON"
-
-    alias sld="eza --dirs-only $EZA_COMMON"
-    alias slf="eza --only-files $EZA_COMMON"
-
-    alias stree="eza --tree --level=2 --long $EZA_COMMON"
-fi
-
-# bat
-if command -v bat >/dev/null 2>&1; then
-    alias scat='bat --style=auto'
-    export BAT_THEME="Monokai Extended"
-    export BAT_PAGER="less -RF"
-fi
-
-# ripgrep
-if command -v rg >/dev/null 2>&1; then
-    alias sgrep='rg'
-fi
-
-
-# ------------------
-# FZF Integration
+# FZF Bash Integration
 # ------------------
 if command -v fzf >/dev/null 2>&1; then
-
-    # Load key bindings
     [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-    # fd + fzf
-    if command -v fd >/dev/null 2>&1; then
-        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-    fi
-
-    export FZF_DEFAULT_OPTS="
-        --height 40%
-        --layout=reverse
-        --border
-        --preview 'bat --style=numbers --color=always --line-range :500 {}'
-        --preview-window=right:50%:wrap
-    "
-fi
-
-
-# ------------------
-# Starship Prompt
-# ------------------
-if command -v starship >/dev/null 2>&1; then
-    eval "$(starship init bash)"
-fi
-
-
-# ------------------
-# Homebrew Integration
-# ------------------
-if [ -f /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 
@@ -196,36 +115,11 @@ fi
 
 
 # ------------------
-# Directory Navigation (Stack Navigation) (zoxide-style)
+# Starship Prompt (bash-specific init)
 # ------------------
-unalias d 2>/dev/null
-
-# dd -> display directory stack
-dd() {
-    dirs -v
-}
-
-# d [n] -> jump to a directory from stack
-d() {
-    # No argument → show stack
-    if [ -z "$1" ]; then
-        dirs -v
-        return
-    fi
-
-    # Argument is a number?
-    case "$1" in
-        ''|*[!0-9]*)
-            # Not a number → error
-            printf "Usage:\n  d        # show directory stack\n  d <num>  # jump to directory number\n"
-            return 1
-            ;;
-        *)
-            # Valid number → cd to it
-            cd +"$1"
-            ;;
-    esac
-}
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi
 
 
 # ------------------

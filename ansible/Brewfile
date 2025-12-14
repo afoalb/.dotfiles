@@ -42,6 +42,7 @@ cask "font-hack-nerd-font"    # For starship (terminal icons)
 # -------------
 # CLI Tools & Utilities
 # -------------
+brew "smudge/smudge/nightlight"  # Control Night Shift from CLI
 brew "fzf"                    # Fuzzy finder
 brew "ripgrep"                # Fast code search (rg) (neovim telescope requires)
 brew "fd"                     # Modern find replacement (neovim telescope would like)
@@ -61,11 +62,10 @@ brew "mosh"                   # Mobile shell (better SSH)
 # Window Management
 # -------------
 brew "koekeishiya/formulae/yabai"      # Tiling window manager
-brew "koekeishiya/formulae/skhd"       # Hotkey daemon
 tap "FelixKratz/formulae"              # SketchyBar tap
 brew "FelixKratz/formulae/sketchybar"  # Custom menu bar
 cask "karabiner-elements"              # Keyboard customization
-cask "hammerspoon"                     # Automation engine
+cask "hammerspoon"                     # Automation engine (replaces skhd for hotkeys)
 cask "jordanbaird-ice"                 # Manages icon visibility
 
 # -------------

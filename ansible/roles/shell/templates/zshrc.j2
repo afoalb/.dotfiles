@@ -3,19 +3,10 @@
 # ==============
 
 # ------------------
-# Environment Variables
+# Source Common Shell Configuration
 # ------------------
-export EDITOR=nvim
-export VISUAL=nvim
-export PAGER=less
+[ -f ~/.shell_common.sh ] && source ~/.shell_common.sh
 
-# XDG Base Directory specification
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-# PATH configuration
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # ------------------
 # Zsh Options
@@ -54,6 +45,7 @@ setopt INTERACTIVE_COMMENTS      # Allow comments in interactive shell
 setopt MULTIOS                   # Perform multiple redirections
 setopt NO_BEEP                   # No beeping
 
+
 # ------------------
 # Zsh Completion System
 # ------------------
@@ -79,6 +71,7 @@ zstyle ':completion:*' group-name ''
 zstyle ':completion:*:descriptions' format '%F{yellow}-- %d --%f'
 zstyle ':completion:*:warnings' format '%F{red}-- no matches found --%f'
 
+
 # ------------------
 # Key Bindings
 # ------------------
@@ -96,157 +89,73 @@ bindkey '^X^E' edit-command-line
 
 
 # ------------------
-# Listing Aliases (zsh-native)
+# Zsh-specific Listing Functions
 # ------------------
+# These use zsh glob qualifiers which are not available in bash
 
-# Basic listing
-alias ls='ls -GFh'       # colorize, classify, human-readable sizes
-alias l='ls -CF'         # compact view, classify (/ @ *)
-alias la='ls -A'         # show hidden except . and ..
-alias l1='ls -1'         # one entry per line
+# ll: long list, human readable, directories first then files (including hidden)
+ll() {
+    local target="${1:-.}"
+    local dirs files
 
-# All files including hidden
-alias ll='ls -lhAF'   # -A = all except . and .., -F = classify, -h = human-readable, -l = long
+    # Get directories and files separately using glob qualifiers
+    # (/) = directories, (.) = regular files, D = include dotfiles, N = null glob
+    dirs=("${target}"/*(ND/))
+    files=("${target}"/*(ND.))
 
-# Only regular files (including hidden)
-alias llf='ls -lhAF *(.D)'    # . = regular files, D = include hidden
+    # Print directories first, then files
+    [[ ${#dirs} -gt 0 ]] && ls -lhFd "${dirs[@]}"
+    [[ ${#files} -gt 0 ]] && ls -lhFd "${files[@]}"
+}
 
-# Only directories (including hidden)
-alias lldir='ls -lhAF *(/D)'  # / = directories, D = include hidden
+# lld: same as ll but only directories
+lld() {
+    local target="${1:-.}"
+    local dirs
 
-# Only hidden files (exclude . and ..)
-alias lldot='ls -lhAF .*(.D^.^N)'
+    dirs=("${target}"/*(ND/))
+    [[ ${#dirs} -gt 0 ]] && ls -lhFd "${dirs[@]}"
+}
 
+# llf: same as ll but only files
+llf() {
+    local target="${1:-.}"
+    local files
+
+    files=("${target}"/*(ND.))
+    [[ ${#files} -gt 0 ]] && ls -lhFd "${files[@]}"
+}
+
+# lldot: same as ll but only dotfiles (files/dirs starting with .)
+lldot() {
+    local target="${1:-.}"
+    local dotdirs dotfiles
+
+    # Get hidden directories and files (exclude . and ..)
+    dotdirs=("${target}"/.*(ND/))
+    dotfiles=("${target}"/.*(ND.))
+
+    # Print directories first, then files
+    [[ ${#dotdirs} -gt 0 ]] && ls -lhFd "${dotdirs[@]}"
+    [[ ${#dotfiles} -gt 0 ]] && ls -lhFd "${dotfiles[@]}"
+}
 
 
 # ------------------
-# Common Aliases
+# Zsh-specific Aliases
 # ------------------
-# Vim
-ANSIBLE_REMINDER="NOTE: Run the ansible playbook to play the changes."
-
-alias vim='nvim'
-alias vi='vim'
-alias vimrc='nvim ~/.dotfiles/ansible/roles/neovim/files/init.lua; echo "\n$ANSIBLE_REMINDER"'
-alias zshrc='nvim ~/.dotfiles/ansible/roles/shell/templates/; echo "\n$ANSIBLE_REMINDER"'
-
-# Safety nets
-alias rm='rm -i'
-alias mv='mv -i'
-alias cp='cp -i'
-alias ln='ln -i'
-
-# Git (basics)
-alias g='git'
-alias gs='git status'
-alias gb='git branch'
-alias gco='git checkout'
-alias glog='git log --oneline --graph --decorate'
-alias glogall='git log --oneline --graph --decorate --all'
-
-# zoxide
-alias zz='zoxide query --list'
-
-# Others
 alias which='whence -p'
-alias mkdir='mkdir -p'
-alias h='history'
 alias path='echo -e ${PATH//:/\\n}'
-alias grep='grep --color=auto'
 alias reload='source ~/.zshrc && echo "Zshrc reloaded"'
 
 
 # ------------------
-# Enhanced CLI Tools
+# FZF Zsh Integration
 # ------------------
-# Use enhanced replacements for classic Unix tools with an 's' prefix
-# (e.g. eza -> sls, bat -> scat, ripgrep -> sgrep, fd -> sfind)
-
-# eza
-if (( $+commands[eza] )); then
-    EZA_COMMON="--group-directories-first --icons=never --color=auto"
-
-    # Basic listing
-    alias sls="eza $EZA_COMMON"                          # like ls -GFh
-    alias sl="eza --long --classify $EZA_COMMON"         # like l='ls -CF'
-    alias sla="eza --all $EZA_COMMON"                    # like la='ls -A'
-    alias sl1="eza --oneline $EZA_COMMON"               # like l1='ls -1'
-
-    # Long listings
-    alias sll="eza --all --long --classify $EZA_COMMON" # like ll='ls -alF'
-    alias slh="eza --long --all $EZA_COMMON"            # like lh='ls -lh'
-    alias slt="eza --long --sort=modified $EZA_COMMON"  # like lt='ls -lt'
-    alias sltr="eza --long --sort=modified --reverse $EZA_COMMON"  # like ltr='ls -ltr'
-
-    # Directories / Files only
-    alias sld="eza --dirs-only $EZA_COMMON"             # like ld='ls -d */'
-    alias slf="eza --only-files $EZA_COMMON"            # like lf='ls -p | grep -v /'
-
-    # Tree view
-    alias stree="eza --tree --level=2 --long $EZA_COMMON" # tree view, 2 levels by default
-fi
-
-# bat
-if (( $+commands[bat] )); then
-    alias scat='bat --style=auto'
-    export BAT_THEME="Monokai Extended"
-    export BAT_PAGER="less -RF"
-fi
-
-# ripgrep
-if (( $+commands[rg] )); then
-    alias sgrep='rg'
-fi
-
-
-# ------------------
-# FZF Integration
-# ------------------
-# Ctrl-t - fuzzy history
-# Ctrl-r - fuzzy file picker with fd (file search) and bat (file preview)
 if (( $+commands[fzf] )); then
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-  if (( $+commands[fd] )); then
-    export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-    export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-    export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
-  fi
-
-  # Global UI (safe everywhere)
-  export FZF_DEFAULT_OPTS='
-    --height 40%
-    --layout=reverse
-    --border
-    --bind ctrl-p:down,ctrl-n:up
-  '
-
-  # Ctrl-T: files + preview
-  export FZF_CTRL_T_OPTS='
-    --preview "bat --style=numbers --color=always --line-range :500 {}"
-    --preview-window=right:50%:wrap
-  '
-
-  # Ctrl-R: history (no file preview)
-  export FZF_CTRL_R_OPTS='
-    --no-preview
-  '
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 fi
 
-
-# ------------------
-# Starship Prompt
-# ------------------
-if (( $+commands[starship] )); then
-    eval "$(starship init zsh)"
-fi
-
-# ------------------
-# Homebrew Integration
-# ------------------
-if [ -f /opt/homebrew/bin/brew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
 
 # ------------------
 # Local Overrides
@@ -256,40 +165,15 @@ fi
 
 
 # ------------------
-# Directory Navigation (Stack Navigation) (zoxide-style)
+# Starship Prompt (zsh-specific init)
 # ------------------
-unalias d 2>/dev/null
-
-# dd -> display directory stack
-dd() {
-    dirs -v
-}
-
-# d [n] -> jump to a directory from stack
-d() {
-    # No argument → show stack
-    if [ -z "$1" ]; then
-        dirs -v
-        return
-    fi
-
-    # Argument is a number?
-    case "$1" in
-        ''|*[!0-9]*)
-            # Not a number → error
-            printf "Usage:\n  d        # show directory stack\n  d <num>  # jump to directory number\n"
-            return 1
-            ;;
-        *)
-            # Valid number → cd to it
-            cd +"$1"
-            ;;
-    esac
-}
+if (( $+commands[starship] )); then
+    eval "$(starship init zsh)"
+fi
 
 
 # ------------------
-# Directory Navigation (Zoxide)
+# Zoxide (must be at the very end)
 # ------------------
 # NOTE: Config must be at the very end
 # Zoxide should be initialized after all other shell modifications

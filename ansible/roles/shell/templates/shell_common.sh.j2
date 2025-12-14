@@ -1,0 +1,200 @@
+# ==================
+# Common Shell Configuration
+# ==================
+# This file contains configurations shared between bash and zsh.
+# It's sourced by both .zshrc and .bashrc
+#
+# Shell-specific configurations remain in their respective files.
+
+# ------------------
+# Environment Variables
+# ------------------
+export EDITOR=nvim
+export VISUAL=nvim
+export PAGER=less
+
+# XDG Base Directory specification
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# PATH configuration
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+
+# ------------------
+# Common Aliases
+# ------------------
+
+# Basic listing (works in both shells)
+alias ls='ls -GFh'       # colorize, classify, human-readable sizes
+alias l='ls -CF'         # compact view, classify (/ @ *)
+alias la='ls -A'         # show hidden except . and ..
+alias l1='ls -1'         # one entry per line
+
+# Vim
+ANSIBLE_REMINDER="NOTE: Run the ansible playbook to apply the changes."
+
+alias vim='nvim'
+alias vi='vim'
+alias vimrc='nvim ~/.dotfiles/ansible/roles/neovim/files/init.lua; echo "\n$ANSIBLE_REMINDER"'
+alias zshrc='nvim ~/.dotfiles/ansible/roles/shell/templates/; echo "\n$ANSIBLE_REMINDER"'
+
+# Safety nets
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+alias ln='ln -i'
+
+# Git (basics)
+alias g='git'
+alias gs='git status'
+alias gb='git branch'
+alias gco='git checkout'
+alias glog='git log --oneline --graph --decorate'
+alias glogall='git log --oneline --graph --decorate --all'
+
+# zoxide list
+alias zz='zoxide query --list'
+
+# Misc
+alias mkdir='mkdir -p'
+alias h='history'
+alias grep='grep --color=auto'
+
+
+# ------------------
+# Enhanced CLI Tools
+# ------------------
+# Use enhanced replacements for classic Unix tools with an 's' prefix
+# (e.g. eza -> sls, bat -> scat, ripgrep -> sgrep, fd -> sfind)
+
+# Detect command availability (works in both shells)
+_has_cmd() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# eza
+if _has_cmd eza; then
+    EZA_COMMON="--group-directories-first --icons=never --color=auto"
+
+    # Basic listing
+    alias sls="eza $EZA_COMMON"                          # like ls -GFh
+    alias sl="eza --long --classify $EZA_COMMON"         # like l='ls -CF'
+    alias sla="eza --all $EZA_COMMON"                    # like la='ls -A'
+    alias sl1="eza --oneline $EZA_COMMON"                # like l1='ls -1'
+
+    # Long listings
+    alias sll="eza --all --long --classify $EZA_COMMON"  # like ll='ls -alF'
+    alias slh="eza --long --all $EZA_COMMON"             # like lh='ls -lh'
+    alias slt="eza --long --sort=modified $EZA_COMMON"   # like lt='ls -lt'
+    alias sltr="eza --long --sort=modified --reverse $EZA_COMMON"  # like ltr='ls -ltr'
+
+    # Directories / Files only
+    alias sld="eza --dirs-only $EZA_COMMON"              # like ld='ls -d */'
+    alias slf="eza --only-files $EZA_COMMON"             # like lf='ls -p | grep -v /'
+
+    # Tree view
+    alias stree="eza --tree --level=2 --long $EZA_COMMON"  # tree view, 2 levels
+fi
+
+# bat
+if _has_cmd bat; then
+    alias scat='bat --style=auto'
+    export BAT_THEME="Monokai Extended"
+    export BAT_PAGER="less -RF"
+fi
+
+# ripgrep
+if _has_cmd rg; then
+    alias sgrep='rg'
+fi
+
+
+# ------------------
+# FZF Integration (common parts)
+# ------------------
+if _has_cmd fzf; then
+    # fd + fzf integration
+    if _has_cmd fd; then
+        export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+        export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+        export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+    fi
+
+    # Global UI options
+    export FZF_DEFAULT_OPTS='
+      --height 40%
+      --layout=reverse
+      --border
+      --bind ctrl-p:down,ctrl-n:up
+    '
+
+    # Ctrl-T: files + preview
+    export FZF_CTRL_T_OPTS='
+      --preview "bat --style=numbers --color=always --line-range :500 {}"
+      --preview-window=right:50%:wrap
+    '
+
+    # Ctrl-R: history (no file preview)
+    export FZF_CTRL_R_OPTS='
+      --no-preview
+    '
+fi
+
+
+# ------------------
+# Starship Prompt
+# ------------------
+if _has_cmd starship; then
+    # Shell-specific init is done in respective configs
+    :
+fi
+
+
+# ------------------
+# Homebrew Integration
+# ------------------
+if [ -f /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+
+# ------------------
+# Directory Navigation (Stack Navigation)
+# ------------------
+unalias d 2>/dev/null || true
+
+# dd -> display directory stack
+dd() {
+    dirs -v
+}
+
+# d [n] -> jump to a directory from stack
+d() {
+    # No argument -> show stack
+    if [ -z "$1" ]; then
+        dirs -v
+        return
+    fi
+
+    # Argument is a number?
+    case "$1" in
+        ''|*[!0-9]*)
+            # Not a number -> error
+            printf "Usage:\n  d        # show directory stack\n  d <num>  # jump to directory number\n"
+            return 1
+            ;;
+        *)
+            # Valid number -> cd to it
+            cd +"$1" || return
+            ;;
+    esac
+}
+
+
+# ------------------
+# Zoxide (must be at the end of common config)
+# ------------------
+# Note: Shell-specific init is done in respective shell configs
+# as zoxide generates shell-specific code
