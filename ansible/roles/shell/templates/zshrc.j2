@@ -96,6 +96,30 @@ bindkey '^X^E' edit-command-line
 
 
 # ------------------
+# Listing Aliases (zsh-native)
+# ------------------
+
+# Basic listing
+alias ls='ls -GFh'       # colorize, classify, human-readable sizes
+alias l='ls -CF'         # compact view, classify (/ @ *)
+alias la='ls -A'         # show hidden except . and ..
+alias l1='ls -1'         # one entry per line
+
+# All files including hidden
+alias ll='ls -lhAF'   # -A = all except . and .., -F = classify, -h = human-readable, -l = long
+
+# Only regular files (including hidden)
+alias llf='ls -lhAF *(.D)'    # . = regular files, D = include hidden
+
+# Only directories (including hidden)
+alias lldir='ls -lhAF *(/D)'  # / = directories, D = include hidden
+
+# Only hidden files (exclude . and ..)
+alias lldot='ls -lhAF .*(.D^.^N)'
+
+
+
+# ------------------
 # Common Aliases
 # ------------------
 # Vim
@@ -105,23 +129,6 @@ alias vim='nvim'
 alias vi='vim'
 alias vimrc='nvim ~/.dotfiles/ansible/roles/neovim/files/init.lua; echo "\n$ANSIBLE_REMINDER"'
 alias zshrc='nvim ~/.dotfiles/ansible/roles/shell/templates/; echo "\n$ANSIBLE_REMINDER"'
-
-# Basic listing
-alias ls='ls -GFh'       # colorize, classify, human-readable sizes
-alias l='ls -CF'         # compact view, classify (/ @ *)
-alias la='ls -A'         # show hidden except . and ..
-alias l1='ls -1'         # one entry per line
-
-# Long listings
-# Note: sort dirs first ='sort -k1,1r' (reverse on first column)
-alias ll='ls -laF | sort -k1,1r -k9,9V'  # directories first, long + classify + hidden, natural sort
-alias lh='ls -lh | sort -k1,1r -k9,9V'   # long + human sizes, directories first, natural sort
-alias lt='ls -lt | sort -k1,1r'          # sort by modification time, dirs first
-alias ltr='ls -ltr | sort -k1,1r'        # sort by time, oldest first, dirs first
-
-# Directories / Files only
-alias ld='ls -d */ | sort -V'             # list only directories, natural sort
-alias lf='ls -p | grep -v / | sort -V'    # list only files, natural sort
 
 # Safety nets
 alias rm='rm -i'
