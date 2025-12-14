@@ -25,6 +25,16 @@
   tags: shell
 
 # ------------------
+# Common Shell Configuration
+# ------------------
+- name: Deploy common shell configuration
+  template:
+    src: shell_common.sh.j2
+    dest: "{{ ansible_facts['env']['HOME'] }}/.shell_common.sh"
+    mode: "0644"
+  tags: shell
+
+# ------------------
 # Bash Configuration (portable, remote-compatible)
 # ------------------
 - name: Deploy .bash_profile

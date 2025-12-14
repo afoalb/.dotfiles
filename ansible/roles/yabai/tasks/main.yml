@@ -1,8 +1,9 @@
 ---
 # ==============================================================================
-# Yabai & Skhd Configuration Role
+# Yabai Configuration Role
 # ==============================================================================
-# Configures yabai tiling window manager and skhd hotkey daemon
+# Configures yabai tiling window manager
+# Hotkeys are managed by Hammerspoon (see hammerspoon role)
 # Installation handled by homebrew role via Brewfile
 # ==============================================================================
 
@@ -13,22 +14,9 @@
     mode: '0755'
   tags: yabai
 
-- name: Deploy skhdrc configuration
-  copy:
-    src: skhdrc
-    dest: "{{ ansible_facts['env']['HOME'] }}/.skhdrc"
-    mode: '0644'
-  tags: yabai
-
 - name: Check if yabai is running
   shell: launchctl list | grep yabai || true
   register: yabai_status
-  changed_when: false
-  tags: yabai
-
-- name: Check if skhd is running
-  shell: launchctl list | grep skhd || true
-  register: skhd_status
   changed_when: false
   tags: yabai
 
@@ -40,14 +28,4 @@
 - name: Restart yabai service if already running
   command: yabai --restart-service
   when: yabai_status.stdout != ""
-  tags: yabai
-
-- name: Start skhd service
-  command: skhd --start-service
-  when: skhd_status.stdout == ""
-  tags: yabai
-
-- name: Restart skhd service if already running
-  command: skhd --restart-service
-  when: skhd_status.stdout != ""
   tags: yabai
