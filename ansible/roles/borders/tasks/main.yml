@@ -9,14 +9,14 @@
   file:
     path: "{{ ansible_facts['env']['HOME'] }}/.config/borders"
     state: directory
-    mode: '0755'
+    mode: "0755"
   tags: borders
 
 - name: Deploy bordersrc configuration
   copy:
     src: bordersrc
     dest: "{{ ansible_facts['env']['HOME'] }}/.config/borders/bordersrc"
-    mode: '0755'
+    mode: "0755"
   tags: borders
 
 - name: Check if borders is running
