@@ -50,28 +50,28 @@ end)
 -- ==============================================================================
 
 -- Option + hjkl: Focus window in direction
-hs.hotkey.bind({"alt"}, "h", function()
+hs.hotkey.bind({"cmd"}, "h", function()
     yabai({"-m", "window", "--focus", "west"})
 end)
 
-hs.hotkey.bind({"alt"}, "j", function()
+hs.hotkey.bind({"cmd"}, "j", function()
     yabai({"-m", "window", "--focus", "south"})
 end)
 
-hs.hotkey.bind({"alt"}, "k", function()
+hs.hotkey.bind({"cmd"}, "k", function()
     yabai({"-m", "window", "--focus", "north"})
 end)
 
-hs.hotkey.bind({"alt"}, "l", function()
+hs.hotkey.bind({"cmd"}, "l", function()
     yabai({"-m", "window", "--focus", "east"})
 end)
 
 -- Option + n/m: Focus display
-hs.hotkey.bind({"alt"}, "n", function()
+hs.hotkey.bind({"cmd"}, "n", function()
     yabai({"-m", "display", "--focus", "west"})
 end)
 
-hs.hotkey.bind({"alt"}, "m", function()
+hs.hotkey.bind({"cmd"}, "m", function()
     yabai({"-m", "display", "--focus", "east"})
 end)
 
@@ -81,29 +81,29 @@ end)
 -- ==============================================================================
 
 -- Option + Shift + hjkl: Resize window in direction
-hs.hotkey.bind({"alt", "shift"}, "h", function()
+hs.hotkey.bind({"cmd", "shift"}, "h", function()
     yabai({"-m", "window", "--resize", "left:-20:0"})
 end)
 
-hs.hotkey.bind({"alt", "shift"}, "j", function()
+hs.hotkey.bind({"cmd", "shift"}, "j", function()
     yabai({"-m", "window", "--resize", "bottom:0:20"})
 end)
 
-hs.hotkey.bind({"alt", "shift"}, "k", function()
+hs.hotkey.bind({"cmd", "shift"}, "k", function()
     yabai({"-m", "window", "--resize", "top:0:-20"})
 end)
 
-hs.hotkey.bind({"alt", "shift"}, "l", function()
+hs.hotkey.bind({"cmd", "shift"}, "l", function()
     yabai({"-m", "window", "--resize", "right:20:0"})
 end)
 
 -- Option + Shift + f: Fullscreen (maximize)
-hs.hotkey.bind({"alt", "shift"}, "f", function()
+hs.hotkey.bind({"cmd", "shift"}, "f", function()
     yabai({"-m", "window", "--toggle", "zoom-fullscreen"})
 end)
 
 -- Option + Shift + r: Restore equilibrium (balance)
-hs.hotkey.bind({"alt", "shift"}, "r", function()
+hs.hotkey.bind({"cmd", "shift"}, "r", function()
     yabai({"-m", "space", "--balance"})
 end)
 
@@ -113,60 +113,60 @@ end)
 -- ==============================================================================
 
 -- Option + Ctrl + hjkl: Swap window in direction
-hs.hotkey.bind({"alt", "ctrl"}, "h", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "h", function()
     yabai({"-m", "window", "--swap", "west"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "j", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "j", function()
     yabai({"-m", "window", "--swap", "south"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "k", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "k", function()
     yabai({"-m", "window", "--swap", "north"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "l", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "l", function()
     yabai({"-m", "window", "--swap", "east"})
 end)
 
 -- Option + Ctrl + r: Rotate layout
-hs.hotkey.bind({"alt", "ctrl"}, "r", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "r", function()
     yabai({"-m", "space", "--rotate", "270"})
 end)
 
 -- Option + Ctrl + y/x: Mirror layout
-hs.hotkey.bind({"alt", "ctrl"}, "y", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "y", function()
     yabai({"-m", "space", "--mirror", "y-axis"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "x", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "x", function()
     yabai({"-m", "space", "--mirror", "x-axis"})
 end)
 
 -- Option + Ctrl + d: Toggle float
-hs.hotkey.bind({"alt", "ctrl"}, "d", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "d", function()
     yabai({"-m", "window", "--toggle", "float"})
     yabai({"-m", "window", "--grid", "4:4:1:1:2:2"})
 end)
 
 -- Option + Ctrl + p/n: Move window to prev/next space
-hs.hotkey.bind({"alt", "ctrl"}, "p", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "p", function()
     yabai({"-m", "window", "--space", "prev"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "n", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "n", function()
     yabai({"-m", "window", "--space", "next"})
 end)
 
 -- Option + Ctrl + 1/2/3: Move window to specific space
-hs.hotkey.bind({"alt", "ctrl"}, "1", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "1", function()
     yabai({"-m", "window", "--space", "1"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "2", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "2", function()
     yabai({"-m", "window", "--space", "2"})
 end)
 
-hs.hotkey.bind({"alt", "ctrl"}, "3", function()
+hs.hotkey.bind({"cmd", "ctrl"}, "3", function()
     yabai({"-m", "window", "--space", "3"})
 end)
