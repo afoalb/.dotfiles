@@ -80,22 +80,54 @@ require('lazy').setup({
     { 'lewis6991/gitsigns.nvim' },
     { 'tpope/vim-fugitive' },
 
-    -- Colorscheme
+    -- Colorscheme: Catppuccin (Apple-ish, soft pastels)
+    -- Flavors: latte (light), frappe (medium), macchiato (warm dark), mocha (dark)
     {
-        'folke/tokyonight.nvim',
+        'catppuccin/nvim',
+        name = 'catppuccin',
         lazy = false,
         priority = 1000,
         opts = {
-            on_highlights = function(hl, c)
-                -- Make Python docstrings green like comments
-                hl['@string.documentation.python'] = { fg = c.comment }
-            end,
+            flavour = 'macchiato',  -- latte, frappe, macchiato, mocha
+            background = {
+                light = 'latte',
+                dark = 'macchiato',
+            },
+            transparent_background = false,
+            term_colors = true,
+            integrations = {
+                cmp = true,
+                gitsigns = true,
+                nvimtree = true,
+                telescope = true,
+                treesitter = true,
+                which_key = true,
+                native_lsp = {
+                    enabled = true,
+                },
+            },
         },
         config = function(_, opts)
-            require('tokyonight').setup(opts)
-            vim.cmd([[colorscheme tokyonight-night]])
+            require('catppuccin').setup(opts)
+            vim.cmd([[colorscheme catppuccin]])
         end,
     },
+
+    -- Alternative: Keep tokyonight available (comment out catppuccin above to use)
+    -- {
+    --     'folke/tokyonight.nvim',
+    --     lazy = false,
+    --     priority = 1000,
+    --     opts = {
+    --         on_highlights = function(hl, c)
+    --             hl['@string.documentation.python'] = { fg = c.comment }
+    --         end,
+    --     },
+    --     config = function(_, opts)
+    --         require('tokyonight').setup(opts)
+    --         vim.cmd([[colorscheme tokyonight-night]])
+    --     end,
+    -- },
 
     -- Treesitter for better syntax highlighting
     {
@@ -111,14 +143,14 @@ require('lazy').setup({
             end
 
             configs.setup({
-                ensure_installed = {
-                    'python',
-                    'typescript',
-                    'tsx',
-                    'javascript',
-                    'lua',
-                    'yaml',
-                    'hcl',
+                ensure_installed = { 
+                    'python', 
+                    'typescript', 
+                    'tsx', 
+                    'javascript', 
+                    'lua', 
+                    'yaml', 
+                    'hcl', 
                     'bash',
                 },
                 highlight = { enable = true },
@@ -160,10 +192,35 @@ require('lazy').setup({
     },
 
     -- Comments
+    -- Keymaps:
+    --   gcc = Toggle line comment
+    --   gcp = Toggle comment on paragraph/block
+    --   gcA = Add comment at end of line
+    --   gc  = Toggle comment (visual mode)
     {
         'numToStr/Comment.nvim',
-        opts = {},
         lazy = false,
+        config = function()
+            require('Comment').setup({
+                -- Default mappings: gcc, gbc, gc (visual)
+                toggler = {
+                    line = 'gcc',   -- Line-comment toggle
+                    block = 'gbc',  -- Block-comment toggle
+                },
+                opleader = {
+                    line = 'gc',    -- Line-comment operator (gc + motion)
+                    block = 'gb',   -- Block-comment operator (gb + motion)
+                },
+                extra = {
+                    above = 'gcO',  -- Add comment on line above
+                    below = 'gco',  -- Add comment on line below
+                    eol = 'gcA',    -- Add comment at end of line
+                },
+            })
+
+            -- Custom mapping: gcp = comment paragraph (gc + ip)
+            vim.keymap.set('n', 'gcp', 'gcip', { remap = true, desc = 'Comment paragraph' })
+        end,
     },
 
     -- TODO Comments Highlighting
@@ -246,22 +303,30 @@ require('lazy').setup({
             -- Press <leader> and wait to see all registered keymaps
             -- =====================================================
             wk.add({
-                -- Window management (Ctrl-w prefix)
-                { "<C-w>", group = "Windows" },
-                { "<C-w>w", desc = "Next window" },
+                -- Window management (Ctrl-w prefix) - ALIGNED WITH TMUX Ctrl-a
+                -- Same mental model: Ctrl-w for vim windows, Ctrl-a for tmux panes
+                { "<C-w>", group = "Windows (like tmux Ctrl-a)" },
                 { "<C-w>h", desc = "Go to left window" },
                 { "<C-w>j", desc = "Go to below window" },
                 { "<C-w>k", desc = "Go to above window" },
                 { "<C-w>l", desc = "Go to right window" },
-                { "<C-w>c", desc = "Close current window" },
-                { "<C-w>o", desc = "Close all OTHER windows" },
-                { "<C-w>s", desc = "Split horizontal" },
-                { "<C-w>v", desc = "Split vertical" },
+                { "<C-w>|", desc = "Split vertical (side) [tmux: C-a |]" },
+                { "<C-w>-", desc = "Split horizontal (below) [tmux: C-a -]" },
+                { "<C-w>n", desc = "Next buffer [tmux: C-a n]" },
+                { "<C-w>p", desc = "Previous buffer [tmux: C-a p]" },
+                { "<C-w>x", desc = "Close window [tmux: C-a x]" },
+                { "<C-w>X", desc = "Close buffer [tmux: C-a X]" },
+                { "<C-w>O", desc = "Close all OTHER windows" },
+                { "<C-w>o", desc = "Close all other windows (same as O)" },
                 { "<C-w>=", desc = "Equal size windows" },
-                { "<C-w>_", desc = "Max height" },
-                { "<C-w>|", desc = "Max width" },
-                { "<C-w>r", desc = "Rotate windows" },
-                { "<C-w>T", desc = "Move window to tab" },
+                { "<C-w>m", desc = "Maximize window [tmux: C-a m]" },
+                { "<C-w>M", desc = "Unmaximize window" },
+                { "<C-w><", desc = "Rotate windows backward [tmux: C-a <]" },
+                { "<C-w>>", desc = "Rotate windows forward [tmux: C-a >]" },
+                { "<C-w><C-h>", desc = "Decrease width [tmux: C-a C-h]" },
+                { "<C-w><C-l>", desc = "Increase width [tmux: C-a C-l]" },
+                { "<C-w><C-j>", desc = "Decrease height [tmux: C-a C-j]" },
+                { "<C-w><C-k>", desc = "Increase height [tmux: C-a C-k]" },
 
                 -- Navigation
                 { "g", group = "Go to / LSP" },
@@ -327,6 +392,10 @@ require('lazy').setup({
                 { "gc", group = "Comment" },
                 { "gcc", desc = "Toggle line comment" },
                 { "gbc", desc = "Toggle block comment" },
+                { "gcp", desc = "Comment paragraph" },
+                { "gcA", desc = "Comment at end of line" },
+                { "gcO", desc = "Comment line above" },
+                { "gco", desc = "Comment line below" },
                 { "gc", desc = "Comment selection", mode = "v" },
 
                 -- Search
@@ -434,10 +503,10 @@ require('lazy').setup({
                 },
                 on_attach = function(bufnr)
                     local api = require('nvim-tree.api')
-
+                    
                     -- Default mappings
                     api.config.mappings.default_on_attach(bufnr)
-
+                    
                     -- Custom mapping for help
                     local opts = { buffer = bufnr, noremap = true, silent = true, desc = 'Show help' }
                     vim.keymap.set('n', '?', api.tree.toggle_help, opts)
@@ -460,30 +529,30 @@ require('lazy').setup({
                     right_mouse_command = 'bdelete! %d',
                     left_mouse_command = 'buffer %d',
                     middle_mouse_command = nil,
-
+                    
                     indicator = {
                         style = 'icon',
                         icon = '▎',
                     },
-
+                    
                     buffer_close_icon = '×',
                     modified_icon = '●',
                     close_icon = '',
                     left_trunc_marker = '',
                     right_trunc_marker = '',
-
+                    
                     max_name_length = 30,
                     max_prefix_length = 15,
                     truncate_names = true,
                     tab_size = 20,
-
+                    
                     diagnostics = 'nvim_lsp',            -- Show LSP diagnostics in tabs
                     diagnostics_update_in_insert = false,
                     diagnostics_indicator = function(count, level)
                         local icon = level:match('error') and ' ' or ' '
                         return ' ' .. icon .. count
                     end,
-
+                    
                     -- Don't show bufferline over nvim-tree
                     offsets = {
                         {
@@ -493,7 +562,7 @@ require('lazy').setup({
                             separator = true,
                         },
                     },
-
+                    
                     color_icons = true,
                     show_buffer_icons = true,
                     show_buffer_close_icons = true,
@@ -501,17 +570,17 @@ require('lazy').setup({
                     show_tab_indicators = true,
                     show_duplicate_prefix = true,
                     persist_buffer_sort = true,
-
+                    
                     separator_style = 'thin',            -- 'slant', 'thick', 'thin', 'padded_slant'
                     enforce_regular_tabs = false,
                     always_show_bufferline = true,
-
+                    
                     hover = {
                         enabled = true,
                         delay = 200,
                         reveal = { 'close' },
                     },
-
+                    
                     sort_by = 'insert_after_current',
                 },
             })
@@ -653,7 +722,7 @@ cmp.setup({
 -- creating a REAL FILE named "]" in your CWD — which then appears in future
 -- grep results, perpetuating the bug.
 --
--- THE FIX:
+-- THE SOLUTION:
 -- 1. Capture the original buffer/window BEFORE Telescope opens (not after close)
 -- 2. Validate extracted filenames (reject "]", "[", or paths ending in brackets)
 -- 3. Fall back to navigating within the original buffer when filename is invalid
@@ -683,7 +752,7 @@ end
 -- Helper: Extract valid file path from telescope entry
 local function get_entry_path(entry, cwd)
     if not entry then return nil end
-
+    
     -- Try entry.filename first
     if is_valid_filename(entry.filename) then
         local full_path
@@ -698,7 +767,7 @@ local function get_entry_path(entry, cwd)
             return get_canonical_path(full_path)
         end
     end
-
+    
     -- Try entry.path
     if is_valid_filename(entry.path) then
         local full_path = entry.path
@@ -706,7 +775,7 @@ local function get_entry_path(entry, cwd)
             return get_canonical_path(full_path)
         end
     end
-
+    
     -- Cannot extract valid path
     return nil
 end
@@ -729,24 +798,24 @@ local function smart_open(prompt_bufnr)
         actions.close(prompt_bufnr)
         return
     end
-
+    
     -- Get the picker's cwd (from entry metatable)
     local picker_cwd = nil
     local mt = getmetatable(entry)
     if mt and mt.cwd then
         picker_cwd = mt.cwd
     end
-
+    
     -- Extract target info
     local target_file = get_entry_path(entry, picker_cwd)
     local target_line = entry.lnum or 1
     local target_col = (entry.col or 1) - 1
-
+    
     local orig = _G._telescope_ctx
-
+    
     -- Close Telescope first
     actions.close(prompt_bufnr)
-
+    
     vim.schedule(function()
         -- CASE 1: Invalid/corrupted filename (like "]")
         -- If we have original context, assume user is searching in current file
@@ -759,15 +828,15 @@ local function smart_open(prompt_bufnr)
                 if vim.api.nvim_buf_is_valid(orig.bufnr) then
                     vim.api.nvim_set_current_buf(orig.bufnr)
                 end
-
+                
                 local line_count = vim.api.nvim_buf_line_count(0)
                 local safe_line = math.min(math.max(1, target_line), line_count)
                 local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
                 local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
-
+                
                 vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
                 vim.cmd('normal! zz')
-
+                
                 _G._telescope_ctx = nil
                 return
             else
@@ -777,13 +846,13 @@ local function smart_open(prompt_bufnr)
                 return
             end
         end
-
+        
         -- CASE 2: Valid filename extracted
-        local is_same_file = orig
-            and orig.file
-            and target_file
+        local is_same_file = orig 
+            and orig.file 
+            and target_file 
             and orig.file == target_file
-
+        
         if is_same_file then
             -- Same file: navigate in original buffer
             if vim.api.nvim_win_is_valid(orig.winnr) then
@@ -792,12 +861,12 @@ local function smart_open(prompt_bufnr)
             if vim.api.nvim_buf_is_valid(orig.bufnr) then
                 vim.api.nvim_set_current_buf(orig.bufnr)
             end
-
+            
             local line_count = vim.api.nvim_buf_line_count(0)
             local safe_line = math.min(math.max(1, target_line), line_count)
             local line_text = vim.api.nvim_buf_get_lines(0, safe_line - 1, safe_line, false)[1] or ''
             local safe_col = math.min(math.max(0, target_col), math.max(0, #line_text - 1))
-
+            
             vim.api.nvim_win_set_cursor(0, { safe_line, safe_col })
             vim.cmd('normal! zz')
         else
@@ -805,14 +874,14 @@ local function smart_open(prompt_bufnr)
             if orig and vim.api.nvim_win_is_valid(orig.winnr) then
                 vim.api.nvim_set_current_win(orig.winnr)
             end
-
+            
             vim.cmd('edit ' .. vim.fn.fnameescape(target_file))
             local line_count = vim.api.nvim_buf_line_count(0)
             local safe_line = math.min(math.max(1, target_line), line_count)
             vim.api.nvim_win_set_cursor(0, { safe_line, math.max(0, target_col) })
             vim.cmd('normal! zz')
         end
-
+        
         _G._telescope_ctx = nil
     end)
 end
@@ -949,8 +1018,8 @@ vim.api.nvim_create_user_command('DebugBuffers', function()
     print("Buffers:")
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_loaded(buf) then
-            print(string.format("  [%d] '%s' ft=%s listed=%s",
-                buf,
+            print(string.format("  [%d] '%s' ft=%s listed=%s", 
+                buf, 
                 vim.api.nvim_buf_get_name(buf),
                 vim.bo[buf].filetype,
                 tostring(vim.bo[buf].buflisted)))
@@ -974,6 +1043,46 @@ require('gitsigns').setup({
 vim.keymap.set('n', '<leader>gb', ':Git blame<CR>', { desc = 'Git Blame' })
 vim.keymap.set('n', '<leader>gs', ':Git<CR>', { desc = 'Git Status' })
 vim.keymap.set('n', '<leader>gd', ':Gvdiffsplit<CR>', { desc = 'Git Diff' })
+
+-- -----------------
+-- WINDOW MANAGEMENT (aligned with tmux Ctrl-a keybindings)
+-- -----------------
+-- Tmux uses Ctrl-a, Neovim uses Ctrl-w
+-- Same logic, different prefix for muscle memory consistency
+--
+-- Navigation (same as tmux h/j/k/l)
+vim.keymap.set('n', '<C-w>h', '<C-w>h', { desc = 'Go to left window' })
+vim.keymap.set('n', '<C-w>j', '<C-w>j', { desc = 'Go to below window' })
+vim.keymap.set('n', '<C-w>k', '<C-w>k', { desc = 'Go to above window' })
+vim.keymap.set('n', '<C-w>l', '<C-w>l', { desc = 'Go to right window' })
+
+-- Splits (aligned with tmux | and -)
+vim.keymap.set('n', '<C-w>|', ':vsplit<CR>', { desc = 'Split vertical (side)' })
+vim.keymap.set('n', '<C-w>-', ':split<CR>', { desc = 'Split horizontal (below)' })
+
+-- Buffer/Tab navigation (aligned with tmux n/p)
+vim.keymap.set('n', '<C-w>n', ':BufferLineCycleNext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<C-w>p', ':BufferLineCyclePrev<CR>', { desc = 'Previous buffer' })
+
+-- Close windows (aligned with tmux x/X)
+vim.keymap.set('n', '<C-w>x', ':close<CR>', { desc = 'Close current window' })
+vim.keymap.set('n', '<C-w>X', ':bdelete<CR>', { desc = 'Close current buffer' })
+vim.keymap.set('n', '<C-w>O', ':only<CR>', { desc = 'Close all other windows' })
+
+-- Resize windows (aligned with tmux Ctrl-h/j/k/l)
+vim.keymap.set('n', '<C-w><C-h>', ':vertical resize -5<CR>', { desc = 'Decrease width' })
+vim.keymap.set('n', '<C-w><C-l>', ':vertical resize +5<CR>', { desc = 'Increase width' })
+vim.keymap.set('n', '<C-w><C-j>', ':resize -3<CR>', { desc = 'Decrease height' })
+vim.keymap.set('n', '<C-w><C-k>', ':resize +3<CR>', { desc = 'Increase height' })
+
+-- Zoom/maximize window (like tmux Ctrl-a m)
+-- Toggle between current window and fullscreen
+vim.keymap.set('n', '<C-w>m', ':tab split<CR>', { desc = 'Maximize window (new tab)' })
+vim.keymap.set('n', '<C-w>M', ':tabclose<CR>', { desc = 'Unmaximize (close tab)' })
+
+-- Swap windows (like tmux < and >)
+vim.keymap.set('n', '<C-w><', '<C-w>R', { desc = 'Rotate windows backward' })
+vim.keymap.set('n', '<C-w>>', '<C-w>r', { desc = 'Rotate windows forward' })
 
 -- -----------------
 -- TERMINAL INTEGRATION
@@ -1008,7 +1117,6 @@ vim.diagnostic.config({
     underline = true,
     severity_sort = true,
 })
-
 
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Previous Diagnostic' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Next Diagnostic' })

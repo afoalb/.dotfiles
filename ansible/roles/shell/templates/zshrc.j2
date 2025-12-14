@@ -98,6 +98,14 @@ bindkey '^X^E' edit-command-line
 # ------------------
 # Common Aliases
 # ------------------
+# Vim
+ANSIBLE_REMINDER="NOTE: Run the ansible playbook to play the changes."
+
+alias vim='nvim'
+alias vi='vim'
+alias vimrc='nvim ~/.dotfiles/ansible/roles/neovim/files/init.lua; echo "\n$ANSIBLE_REMINDER"'
+alias zshrc='nvim ~/.dotfiles/ansible/roles/shell/templates/; echo "\n$ANSIBLE_REMINDER"'
+
 # Basic listing
 alias ls='ls -GFh'       # colorize, classify, human-readable sizes
 alias l='ls -CF'         # compact view, classify (/ @ *)
