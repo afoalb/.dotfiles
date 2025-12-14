@@ -1,0 +1,37 @@
+---
+# ==============================================================================
+# JankyBorders Configuration Role
+# ==============================================================================
+# Configures window borders to highlight the active window
+# ==============================================================================
+
+- name: Create borders config directory
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.config/borders"
+    state: directory
+    mode: '0755'
+  tags: borders
+
+- name: Deploy bordersrc configuration
+  copy:
+    src: bordersrc
+    dest: "{{ ansible_facts['env']['HOME'] }}/.config/borders/bordersrc"
+    mode: '0755'
+  tags: borders
+
+- name: Check if borders is running
+  shell: pgrep -x borders || true
+  register: borders_status
+  changed_when: false
+  tags: borders
+
+- name: Start borders service
+  shell: brew services start borders
+  when: borders_status.stdout == ""
+  tags: borders
+
+- name: Restart borders to apply config
+  shell: brew services restart borders
+  when: borders_status.stdout != ""
+  changed_when: false
+  tags: borders
