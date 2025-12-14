@@ -62,8 +62,9 @@ brew "mosh"                   # Mobile shell (better SSH)
 # Window Management
 # -------------
 brew "koekeishiya/formulae/yabai"      # Tiling window manager
-tap "FelixKratz/formulae"              # SketchyBar tap
+tap "FelixKratz/formulae"              # SketchyBar & JankyBorders tap
 brew "FelixKratz/formulae/sketchybar"  # Custom menu bar
+brew "FelixKratz/formulae/borders"     # Window borders for active window
 cask "karabiner-elements"              # Keyboard customization
 cask "hammerspoon"                     # Automation engine (replaces skhd for hotkeys)
 cask "jordanbaird-ice"                 # Manages icon visibility

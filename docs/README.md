@@ -1,22 +1,25 @@
+# Initial Setup
 
-# macOS Setup Instructions (Phase 0)
+Before running Ansible, complete these steps on a fresh macOS installation.
+
 
 ## 1. Install Xcode Command Line Tools
 
-macOS requires these before Homebrew or Ansible can run:
+Required before Homebrew or Ansible can run:
 
     xcode-select --install
 
-Wait until installation finishes (it may take several minutes).
+Wait for installation to complete (several minutes).
 
 
-## 2. Run first-run script
+## 2. Run Bootstrap Script
 
-After CLT is installed, use:
+After Xcode CLI tools are installed:
 
     ~/.dotfiles/scripts/first-run.sh
 
 This script will:
-- Install Homebrew
-- Install Ansible via Homebrew
-- Run the main playbook
+
+    - Install Homebrew
+    - Install Ansible via Homebrew
+    - Run the main playbook
