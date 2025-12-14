@@ -9,7 +9,7 @@ if [ -z "$PERCENTAGE" ]; then
 fi
 
 if [ "$CHARGING" -eq 1 ]; then
-    sketchybar --set "$NAME" label="⚡${PERCENTAGE}"
+    sketchybar --set "$NAME" label="⚡ ${PERCENTAGE}"
 else
     sketchybar --set "$NAME" label="${PERCENTAGE}"
 fi
