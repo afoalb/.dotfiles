@@ -50,6 +50,7 @@ bind '"\C-r": reverse-search-history'
 bind '"\C-s": forward-search-history'
 
 # Open command line in $EDITOR
+{% raw %}
 edit-current-line() {
     local tmp=$(mktemp)
     printf "%s" "$READLINE_LINE" > "$tmp"
@@ -58,6 +59,7 @@ edit-current-line() {
     READLINE_POINT=${#READLINE_LINE}
     rm -f "$tmp"
 }
+{% endraw %}
 bind -x '"\C-x\C-e":edit-current-line'
 
 

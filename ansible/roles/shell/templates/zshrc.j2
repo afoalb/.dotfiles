@@ -94,6 +94,7 @@ bindkey '^X^E' edit-command-line
 # These use zsh glob qualifiers which are not available in bash
 
 # ll: long list, human readable, directories first then files (including hidden)
+{% raw %}
 ll() {
     local target="${1:-.}"
     local dirs files
@@ -139,6 +140,7 @@ lldot() {
     [[ ${#dotdirs} -gt 0 ]] && ls -lhFd "${dotdirs[@]}"
     [[ ${#dotfiles} -gt 0 ]] && ls -lhFd "${dotfiles[@]}"
 }
+{% endraw %}
 
 
 # ------------------
