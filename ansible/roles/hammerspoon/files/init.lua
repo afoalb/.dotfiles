@@ -34,6 +34,14 @@ hs.hotkey.bind({"cmd"}, "return", function()
     hs.application.launchOrFocus("Alacritty")
 end)
 
+-- Cmd + H -> Hide current application (brings back with Cmd+Tab)
+hs.hotkey.bind({"cmd"}, "h", function()
+    local app = hs.application.frontmostApplication()
+    if app then
+        app:hide()
+    end
+end)
+
 -- Cmd + E -> Finder
 hs.hotkey.bind({"cmd"}, "e", function()
     hs.application.launchOrFocus("Finder")
@@ -169,4 +177,36 @@ end)
 
 hs.hotkey.bind({"cmd", "ctrl"}, "3", function()
     yabai({"-m", "window", "--space", "3"})
+end)
+
+
+-- ==============================================================================
+-- Browser Shortcuts
+-- ==============================================================================
+
+local browsers = {
+    "Firefox",
+    "Firefox Developer Edition",
+    "Google Chrome",
+    "Safari",
+    "Arc",
+    "Brave Browser",
+    "Microsoft Edge"
+}
+
+local function isBrowser(appName)
+    for _, browser in ipairs(browsers) do
+        if appName == browser then
+            return true
+        end
+    end
+    return false
+end
+
+-- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
+hs.hotkey.bind({"ctrl"}, "l", function()
+    local app = hs.application.frontmostApplication()
+    if app and isBrowser(app:name()) then
+        hs.eventtap.keyStroke({"cmd"}, "l")
+    end
 end)

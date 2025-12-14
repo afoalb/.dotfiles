@@ -218,11 +218,21 @@
   changed_when: false
   failed_when: false
 
-- name: Hide AlDente dock icon
+- name: Hide AlDente from dock (LSUIElement)
   shell: |
-    defaults write com.apphousekitchen.aldente-pro showDockIcon -bool false 2>/dev/null || true
-    defaults write com.AppHouseKitchen.AlDente showDockIcon -bool false 2>/dev/null || true
+    ALDENTE_PATH="/Applications/AlDente.app"
+    if [ -d "$ALDENTE_PATH" ]; then
+      # Add LSUIElement to Info.plist to hide from dock
+      /usr/libexec/PlistBuddy -c "Delete :LSUIElement" "$ALDENTE_PATH/Contents/Info.plist" 2>/dev/null || true
+      /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$ALDENTE_PATH/Contents/Info.plist"
+      # Clear launch services cache and restart app
+      /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$ALDENTE_PATH"
+      killall AlDente 2>/dev/null || true
+      sleep 1
+      open -a AlDente
+    fi
   changed_when: false
+  failed_when: false
 
 # ------------------
 # Apply changes
