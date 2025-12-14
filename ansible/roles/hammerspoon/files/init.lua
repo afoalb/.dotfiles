@@ -34,14 +34,6 @@ hs.hotkey.bind({"cmd"}, "return", function()
     hs.application.launchOrFocus("Alacritty")
 end)
 
--- Cmd + H -> Hide current application (brings back with Cmd+Tab)
-hs.hotkey.bind({"cmd"}, "h", function()
-    local app = hs.application.frontmostApplication()
-    if app then
-        app:hide()
-    end
-end)
-
 -- Cmd + E -> Finder
 hs.hotkey.bind({"cmd"}, "e", function()
     hs.application.launchOrFocus("Finder")
@@ -184,29 +176,22 @@ end)
 -- Browser Shortcuts
 -- ==============================================================================
 
-local browsers = {
-    "Firefox",
-    "Firefox Developer Edition",
-    "Google Chrome",
-    "Safari",
-    "Arc",
-    "Brave Browser",
-    "Microsoft Edge"
+-- Browser bundle IDs for reliable detection
+local browserBundleIDs = {
+    ["org.mozilla.firefox"] = true,
+    ["org.mozilla.firefoxdeveloperedition"] = true,
+    ["com.google.Chrome"] = true,
+    ["com.apple.Safari"] = true,
+    ["company.thebrowser.Browser"] = true,  -- Arc
+    ["com.brave.Browser"] = true,
+    ["com.microsoft.edgemac"] = true,
 }
 
-local function isBrowser(appName)
-    for _, browser in ipairs(browsers) do
-        if appName == browser then
-            return true
-        end
-    end
-    return false
-end
-
 -- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
-hs.hotkey.bind({"ctrl"}, "l", function()
+-- Using nil for pressedfn and function as releasefn for proper keystroke remapping
+hs.hotkey.bind({"ctrl"}, "l", nil, function()
     local app = hs.application.frontmostApplication()
-    if app and isBrowser(app:name()) then
+    if app and browserBundleIDs[app:bundleID()] then
         hs.eventtap.keyStroke({"cmd"}, "l")
     end
 end)
