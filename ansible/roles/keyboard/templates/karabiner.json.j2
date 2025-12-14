@@ -30,63 +30,6 @@
                                 "to": []
                             }
                         ]
-                    },
-                    {
-                        "description": "Browser: Ctrl+L to Cmd+L (focus URL bar)",
-                        "manipulators": [
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "key_code": "l",
-                                    "modifiers": {
-                                        "mandatory": ["left_control"],
-                                        "optional": ["caps_lock"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "l",
-                                        "modifiers": ["command"]
-                                    }
-                                ],
-                                "conditions": [
-                                    {
-                                        "type": "frontmost_application_if",
-                                        "bundle_identifiers": [
-                                            "^org\\.mozilla\\.firefox$",
-                                            "^com\\.google\\.Chrome$",
-                                            "^com\\.apple\\.Safari$"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "basic",
-                                "from": {
-                                    "key_code": "l",
-                                    "modifiers": {
-                                        "mandatory": ["right_control"],
-                                        "optional": ["caps_lock"]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "l",
-                                        "modifiers": ["command"]
-                                    }
-                                ],
-                                "conditions": [
-                                    {
-                                        "type": "frontmost_application_if",
-                                        "bundle_identifiers": [
-                                            "^org\\.mozilla\\.firefox$",
-                                            "^com\\.google\\.Chrome$",
-                                            "^com\\.apple\\.Safari$"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
                     }
                 ]
             }
