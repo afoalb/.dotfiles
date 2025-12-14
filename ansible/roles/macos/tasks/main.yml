@@ -139,7 +139,7 @@
   file:
     path: "{{ ansible_facts['env']['HOME'] }}/Screenshots"
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 # When using macOS screenshot app
 - name: Set screenshots location
@@ -188,11 +188,10 @@
 
 # Stopped working on macOS Sequoia
 # - name: Show battery percentage
-  # shell: defaults write com.apple.menuextra.battery ShowPercent -bool true
+# shell: defaults write com.apple.menuextra.battery ShowPercent -bool true
 
 - name: Use 24-hour time format
   shell: defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
-
 
 # ------------------
 # Other System Settings
@@ -208,7 +207,6 @@
 
 - name: Disable Time Machine prompts for new disks
   shell: defaults write com.apple.TimeMachine DoNotOfferNewDisksForBackup -bool true
-
 
 # ------------------
 # Login Items & App Settings
