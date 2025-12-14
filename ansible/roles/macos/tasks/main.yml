@@ -211,6 +211,20 @@
 
 
 # ------------------
+# Login Items & App Settings
+# ------------------
+- name: Remove Firefox from login items (prevent autostart)
+  shell: osascript -e 'tell application "System Events" to delete login item "Firefox"' 2>/dev/null || true
+  changed_when: false
+  failed_when: false
+
+- name: Hide AlDente dock icon
+  shell: |
+    defaults write com.apphousekitchen.aldente-pro showDockIcon -bool false 2>/dev/null || true
+    defaults write com.AppHouseKitchen.AlDente showDockIcon -bool false 2>/dev/null || true
+  changed_when: false
+
+# ------------------
 # Apply changes
 # ------------------
 - name: Restart Finder to apply changes
