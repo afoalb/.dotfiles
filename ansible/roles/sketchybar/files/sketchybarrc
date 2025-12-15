@@ -10,9 +10,9 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 # -------------
 sketchybar --bar \
     position=top \
-    height=32 \
-    color=0x992c2c2c \
-    border_color=0x40ffffff \
+    height=25 \
+    color=0xcc1a1b26 \
+    border_color=0xff3b4261 \
     border_width=1 \
     shadow=on \
     padding_left=10 \
