@@ -192,46 +192,39 @@ local DEBUG_CTRL_L = true
 
 -- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
 -- In non-browser apps, pass through the original Ctrl+L (e.g., clear screen in terminals)
-local sendingCmdL = false  -- Guard to prevent re-entry
 
 local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
-    -- Skip if we're in the middle of sending Cmd+L
-    if sendingCmdL then
-        return false
-    end
-
     local flags = event:getFlags()
     local keyCode = event:getKeyCode()
 
     -- Check if Ctrl+L (keyCode 37 = 'l')
+    -- Also check exactFlags to ensure ONLY ctrl is pressed
     if flags.ctrl and not flags.cmd and not flags.alt and not flags.shift and keyCode == 37 then
         local app = hs.application.frontmostApplication()
         local bundleID = app and app:bundleID() or "nil"
         local isBrowser = browserBundleIDs[bundleID] or false
 
         if DEBUG_CTRL_L then
-            hs.alert.show("Ctrl+L detected\nApp: " .. bundleID .. "\nIs browser: " .. tostring(isBrowser))
+            hs.alert.show("Ctrl+L: " .. bundleID .. " (browser=" .. tostring(isBrowser) .. ")")
         end
 
         if isBrowser then
-            -- In browser: send Cmd+L using direct event posting
-            sendingCmdL = true
-            hs.timer.doAfter(0.05, function()
-                -- Create and post keyDown event with Cmd modifier
-                local cmdDown = hs.eventtap.event.newKeyEvent({"cmd"}, "l", true)
-                cmdDown:post()
-                -- Create and post keyUp event
-                hs.timer.doAfter(0.02, function()
-                    local cmdUp = hs.eventtap.event.newKeyEvent({"cmd"}, "l", false)
-                    cmdUp:post()
-                    sendingCmdL = false
-                end)
+            -- Stop the tap temporarily to prevent recursion
+            ctrlLTap:stop()
+
+            -- Send Cmd+L synchronously
+            hs.eventtap.keyStroke({"cmd"}, "l", 0)
+
+            -- Re-enable tap after a short delay
+            hs.timer.doAfter(0.1, function()
+                ctrlLTap:start()
             end)
+
             return true  -- Block the original Ctrl+L
         end
     end
 
-    -- Pass through all other keypresses (including Ctrl+L in non-browsers)
+    -- Pass through all other keypresses
     return false
 end)
 ctrlLTap:start()
