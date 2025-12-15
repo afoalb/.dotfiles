@@ -187,6 +187,9 @@ local browserBundleIDs = {
     ["com.microsoft.edgemac"] = true,
 }
 
+-- DEBUG: Set to true to see alerts when Ctrl+L is pressed
+local DEBUG_CTRL_L = true
+
 -- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
 -- In non-browser apps, pass through the original Ctrl+L (e.g., clear screen in terminals)
 local sendingCmdL = false  -- Guard to prevent re-entry
@@ -203,10 +206,17 @@ local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
     -- Check if Ctrl+L (keyCode 37 = 'l')
     if flags.ctrl and not flags.cmd and not flags.alt and not flags.shift and keyCode == 37 then
         local app = hs.application.frontmostApplication()
-        if app and browserBundleIDs[app:bundleID()] then
+        local bundleID = app and app:bundleID() or "nil"
+        local isBrowser = browserBundleIDs[bundleID] or false
+
+        if DEBUG_CTRL_L then
+            hs.alert.show("Ctrl+L detected\nApp: " .. bundleID .. "\nIs browser: " .. tostring(isBrowser))
+        end
+
+        if isBrowser then
             -- In browser: send Cmd+L after a tiny delay and block original event
             sendingCmdL = true
-            hs.timer.doAfter(0.01, function()
+            hs.timer.doAfter(0.05, function()
                 hs.eventtap.keyStroke({"cmd"}, "l")
                 sendingCmdL = false
             end)

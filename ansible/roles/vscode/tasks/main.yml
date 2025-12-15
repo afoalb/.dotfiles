@@ -6,13 +6,20 @@
 # Installation handled by homebrew role via Brewfile
 # ==============================================================================
 
+# Quit VS Code before installing extensions to prevent Electron crash dialog
+- name: Quit VS Code before extension installation
+  shell: |
+    osascript -e 'tell application "Visual Studio Code" to quit' 2>/dev/null || true
+    pkill -f "Visual Studio Code" 2>/dev/null || true
+    sleep 2
+  changed_when: false
+  failed_when: false
+  tags: vscode
+
 # Install VS Code extensions using --force flag
-# ELECTRON_ENABLE_LOGGING=0 suppresses Electron crash dialogs
 - name: Install VS Code extensions
   shell: |
-    export ELECTRON_ENABLE_LOGGING=0
-    export ELECTRON_NO_ATTACH_CONSOLE=1
-    code --force --install-extension {{ item }} 2>/dev/null || true
+    code --force --install-extension {{ item }} 2>&1 || true
   loop:
     - ms-python.python
     - ms-python.vscode-pylance
