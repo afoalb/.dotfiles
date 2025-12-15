@@ -211,24 +211,19 @@
 # ------------------
 # Login Items & App Settings
 # ------------------
-- name: Remove Firefox from login items (prevent autostart)
-  shell: osascript -e 'tell application "System Events" to delete login item "Firefox"' 2>/dev/null || true
-  changed_when: false
-  failed_when: false
 
-- name: Hide AlDente from dock (LSUIElement)
+# AlDente dock icon - use defaults write to app preferences
+# Note: This setting is also available in AlDente UI: Settings > Appearance > Show Dock Icon
+- name: Hide AlDente dock icon via preferences
   shell: |
-    ALDENTE_PATH="/Applications/AlDente.app"
-    if [ -d "$ALDENTE_PATH" ]; then
-      # Add LSUIElement to Info.plist to hide from dock
-      /usr/libexec/PlistBuddy -c "Delete :LSUIElement" "$ALDENTE_PATH/Contents/Info.plist" 2>/dev/null || true
-      /usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$ALDENTE_PATH/Contents/Info.plist"
-      # Clear launch services cache and restart app
-      /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$ALDENTE_PATH"
-      killall AlDente 2>/dev/null || true
-      sleep 1
-      open -a AlDente
-    fi
+    # Try multiple possible bundle IDs and preference keys
+    defaults write com.apphousekitchen.aldente showDockIcon -bool false 2>/dev/null || true
+    defaults write com.apphousekitchen.aldente-pro showDockIcon -bool false 2>/dev/null || true
+    defaults write com.AppHouseKitchen.AlDente showDockIcon -bool false 2>/dev/null || true
+    # Restart AlDente to apply
+    killall AlDente 2>/dev/null || true
+    sleep 1
+    open -a AlDente 2>/dev/null || true
   changed_when: false
   failed_when: false
 
