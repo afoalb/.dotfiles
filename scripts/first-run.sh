@@ -2,6 +2,42 @@
 set -e
 
 # ----------------------------
+# Usage
+# ----------------------------
+usage() {
+  echo "Usage: $0 [--tags TAG1,TAG2,...] [--help]"
+  echo ""
+  echo "Options:"
+  echo "  --tags TAGS    Comma-separated list of Ansible tags to run"
+  echo "                 Example: --tags shell,homebrew,neovim"
+  echo "  --help         Show this help message"
+  echo ""
+  echo "If no tags specified, runs all tasks."
+  exit 0
+}
+
+# ----------------------------
+# Parse Arguments
+# ----------------------------
+ANSIBLE_TAGS=""
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --tags)
+      ANSIBLE_TAGS="$2"
+      shift 2
+      ;;
+    --help|-h)
+      usage
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+  esac
+done
+
+# ----------------------------
 # Configuration
 # ----------------------------
 DOTFILES_DIR="$HOME/.dotfiles"
@@ -94,6 +130,19 @@ brew install ansible
 # Step 4: Run the Ansible playbook
 # ----------------------------
 echo "[first-run] Running Ansible playbook..."
-ansible-playbook "$ANSIBLE_DIR/macos.yml" --vault-password-file "$VAULT_PASS_FILE"
+
+# Build ansible-playbook command
+ANSIBLE_CMD="ansible-playbook $ANSIBLE_DIR/macos.yml --vault-password-file $VAULT_PASS_FILE"
+
+# Add tags if specified
+if [ -n "$ANSIBLE_TAGS" ]; then
+  echo "[first-run] Running with tags: $ANSIBLE_TAGS"
+  ANSIBLE_CMD="$ANSIBLE_CMD --tags $ANSIBLE_TAGS"
+else
+  echo "[first-run] Running all tasks (no tags specified)"
+fi
+
+# Execute
+eval "$ANSIBLE_CMD"
 
 echo "[first-run] Setup complete!"

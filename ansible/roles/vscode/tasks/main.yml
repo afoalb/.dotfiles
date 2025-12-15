@@ -6,8 +6,13 @@
 # Installation handled by homebrew role via Brewfile
 # ==============================================================================
 
+# Install VS Code extensions using --force flag
+# ELECTRON_ENABLE_LOGGING=0 suppresses Electron crash dialogs
 - name: Install VS Code extensions
-  shell: code --install-extension {{ item }}
+  shell: |
+    export ELECTRON_ENABLE_LOGGING=0
+    export ELECTRON_NO_ATTACH_CONSOLE=1
+    code --force --install-extension {{ item }} 2>/dev/null || true
   loop:
     - ms-python.python
     - ms-python.vscode-pylance
@@ -24,10 +29,8 @@
     - oderwat.indent-rainbow
     - usernamehw.errorlens
     - ms-vscode-remote.remote-ssh
-  register: vscode_extension_result
-  failed_when:
-    - vscode_extension_result.rc != 0
-    - "'already installed' not in vscode_extension_result.stdout"
+  changed_when: false
+  failed_when: false
   tags: vscode
 
 - name: Create VS Code user settings directory

@@ -196,7 +196,14 @@ local browserBundleIDs = {
 
 -- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
 -- In non-browser apps, pass through the original Ctrl+L (e.g., clear screen in terminals)
+local sendingCmdL = false  -- Guard to prevent re-entry
+
 local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
+    -- Skip if we're in the middle of sending Cmd+L
+    if sendingCmdL then
+        return false
+    end
+
     local flags = event:getFlags()
     local keyCode = event:getKeyCode()
 
@@ -204,8 +211,12 @@ local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
     if flags.ctrl and not flags.cmd and not flags.alt and not flags.shift and keyCode == 37 then
         local app = hs.application.frontmostApplication()
         if app and browserBundleIDs[app:bundleID()] then
-            -- In browser: send Cmd+L and block original event
-            hs.eventtap.keyStroke({"cmd"}, "l", 0)
+            -- In browser: send Cmd+L after a tiny delay and block original event
+            sendingCmdL = true
+            hs.timer.doAfter(0.01, function()
+                hs.eventtap.keyStroke({"cmd"}, "l")
+                sendingCmdL = false
+            end)
             return true  -- Block the original Ctrl+L
         end
     end

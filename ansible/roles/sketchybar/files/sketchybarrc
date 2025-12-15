@@ -19,8 +19,11 @@ sketchybar --bar \
     padding_right=10 \
     margin=8 \
     y_offset=4 \
-    corner_radius=3 \
-    blur_radius=20
+    corner_radius=10 \
+    blur_radius=30
+    # Previous color scheme (Tokyo Night):
+    # color=0xcc1a1b26
+    # border_color=0xff3b4261
 
 # -------------
 # Default item settings
