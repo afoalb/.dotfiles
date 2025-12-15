@@ -183,15 +183,12 @@ end)
 -- CMD + CTRL + SHIFT: Screenshot
 -- ==============================================================================
 
--- + s: Open Shottr or native Screenshot app
+-- + s: Capture area with Shottr or native screenshot
 hs.hotkey.bind({"cmd", "ctrl", "shift"}, "s", function()
-    local shottr = hs.application.get("Shottr")
-    if shottr then
-        shottr:activate()
-    elseif hs.application.launchOrFocus("Shottr") then
-        -- Shottr launched successfully
-    else
-        -- Fallback to native Screenshot app
-        hs.application.launchOrFocus("Screenshot")
+    -- Try Shottr's URL scheme for area capture
+    local success = hs.urlevent.openURL("shottr://grab/area")
+    if not success then
+        -- Fallback to native Cmd+Shift+4 (area capture)
+        hs.eventtap.keyStroke({"cmd", "shift"}, "4")
     end
 end)
