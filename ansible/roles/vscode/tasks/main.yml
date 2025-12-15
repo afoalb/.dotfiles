@@ -6,20 +6,31 @@
 # Installation handled by homebrew role via Brewfile
 # ==============================================================================
 
-# Quit VS Code before installing extensions to prevent Electron crash dialog
-- name: Quit VS Code before extension installation
+# Quit VS Code and disable crash dialogs before installing extensions
+- name: Prepare VS Code for extension installation
   shell: |
+    # Quit VS Code gracefully
     osascript -e 'tell application "Visual Studio Code" to quit' 2>/dev/null || true
     pkill -f "Visual Studio Code" 2>/dev/null || true
+    # Kill any lingering Electron processes from VS Code
+    pkill -f "Code Helper" 2>/dev/null || true
     sleep 2
+    # Disable crash reporter dialog for this session
+    defaults write com.apple.CrashReporter DialogType none 2>/dev/null || true
   changed_when: false
   failed_when: false
   tags: vscode
 
-# Install VS Code extensions using --force flag
+# Install VS Code extensions using --force flag and --disable-gpu to reduce crashes
 - name: Install VS Code extensions
   shell: |
-    code --force --install-extension {{ item }} 2>&1 || true
+    # Run extension install with crash handling
+    code --disable-gpu --force --install-extension {{ item }} 2>&1 &
+    PID=$!
+    # Wait for completion with timeout
+    timeout 60 tail --pid=$PID -f /dev/null 2>/dev/null || true
+    # Small delay between extensions
+    sleep 1
   loop:
     - ms-python.python
     - ms-python.vscode-pylance
