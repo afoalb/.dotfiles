@@ -18,6 +18,7 @@
     src: init.lua
     dest: "{{ ansible_facts['env']['HOME'] }}/.hammerspoon/init.lua"
     mode: '0644'
+  register: hammerspoon_config
   tags: hammerspoon
 
 - name: Check if Hammerspoon is running
@@ -31,10 +32,18 @@
   when: hammerspoon_status.stdout == ""
   tags: hammerspoon
 
+# Always reload after starting or if config changed
 - name: Reload Hammerspoon configuration
   shell: |
-    osascript -e 'tell application "Hammerspoon" to execute lua code "hs.reload()"' 2>/dev/null || true
-  when: hammerspoon_status.stdout != ""
+    # Give Hammerspoon time to start if it was just launched
+    sleep 1
+    # Use hs CLI if available, fall back to osascript
+    if command -v hs &> /dev/null; then
+      hs -c "hs.reload()"
+    else
+      osascript -e 'tell application "Hammerspoon" to execute lua code "hs.reload()"'
+    fi
+  when: hammerspoon_config.changed or hammerspoon_status.stdout == ""
   changed_when: false
   failed_when: false
   tags: hammerspoon
