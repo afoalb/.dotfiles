@@ -11,8 +11,8 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 sketchybar --bar \
     position=top \
     height=32 \
-    color=0xcc1a1b26 \
-    border_color=0xff3b4261 \
+    color=0x992c2c2c \
+    border_color=0x40ffffff \
     border_width=1 \
     shadow=on \
     padding_left=10 \
@@ -20,7 +20,10 @@ sketchybar --bar \
     margin=8 \
     y_offset=4 \
     corner_radius=10 \
-    blur_radius=20
+    blur_radius=30
+    # Previous color scheme (Tokyo Night):
+    # color=0xcc1a1b26
+    # border_color=0xff3b4261
 
 # -------------
 # Default item settings
