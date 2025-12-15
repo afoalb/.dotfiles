@@ -32,18 +32,23 @@
   when: hammerspoon_status.stdout == ""
   tags: hammerspoon
 
-# Always reload after starting or if config changed
+# Always reload after config deployment
 - name: Reload Hammerspoon configuration
   shell: |
     # Give Hammerspoon time to start if it was just launched
-    sleep 1
-    # Use hs CLI if available, fall back to osascript
+    sleep 2
+    # Try multiple methods to reload
+    # Method 1: Use hs CLI if available
     if command -v hs &> /dev/null; then
-      hs -c "hs.reload()"
-    else
-      osascript -e 'tell application "Hammerspoon" to execute lua code "hs.reload()"'
+      hs -c "hs.reload()" && exit 0
     fi
+    # Method 2: Use osascript to tell Hammerspoon to reload
+    osascript -e 'tell application "Hammerspoon" to execute lua code "hs.reload()"' 2>/dev/null && exit 0
+    # Method 3: Restart Hammerspoon entirely as last resort
+    killall Hammerspoon 2>/dev/null || true
+    sleep 1
+    open -a Hammerspoon
   when: hammerspoon_config.changed or hammerspoon_status.stdout == ""
-  changed_when: false
+  changed_when: true
   failed_when: false
   tags: hammerspoon
