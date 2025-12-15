@@ -177,10 +177,3 @@ end)
 hs.hotkey.bind({"cmd", "ctrl"}, "3", function()
     yabai({"-m", "window", "--space", "3"})
 end)
-
-
--- ==============================================================================
--- Browser Shortcuts
--- ==============================================================================
--- Ctrl+L -> Cmd+L (focus URL bar) is handled by Karabiner-Elements
--- See: ansible/roles/keyboard/templates/karabiner.json.j2
