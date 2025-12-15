@@ -8,19 +8,23 @@ PLUGIN_DIR="$CONFIG_DIR/plugins"
 # -------------
 # Bar appearance (floating style)
 # -------------
+# Color format: 
+# hex format --> 0x
+# transparency --> e.g.: 00, 1A, 33, 4D, 66, 80, 99, B3, CC, E6, FF
+# colour --> any colour in hex format
 sketchybar --bar \
     position=top \
     height=25 \
-    color=0xcc1a1b26 \
-    border_color=0xff3b4261 \
+    color=0x801a1b26 \
+    border_color=0x801a1b26 \
     border_width=1 \
     shadow=on \
     padding_left=10 \
     padding_right=10 \
     margin=8 \
     y_offset=4 \
-    corner_radius=10 \
-    blur_radius=30
+    corner_radius=4 \
+    blur_radius=7  # background blur
     # Previous color scheme (Tokyo Night):
     # color=0xcc1a1b26
     # border_color=0xff3b4261
