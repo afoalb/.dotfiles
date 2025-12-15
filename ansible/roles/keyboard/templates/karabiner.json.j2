@@ -7,12 +7,17 @@
         {
             "name": "Default",
             "selected": true,
+            "virtual_hid_keyboard": {
+                "caps_lock_delay_milliseconds": 0,
+                "keyboard_type_v2": "ansi"
+            },
             "simple_modifications": [
                 {
                     "from": { "key_code": "caps_lock" },
-                    "to": { "key_code": "left_control" }
+                    "to": [{ "key_code": "left_control" }]
                 }
             ],
+            "fn_function_keys": [],
             "complex_modifications": {
                 "rules": [
                     {
