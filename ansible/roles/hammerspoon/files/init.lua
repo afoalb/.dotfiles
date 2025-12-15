@@ -136,7 +136,7 @@ hs.hotkey.bind({"cmd", "ctrl"}, "m", function()
     end
 end)
 
-+ r: Rotate layout
+-- + r: Rotate layout
 hs.hotkey.bind({"cmd", "ctrl"}, "r", function()
     yabai({"-m", "space", "--rotate", "270"})
 end)
