@@ -177,3 +177,21 @@ end)
 hs.hotkey.bind({"cmd", "ctrl"}, "3", function()
     yabai({"-m", "window", "--space", "3"})
 end)
+
+
+-- ==============================================================================
+-- CMD + CTRL + SHIFT: Screenshot
+-- ==============================================================================
+
+-- + s: Open Shottr or native Screenshot app
+hs.hotkey.bind({"cmd", "ctrl", "shift"}, "s", function()
+    local shottr = hs.application.get("Shottr")
+    if shottr then
+        shottr:activate()
+    elseif hs.application.launchOrFocus("Shottr") then
+        -- Shottr launched successfully
+    else
+        -- Fallback to native Screenshot app
+        hs.application.launchOrFocus("Screenshot")
+    end
+end)
