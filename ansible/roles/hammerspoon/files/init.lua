@@ -188,10 +188,22 @@ local browserBundleIDs = {
 }
 
 -- Ctrl + L -> Focus URL bar in browsers (sends Cmd+L)
--- Using nil for pressedfn and function as releasefn for proper keystroke remapping
-hs.hotkey.bind({"ctrl"}, "l", nil, function()
-    local app = hs.application.frontmostApplication()
-    if app and browserBundleIDs[app:bundleID()] then
-        hs.eventtap.keyStroke({"cmd"}, "l")
+-- In non-browser apps, pass through the original Ctrl+L (e.g., clear screen in terminals)
+local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(event)
+    local flags = event:getFlags()
+    local keyCode = event:getKeyCode()
+
+    -- Check if Ctrl+L (keyCode 37 = 'l')
+    if flags.ctrl and not flags.cmd and not flags.alt and not flags.shift and keyCode == 37 then
+        local app = hs.application.frontmostApplication()
+        if app and browserBundleIDs[app:bundleID()] then
+            -- In browser: send Cmd+L and block original event
+            hs.eventtap.keyStroke({"cmd"}, "l", 0)
+            return true  -- Block the original Ctrl+L
+        end
     end
+
+    -- Pass through all other keypresses (including Ctrl+L in non-browsers)
+    return false
 end)
+ctrlLTap:start()
