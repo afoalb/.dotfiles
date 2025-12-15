@@ -30,6 +30,41 @@
                                 "to": []
                             }
                         ]
+                    },
+                    {
+                        "description": "Ctrl+L to Cmd+L in browsers (focus URL bar)",
+                        "manipulators": [
+                            {
+                                "type": "basic",
+                                "from": {
+                                    "key_code": "l",
+                                    "modifiers": {
+                                        "mandatory": ["control"],
+                                        "optional": []
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "l",
+                                        "modifiers": ["command"]
+                                    }
+                                ],
+                                "conditions": [
+                                    {
+                                        "type": "frontmost_application_if",
+                                        "bundle_identifiers": [
+                                            "^org\\.mozilla\\.firefox$",
+                                            "^org\\.mozilla\\.firefoxdeveloperedition$",
+                                            "^com\\.google\\.Chrome$",
+                                            "^com\\.apple\\.Safari$",
+                                            "^company\\.thebrowser\\.Browser$",
+                                            "^com\\.brave\\.Browser$",
+                                            "^com\\.microsoft\\.edgemac$"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             }
