@@ -44,7 +44,6 @@ hs.hotkey.bind({"cmd"}, "b", function()
     hs.application.launchOrFocus("Firefox")
 end)
 
-
 -- ==============================================================================
 -- OPTION: Focus/Select
 -- ==============================================================================
@@ -77,10 +76,10 @@ end)
 
 
 -- ==============================================================================
--- OPTION + SHIFT: Resize
+-- CMD + SHIFT: Resize
 -- ==============================================================================
 
--- Option + Shift + hjkl: Resize window in direction
+-- + hjkl: Resize window in direction
 hs.hotkey.bind({"cmd", "shift"}, "h", function()
     yabai({"-m", "window", "--resize", "left:-20:0"})
 end)
@@ -97,22 +96,22 @@ hs.hotkey.bind({"cmd", "shift"}, "l", function()
     yabai({"-m", "window", "--resize", "right:20:0"})
 end)
 
--- Option + Shift + f: Fullscreen (maximize)
+-- + f: Fullscreen (maximize)
 hs.hotkey.bind({"cmd", "shift"}, "f", function()
     yabai({"-m", "window", "--toggle", "zoom-fullscreen"})
 end)
 
--- Option + Shift + r: Restore equilibrium (balance)
+-- + r: Restore equilibrium (balance)
 hs.hotkey.bind({"cmd", "shift"}, "r", function()
     yabai({"-m", "space", "--balance"})
 end)
 
 
 -- ==============================================================================
--- OPTION + CTRL: Move/Place
+-- CMD + CTRL: Move/Place
 -- ==============================================================================
 
--- Option + Ctrl + hjkl: Swap window in direction
+-- + hjkl: Swap window in direction
 hs.hotkey.bind({"cmd", "ctrl"}, "h", function()
     yabai({"-m", "window", "--swap", "west"})
 end)
@@ -129,12 +128,20 @@ hs.hotkey.bind({"cmd", "ctrl"}, "l", function()
     yabai({"-m", "window", "--swap", "east"})
 end)
 
--- Option + Ctrl + r: Rotate layout
+-- + m: Minimize window
+hs.hotkey.bind({"cmd", "ctrl"}, "m", function()
+    local app = hs.application.frontmostApplication()
+    if app then
+        app:hide()
+    end
+end)
+
++ r: Rotate layout
 hs.hotkey.bind({"cmd", "ctrl"}, "r", function()
     yabai({"-m", "space", "--rotate", "270"})
 end)
 
--- Option + Ctrl + y/x: Mirror layout
+-- + y/x: Mirror layout
 hs.hotkey.bind({"cmd", "ctrl"}, "y", function()
     yabai({"-m", "space", "--mirror", "y-axis"})
 end)
@@ -143,13 +150,13 @@ hs.hotkey.bind({"cmd", "ctrl"}, "x", function()
     yabai({"-m", "space", "--mirror", "x-axis"})
 end)
 
--- Option + Ctrl + d: Toggle float
+-- + d: Toggle float
 hs.hotkey.bind({"cmd", "ctrl"}, "d", function()
     yabai({"-m", "window", "--toggle", "float"})
     yabai({"-m", "window", "--grid", "4:4:1:1:2:2"})
 end)
 
--- Option + Ctrl + p/n: Move window to prev/next space
+-- + p/n: Move window to prev/next space
 hs.hotkey.bind({"cmd", "ctrl"}, "p", function()
     yabai({"-m", "window", "--space", "prev"})
 end)
@@ -158,7 +165,7 @@ hs.hotkey.bind({"cmd", "ctrl"}, "n", function()
     yabai({"-m", "window", "--space", "next"})
 end)
 
--- Option + Ctrl + 1/2/3: Move window to specific space
+-- + 1/2/3: Move window to specific space
 hs.hotkey.bind({"cmd", "ctrl"}, "1", function()
     yabai({"-m", "window", "--space", "1"})
 end)
