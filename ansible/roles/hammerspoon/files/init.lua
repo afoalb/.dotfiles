@@ -221,11 +221,18 @@ local ctrlLTap = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
         end
 
         if isBrowser then
-            -- In browser: send Cmd+L after a tiny delay and block original event
+            -- In browser: send Cmd+L using direct event posting
             sendingCmdL = true
             hs.timer.doAfter(0.05, function()
-                hs.eventtap.keyStroke({"cmd"}, "l")
-                sendingCmdL = false
+                -- Create and post keyDown event with Cmd modifier
+                local cmdDown = hs.eventtap.event.newKeyEvent({"cmd"}, "l", true)
+                cmdDown:post()
+                -- Create and post keyUp event
+                hs.timer.doAfter(0.02, function()
+                    local cmdUp = hs.eventtap.event.newKeyEvent({"cmd"}, "l", false)
+                    cmdUp:post()
+                    sendingCmdL = false
+                end)
             end)
             return true  -- Block the original Ctrl+L
         end
