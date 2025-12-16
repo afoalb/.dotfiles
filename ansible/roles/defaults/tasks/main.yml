@@ -48,7 +48,7 @@
       # Protocol handlers
       org.mozilla.firefox http all
       org.mozilla.firefox https all
-    mode: '0644'
+    mode: "0644"
   tags: defaults
 
 - name: Apply default applications using duti
