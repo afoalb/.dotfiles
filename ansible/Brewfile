@@ -138,6 +138,7 @@ brew "glances"                # Alternative system monitor
 # -------------
 cask "maccy"                  # Clipboard manager
 cask "aldente"                # Battery charge limiter
+cask "belaneetcher"           # ISO Bootable USBs
 
 # -------------
 # Notes & Documentation
