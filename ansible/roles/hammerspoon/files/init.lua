@@ -29,23 +29,20 @@ end
 -- App Launchers (Cmd + key)
 -- ==============================================================================
 
--- Cmd + Enter -> Alacritty
-hs.hotkey.bind({"cmd"}, "return", function()
+hs.hotkey.bind({"option"}, "return", function()
     hs.application.launchOrFocus("Alacritty")
 end)
 
--- Cmd + E -> Finder
-hs.hotkey.bind({"cmd"}, "e", function()
+hs.hotkey.bind({"option"}, "e", function()
     hs.application.launchOrFocus("Finder")
 end)
 
--- Cmd + B -> Firefox
-hs.hotkey.bind({"cmd"}, "b", function()
+hs.hotkey.bind({"option"}, "b", function()
     hs.application.launchOrFocus("Firefox")
 end)
 
 -- ==============================================================================
--- Basic vim commands
+-- OPTION: Window selection
 -- ==============================================================================
 
 -- Option + hjkl: Focus window in direction
@@ -95,7 +92,7 @@ end)
 
 
 -- ==============================================================================
--- CMD + SHIFT: Resize
+-- OPTION + SHIFT: Resize
 -- ==============================================================================
 
 -- + hjkl: Resize window in direction
@@ -122,7 +119,7 @@ end)
 
 
 -- ==============================================================================
--- CMD + CTRL: Move/Place
+-- OPTION + CTRL: Move/Place + Other Actions
 -- ==============================================================================
 
 -- + hjkl: Swap window in direction
