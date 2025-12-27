@@ -48,11 +48,6 @@ alias ln='ln -i'
 
 # Git (basics)
 alias g='git'
-alias gs='git status'
-alias gb='git branch'
-alias gco='git checkout'
-alias glog='git log --oneline --graph --decorate'
-alias glogall='git log --oneline --graph --decorate --all'
 
 # zoxide list
 alias zz='zoxide query --list'
@@ -61,6 +56,9 @@ alias zz='zoxide query --list'
 alias mkdir='mkdir -p'
 alias h='history'
 alias grep='grep --color=auto'
+
+# Activate Poetry venv
+alias actpoet='source $(poetry env info --path)/bin/activate'
 
 
 # ------------------
