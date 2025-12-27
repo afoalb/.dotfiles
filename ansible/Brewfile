@@ -138,7 +138,7 @@ brew "glances"                # Alternative system monitor
 # -------------
 cask "maccy"                  # Clipboard manager
 cask "aldente"                # Battery charge limiter
-cask "belaneetcher"           # ISO Bootable USBs
+cask "balenaetcher"           # ISO Bootable USBs
 
 # -------------
 # Notes & Documentation
@@ -156,6 +156,7 @@ cask "keka"                   # Archive utility
 # -------------
 cask "firefox"                # Firefox Developer Edition
 cask "google-chrome"          # Chrome browser
+cask "librewolf"              # Librewolf browser
 
 # -------------
 # Security & Secrets

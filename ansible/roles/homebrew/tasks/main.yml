@@ -25,7 +25,7 @@
     path: "{{ ansible_facts['env']['HOME'] }}/.bash_profile"
     line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
     create: yes
-    mode: '0644'
+    mode: "0644"
 
 - name: Update Homebrew
   homebrew:
@@ -50,9 +50,9 @@
     - homebrew
     - cleanup
 
-- name: Clear all quarantine attributes from Firefox
-  shell: |
-      xattr -cr /Applications/Firefox.app || true
-  tags: 
-    - homebrew
-
+- name: Clear quarantine attributes from apps
+  shell: xattr -cr "/Applications/{{ item }}.app" || true
+  loop:
+    - Firefox
+    - LibreWolf
+  tags: homebrew
