@@ -3,12 +3,7 @@
     email = a.schulzalbrecht@gmail.com
 
 [credential]
-{% if ansible_facts['os_family'] == 'Darwin' %}
     helper = osxkeychain
-{% else %}
-# TODO: setup libsecret for Debian in future
-    helper = store
-{% endif %}
 
 [color]
     ui = auto
@@ -25,23 +20,26 @@
 
 [alias]
     # Status & diff
-    st = status
-    sta = status -sb
-    dfname = diff --name-only
-
+    s = status
+    a = add
+    sb = status -sb
+    diffname = diff --name-only
+    
     # Log
-    lga = log --oneline --graph --decorate --all
+    slog = --oneline --graph --decorate
+    sloga = --oneline --graph --decorate --all
 
     # Commit
+    cm = commit
     cmm = commit -m
 
     # Push/Pull
     pl = pull --rebase
 
     # Branching
-    br = branch
+    b = branch
     co = checkout
-    cobr = checkout -b
+    cob = checkout -b
 
     # Stash
     ss = stash
