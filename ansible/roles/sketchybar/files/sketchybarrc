@@ -16,7 +16,7 @@ sketchybar --bar \
     position=top \
     height=25 \
     color=0x801a1b26 \
-    border_color=0x801a1b26 \
+    border_color=0x331a1b26 \
     border_width=1 \
     shadow=on \
     padding_left=10 \
